@@ -1,0 +1,1 @@
+import{_ as c,c as o,o as a,a as s,b as t,aa as n}from"./B8cRixjd.js";const _={},r={class:"min-h-screen bg-background flex flex-col"},l={class:"flex-1"};function d(f,i){const e=n;return a(),o("div",r,[s("main",l,[t(e)])])}const x=c(_,[["render",d]]);export{x as default};
