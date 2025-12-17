@@ -210,7 +210,7 @@
                   
                   <button 
                     @click="close"
-                    class="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium shadow-lg"
+                    class="px-8 py-3 bg-[#005B8F] text-white rounded-lg  transition font-medium shadow-lg"
                   >
                     Import New Files
                   </button>
@@ -270,7 +270,7 @@
                 v-if="currentStep < 3"
                 @click="nextStep"
                 :disabled="currentStep === 1 && !uploadedFile"
-                class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-medium flex items-center gap-2 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                class="px-6 py-3 bg-[#005B8F] text-white rounded-lg  transition-all font-medium flex items-center gap-2 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span>Next Step</span>
                 <Icon name="heroicons:arrow-right" class="w-5 h-5" />

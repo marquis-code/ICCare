@@ -10,7 +10,7 @@
             v-model="formData.firstName"
             type="text" 
             placeholder="e.g Admin"
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+            class="custom-input"
           />
         </div>
         
@@ -22,7 +22,7 @@
             v-model="formData.lastName"
             type="text" 
             placeholder="e.g Admin"
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+            class="custom-input"
           />
         </div>
         
@@ -34,7 +34,7 @@
             v-model="formData.newPassword"
             type="password" 
             placeholder="e.g Admin"
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+            class="custom-input"
           />
         </div>
         
@@ -46,7 +46,7 @@
             v-model="formData.confirmedNewPassword"
             type="password" 
             placeholder="e.g Admin"
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+            class="custom-input"
           />
         </div>
       </div>
@@ -55,13 +55,13 @@
         <button 
           type="button"
           @click="handleCancel"
-          class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
+          class="px-6 py-3 border-[0.5px] text-sm border-gray-100 text-gray-700 rounded-xl hover:bg-gray-50 transition font-medium"
         >
           Cancel
         </button>
         <button 
           type="submit"
-          class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium shadow-sm"
+          class="px-6 py-3 bg-[#005B8F] text-sm text-white rounded-xl  transition font-medium shadow-sm"
         >
           Save
         </button>

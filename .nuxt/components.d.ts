@@ -23,20 +23,32 @@ interface _GlobalComponents {
     'BiospecimenTransferModal': typeof import("../components/Biospecimen/TransferModal.vue")['default']
     'ConsultationTypeCard': typeof import("../components/ConsultationTypeCard.vue")['default']
     'DateRangePicker': typeof import("../components/DateRangePicker.vue")['default']
+    'DetailModal': typeof import("../components/DetailModal.vue")['default']
     'EmptyState': typeof import("../components/EmptyState.vue")['default']
     'LoadingSpinner': typeof import("../components/LoadingSpinner.vue")['default']
+    'MultiSelect': typeof import("../components/MultiSelect.vue")['default']
     'NotificationDetail': typeof import("../components/NotificationDetail.vue")['default']
     'NotificationList': typeof import("../components/NotificationList.vue")['default']
     'PersonalInfoTab': typeof import("../components/PersonalInfoTab.vue")['default']
     'SecurityTab': typeof import("../components/SecurityTab.vue")['default']
     'SettingsTab': typeof import("../components/SettingsTab.vue")['default']
     'TimeSlotPicker': typeof import("../components/TimeSlotPicker.vue")['default']
-    'AppointmentsAppointmentCard': typeof import("../components/appointments/AppointmentCard.vue")['default']
-    'AppointmentsRescheduleModal': typeof import("../components/appointments/RescheduleModal.vue")['default']
+    'CoreAlertModal': typeof import("../components/core/AlertModal.vue")['default']
+    'CoreCustomCalendar': typeof import("../components/core/CustomCalendar.vue")['default']
+    'CoreDateInput': typeof import("../components/core/DateInput.vue")['default']
+    'CoreDateRangePicker': typeof import("../components/core/DateRangePicker.vue")['default']
     'CoreLoadingSpinner': typeof import("../components/core/LoadingSpinner.vue")['default']
+    'CoreModal': typeof import("../components/core/Modal.vue")['default']
+    'CoreRadioInput': typeof import("../components/core/RadioInput.vue")['default']
+    'CoreToast': typeof import("../components/core/Toast.vue")['default']
+    'UiAnimatedInput': typeof import("../components/ui/AnimatedInput.vue")['default']
     'UiCustomDropdown': typeof import("../components/ui/CustomDropdown.vue")['default']
     'UiCustomToggle': typeof import("../components/ui/CustomToggle.vue")['default']
+    'UiPhoneInput': typeof import("../components/ui/PhoneInput.vue")['default']
+    'UiPhoneNumberInput': typeof import("../components/ui/PhoneNumberInput.vue")['default']
+    'UiSelectInput': typeof import("../components/ui/SelectInput.vue")['default']
     'UiToast': typeof import("../components/ui/Toast.vue")['default']
+    'UiVerifyEmailOtpInput': typeof import("../components/ui/VerifyEmailOtpInput.vue")['default']
     'NuxtWelcome': typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']
     'NuxtLayout': typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout")['default']
     'NuxtErrorBoundary': typeof import("../node_modules/nuxt/dist/app/components/nuxt-error-boundary")['default']
@@ -71,20 +83,32 @@ interface _GlobalComponents {
     'LazyBiospecimenTransferModal': LazyComponent<typeof import("../components/Biospecimen/TransferModal.vue")['default']>
     'LazyConsultationTypeCard': LazyComponent<typeof import("../components/ConsultationTypeCard.vue")['default']>
     'LazyDateRangePicker': LazyComponent<typeof import("../components/DateRangePicker.vue")['default']>
+    'LazyDetailModal': LazyComponent<typeof import("../components/DetailModal.vue")['default']>
     'LazyEmptyState': LazyComponent<typeof import("../components/EmptyState.vue")['default']>
     'LazyLoadingSpinner': LazyComponent<typeof import("../components/LoadingSpinner.vue")['default']>
+    'LazyMultiSelect': LazyComponent<typeof import("../components/MultiSelect.vue")['default']>
     'LazyNotificationDetail': LazyComponent<typeof import("../components/NotificationDetail.vue")['default']>
     'LazyNotificationList': LazyComponent<typeof import("../components/NotificationList.vue")['default']>
     'LazyPersonalInfoTab': LazyComponent<typeof import("../components/PersonalInfoTab.vue")['default']>
     'LazySecurityTab': LazyComponent<typeof import("../components/SecurityTab.vue")['default']>
     'LazySettingsTab': LazyComponent<typeof import("../components/SettingsTab.vue")['default']>
     'LazyTimeSlotPicker': LazyComponent<typeof import("../components/TimeSlotPicker.vue")['default']>
-    'LazyAppointmentsAppointmentCard': LazyComponent<typeof import("../components/appointments/AppointmentCard.vue")['default']>
-    'LazyAppointmentsRescheduleModal': LazyComponent<typeof import("../components/appointments/RescheduleModal.vue")['default']>
+    'LazyCoreAlertModal': LazyComponent<typeof import("../components/core/AlertModal.vue")['default']>
+    'LazyCoreCustomCalendar': LazyComponent<typeof import("../components/core/CustomCalendar.vue")['default']>
+    'LazyCoreDateInput': LazyComponent<typeof import("../components/core/DateInput.vue")['default']>
+    'LazyCoreDateRangePicker': LazyComponent<typeof import("../components/core/DateRangePicker.vue")['default']>
     'LazyCoreLoadingSpinner': LazyComponent<typeof import("../components/core/LoadingSpinner.vue")['default']>
+    'LazyCoreModal': LazyComponent<typeof import("../components/core/Modal.vue")['default']>
+    'LazyCoreRadioInput': LazyComponent<typeof import("../components/core/RadioInput.vue")['default']>
+    'LazyCoreToast': LazyComponent<typeof import("../components/core/Toast.vue")['default']>
+    'LazyUiAnimatedInput': LazyComponent<typeof import("../components/ui/AnimatedInput.vue")['default']>
     'LazyUiCustomDropdown': LazyComponent<typeof import("../components/ui/CustomDropdown.vue")['default']>
     'LazyUiCustomToggle': LazyComponent<typeof import("../components/ui/CustomToggle.vue")['default']>
+    'LazyUiPhoneInput': LazyComponent<typeof import("../components/ui/PhoneInput.vue")['default']>
+    'LazyUiPhoneNumberInput': LazyComponent<typeof import("../components/ui/PhoneNumberInput.vue")['default']>
+    'LazyUiSelectInput': LazyComponent<typeof import("../components/ui/SelectInput.vue")['default']>
     'LazyUiToast': LazyComponent<typeof import("../components/ui/Toast.vue")['default']>
+    'LazyUiVerifyEmailOtpInput': LazyComponent<typeof import("../components/ui/VerifyEmailOtpInput.vue")['default']>
     'LazyNuxtWelcome': LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']>
     'LazyNuxtLayout': LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout")['default']>
     'LazyNuxtErrorBoundary': LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-error-boundary")['default']>
@@ -125,20 +149,32 @@ export const BiospecimenNewSpecimenModal: typeof import("../components/Biospecim
 export const BiospecimenTransferModal: typeof import("../components/Biospecimen/TransferModal.vue")['default']
 export const ConsultationTypeCard: typeof import("../components/ConsultationTypeCard.vue")['default']
 export const DateRangePicker: typeof import("../components/DateRangePicker.vue")['default']
+export const DetailModal: typeof import("../components/DetailModal.vue")['default']
 export const EmptyState: typeof import("../components/EmptyState.vue")['default']
 export const LoadingSpinner: typeof import("../components/LoadingSpinner.vue")['default']
+export const MultiSelect: typeof import("../components/MultiSelect.vue")['default']
 export const NotificationDetail: typeof import("../components/NotificationDetail.vue")['default']
 export const NotificationList: typeof import("../components/NotificationList.vue")['default']
 export const PersonalInfoTab: typeof import("../components/PersonalInfoTab.vue")['default']
 export const SecurityTab: typeof import("../components/SecurityTab.vue")['default']
 export const SettingsTab: typeof import("../components/SettingsTab.vue")['default']
 export const TimeSlotPicker: typeof import("../components/TimeSlotPicker.vue")['default']
-export const AppointmentsAppointmentCard: typeof import("../components/appointments/AppointmentCard.vue")['default']
-export const AppointmentsRescheduleModal: typeof import("../components/appointments/RescheduleModal.vue")['default']
+export const CoreAlertModal: typeof import("../components/core/AlertModal.vue")['default']
+export const CoreCustomCalendar: typeof import("../components/core/CustomCalendar.vue")['default']
+export const CoreDateInput: typeof import("../components/core/DateInput.vue")['default']
+export const CoreDateRangePicker: typeof import("../components/core/DateRangePicker.vue")['default']
 export const CoreLoadingSpinner: typeof import("../components/core/LoadingSpinner.vue")['default']
+export const CoreModal: typeof import("../components/core/Modal.vue")['default']
+export const CoreRadioInput: typeof import("../components/core/RadioInput.vue")['default']
+export const CoreToast: typeof import("../components/core/Toast.vue")['default']
+export const UiAnimatedInput: typeof import("../components/ui/AnimatedInput.vue")['default']
 export const UiCustomDropdown: typeof import("../components/ui/CustomDropdown.vue")['default']
 export const UiCustomToggle: typeof import("../components/ui/CustomToggle.vue")['default']
+export const UiPhoneInput: typeof import("../components/ui/PhoneInput.vue")['default']
+export const UiPhoneNumberInput: typeof import("../components/ui/PhoneNumberInput.vue")['default']
+export const UiSelectInput: typeof import("../components/ui/SelectInput.vue")['default']
 export const UiToast: typeof import("../components/ui/Toast.vue")['default']
+export const UiVerifyEmailOtpInput: typeof import("../components/ui/VerifyEmailOtpInput.vue")['default']
 export const NuxtWelcome: typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']
 export const NuxtLayout: typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout")['default']
 export const NuxtErrorBoundary: typeof import("../node_modules/nuxt/dist/app/components/nuxt-error-boundary")['default']
@@ -173,20 +209,32 @@ export const LazyBiospecimenNewSpecimenModal: LazyComponent<typeof import("../co
 export const LazyBiospecimenTransferModal: LazyComponent<typeof import("../components/Biospecimen/TransferModal.vue")['default']>
 export const LazyConsultationTypeCard: LazyComponent<typeof import("../components/ConsultationTypeCard.vue")['default']>
 export const LazyDateRangePicker: LazyComponent<typeof import("../components/DateRangePicker.vue")['default']>
+export const LazyDetailModal: LazyComponent<typeof import("../components/DetailModal.vue")['default']>
 export const LazyEmptyState: LazyComponent<typeof import("../components/EmptyState.vue")['default']>
 export const LazyLoadingSpinner: LazyComponent<typeof import("../components/LoadingSpinner.vue")['default']>
+export const LazyMultiSelect: LazyComponent<typeof import("../components/MultiSelect.vue")['default']>
 export const LazyNotificationDetail: LazyComponent<typeof import("../components/NotificationDetail.vue")['default']>
 export const LazyNotificationList: LazyComponent<typeof import("../components/NotificationList.vue")['default']>
 export const LazyPersonalInfoTab: LazyComponent<typeof import("../components/PersonalInfoTab.vue")['default']>
 export const LazySecurityTab: LazyComponent<typeof import("../components/SecurityTab.vue")['default']>
 export const LazySettingsTab: LazyComponent<typeof import("../components/SettingsTab.vue")['default']>
 export const LazyTimeSlotPicker: LazyComponent<typeof import("../components/TimeSlotPicker.vue")['default']>
-export const LazyAppointmentsAppointmentCard: LazyComponent<typeof import("../components/appointments/AppointmentCard.vue")['default']>
-export const LazyAppointmentsRescheduleModal: LazyComponent<typeof import("../components/appointments/RescheduleModal.vue")['default']>
+export const LazyCoreAlertModal: LazyComponent<typeof import("../components/core/AlertModal.vue")['default']>
+export const LazyCoreCustomCalendar: LazyComponent<typeof import("../components/core/CustomCalendar.vue")['default']>
+export const LazyCoreDateInput: LazyComponent<typeof import("../components/core/DateInput.vue")['default']>
+export const LazyCoreDateRangePicker: LazyComponent<typeof import("../components/core/DateRangePicker.vue")['default']>
 export const LazyCoreLoadingSpinner: LazyComponent<typeof import("../components/core/LoadingSpinner.vue")['default']>
+export const LazyCoreModal: LazyComponent<typeof import("../components/core/Modal.vue")['default']>
+export const LazyCoreRadioInput: LazyComponent<typeof import("../components/core/RadioInput.vue")['default']>
+export const LazyCoreToast: LazyComponent<typeof import("../components/core/Toast.vue")['default']>
+export const LazyUiAnimatedInput: LazyComponent<typeof import("../components/ui/AnimatedInput.vue")['default']>
 export const LazyUiCustomDropdown: LazyComponent<typeof import("../components/ui/CustomDropdown.vue")['default']>
 export const LazyUiCustomToggle: LazyComponent<typeof import("../components/ui/CustomToggle.vue")['default']>
+export const LazyUiPhoneInput: LazyComponent<typeof import("../components/ui/PhoneInput.vue")['default']>
+export const LazyUiPhoneNumberInput: LazyComponent<typeof import("../components/ui/PhoneNumberInput.vue")['default']>
+export const LazyUiSelectInput: LazyComponent<typeof import("../components/ui/SelectInput.vue")['default']>
 export const LazyUiToast: LazyComponent<typeof import("../components/ui/Toast.vue")['default']>
+export const LazyUiVerifyEmailOtpInput: LazyComponent<typeof import("../components/ui/VerifyEmailOtpInput.vue")['default']>
 export const LazyNuxtWelcome: LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']>
 export const LazyNuxtLayout: LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout")['default']>
 export const LazyNuxtErrorBoundary: LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-error-boundary")['default']>

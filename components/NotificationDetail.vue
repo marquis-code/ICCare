@@ -1,8 +1,8 @@
 <template>
-  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+  <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
     <!-- Header -->
-    <div class="flex items-start justify-between gap-4 mb-6 pb-6 border-b border-gray-200">
-      <h2 class="text-xl font-bold text-gray-900">
+    <div class="flex items-start justify-between gap-4 mb-6 pb-6 border-b border-gray-100">
+      <h2 class="text-xl font-semibold text-gray-900">
         {{ notification.title }} - Serum Sample
       </h2>
       

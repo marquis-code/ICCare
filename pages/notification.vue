@@ -6,10 +6,10 @@
 
       <!-- Main Content -->
       <main class="flex-1 p-4 md:p-6 lg:p-8">
-        <div class="max-w-7xl mx-auto">
+        <div class="">
           <!-- Page Title -->
           <div class="mb-6">
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Notifications</h1>
+            <h1 class="text-xl  font-bold text-gray-900">Notifications</h1>
             <p class="text-sm text-gray-600 mt-1">Stay informed about your iCCaREPO activities and critical alerts.</p>
           </div>
 

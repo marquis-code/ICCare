@@ -3,12 +3,20 @@
         <div class="space-y-6">
             <!-- Header -->
             <div class="flex items-center justify-between">
-                <h1 class="text-3xl font-bold text-gray-900">User Management</h1>
+                <h1 class="text-xl font-semibold text-gray-900">User Management</h1>
                 <button @click="openAddUserModal"
-                    class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
+                    class="flex items-center gap-2 px-4 py-2 bg-[#005B8F] text-white rounded-lg  transition-colors">
+                  <svg width="18" height="16" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_2013_376)">
+<path d="M3.01562 0C1.9125 0 1.01562 0.896875 1.01562 2V14C1.01562 15.1031 1.9125 16 3.01562 16H11.0156C12.1187 16 13.0156 15.1031 13.0156 14V11H15.4563L14.4875 11.9688C14.1938 12.2625 14.1938 12.7375 14.4875 13.0281C14.7812 13.3187 15.2563 13.3219 15.5469 13.0281L17.7969 10.7781C18.0906 10.4844 18.0906 10.0094 17.7969 9.71875L15.5469 7.46875C15.2531 7.175 14.7781 7.175 14.4875 7.46875C14.1969 7.7625 14.1938 8.2375 14.4875 8.52812L15.4563 9.49687H13.0156V5.325C13.0156 4.79375 12.8062 4.28438 12.4312 3.90937L9.1 0.584375C8.725 0.209375 8.21875 0 7.6875 0H3.01562ZM11.1875 5.5H8.26562C7.85 5.5 7.51562 5.16563 7.51562 4.75V1.82812L11.1875 5.5ZM7.01562 10.25C7.01562 9.83438 7.35 9.5 7.76562 9.5H11.0156V11H7.76562C7.35 11 7.01562 10.6656 7.01562 10.25Z" fill="white"/>
+</g>
+<defs>
+<clipPath id="clip0_2013_376">
+<rect width="18" height="16" fill="white"/>
+</clipPath>
+</defs>
+</svg>
+
                     <span class="font-medium">Add New User</span>
                 </button>
             </div>
@@ -16,107 +24,153 @@
             <!-- Stats Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Total Users -->
-                <div class="bg-white rounded-xl shadow-sm p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-sm font-medium text-gray-600">Total Users</h3>
-                        <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                            </svg>
-                        </div>
+                <div class="bg-white rounded-xl shadow-sm">
+                    <div class="flex items-center justify-between mb-4 bg-[#F6F6F6] px-6 py-4">
+                        <h3 class="font-medium text-gray-600">Total Users</h3>
                     </div>
-                    <p class="text-3xl font-bold text-gray-900">{{ stats.total.toLocaleString() }}</p>
+                    <div class="p-6 py-4 space-y-3">
+                        <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect width="40" height="40" rx="9" fill="#EBF1F5" />
+                                <g clip-path="url(#clip0_2013_263)">
+                                    <mask id="mask0_2013_263" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="9"
+                                        y="9" width="25" height="25">
+                                        <rect x="9.5" y="9.25" width="24" height="24" fill="#D9D9D9" />
+                                    </mask>
+                                    <g mask="url(#mask0_2013_263)">
+                                        <path
+                                            d="M9.5 27.25V25.675C9.5 24.9583 9.86667 24.375 10.6 23.925C11.3333 23.475 12.3 23.25 13.5 23.25C13.7167 23.25 13.925 23.2542 14.125 23.2625C14.325 23.2708 14.5167 23.2917 14.7 23.325C14.4667 23.675 14.2917 24.0417 14.175 24.425C14.0583 24.8083 14 25.2083 14 25.625V27.25H9.5ZM15.5 27.25V25.625C15.5 25.0917 15.6458 24.6042 15.9375 24.1625C16.2292 23.7208 16.6417 23.3333 17.175 23C17.7083 22.6667 18.3458 22.4167 19.0875 22.25C19.8292 22.0833 20.6333 22 21.5 22C22.3833 22 23.1958 22.0833 23.9375 22.25C24.6792 22.4167 25.3167 22.6667 25.85 23C26.3833 23.3333 26.7917 23.7208 27.075 24.1625C27.3583 24.6042 27.5 25.0917 27.5 25.625V27.25H15.5ZM29 27.25V25.625C29 25.1917 28.9458 24.7833 28.8375 24.4C28.7292 24.0167 28.5667 23.6583 28.35 23.325C28.5333 23.2917 28.7208 23.2708 28.9125 23.2625C29.1042 23.2542 29.3 23.25 29.5 23.25C30.7 23.25 31.6667 23.4708 32.4 23.9125C33.1333 24.3542 33.5 24.9417 33.5 25.675V27.25H29ZM17.625 25.25H25.4C25.2333 24.9167 24.7708 24.625 24.0125 24.375C23.2542 24.125 22.4167 24 21.5 24C20.5833 24 19.7458 24.125 18.9875 24.375C18.2292 24.625 17.775 24.9167 17.625 25.25ZM13.5 22.25C12.95 22.25 12.4792 22.0542 12.0875 21.6625C11.6958 21.2708 11.5 20.8 11.5 20.25C11.5 19.6833 11.6958 19.2083 12.0875 18.825C12.4792 18.4417 12.95 18.25 13.5 18.25C14.0667 18.25 14.5417 18.4417 14.925 18.825C15.3083 19.2083 15.5 19.6833 15.5 20.25C15.5 20.8 15.3083 21.2708 14.925 21.6625C14.5417 22.0542 14.0667 22.25 13.5 22.25ZM29.5 22.25C28.95 22.25 28.4792 22.0542 28.0875 21.6625C27.6958 21.2708 27.5 20.8 27.5 20.25C27.5 19.6833 27.6958 19.2083 28.0875 18.825C28.4792 18.4417 28.95 18.25 29.5 18.25C30.0667 18.25 30.5417 18.4417 30.925 18.825C31.3083 19.2083 31.5 19.6833 31.5 20.25C31.5 20.8 31.3083 21.2708 30.925 21.6625C30.5417 22.0542 30.0667 22.25 29.5 22.25ZM21.5 21.25C20.6667 21.25 19.9583 20.9583 19.375 20.375C18.7917 19.7917 18.5 19.0833 18.5 18.25C18.5 17.4 18.7917 16.6875 19.375 16.1125C19.9583 15.5375 20.6667 15.25 21.5 15.25C22.35 15.25 23.0625 15.5375 23.6375 16.1125C24.2125 16.6875 24.5 17.4 24.5 18.25C24.5 19.0833 24.2125 19.7917 23.6375 20.375C23.0625 20.9583 22.35 21.25 21.5 21.25ZM21.5 19.25C21.7833 19.25 22.0208 19.1542 22.2125 18.9625C22.4042 18.7708 22.5 18.5333 22.5 18.25C22.5 17.9667 22.4042 17.7292 22.2125 17.5375C22.0208 17.3458 21.7833 17.25 21.5 17.25C21.2167 17.25 20.9792 17.3458 20.7875 17.5375C20.5958 17.7292 20.5 17.9667 20.5 18.25C20.5 18.5333 20.5958 18.7708 20.7875 18.9625C20.9792 19.1542 21.2167 19.25 21.5 19.25Z"
+                                            fill="#004979" />
+                                    </g>
+                                </g>
+                                <defs>
+                                    <clipPath id="clip0_2013_263">
+                                        <rect width="20" height="16" fill="white" transform="translate(11.5 13.5)" />
+                                    </clipPath>
+                                </defs>
+                            </svg>
+
+                        </div>
+                        <p class="text-2xl font-semibold text-gray-900">{{ stats.total.toLocaleString() }}</p>
+                    </div>
                 </div>
 
                 <!-- Active Users -->
-                <div class="bg-white rounded-xl shadow-sm p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-sm font-medium text-gray-600">Active Users</h3>
-                        <div class="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
+                <div class="bg-white rounded-xl shadow-sm">
+                    <div class="flex items-center justify-between mb-4 bg-[#F6F6F6] px-6 py-4">
+                        <h3 class="font-medium text-gray-600">Active Users</h3>
                     </div>
-                    <p class="text-3xl font-bold text-gray-900">{{ stats.active.toLocaleString() }}</p>
+                    <div class="p-6 py-4 space-y-3">
+                        <div class="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
+                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect width="40" height="40" rx="9" fill="#E7F3EF" />
+                                <path
+                                    d="M14.116 23.27C13.6553 23.27 13.271 23.1157 12.963 22.807C12.655 22.4984 12.5007 22.114 12.5 21.654V13.884C12.5 13.424 12.6543 13.04 12.963 12.732C13.2717 12.424 13.6557 12.2697 14.115 12.269H28.885C29.345 12.269 29.729 12.4234 30.037 12.732C30.345 13.0407 30.4993 13.4247 30.5 13.884V21.654C30.5 22.114 30.3457 22.4984 30.037 22.807C29.7283 23.1157 29.344 23.2697 28.884 23.269H25.814C25.8493 23.1024 25.871 22.9357 25.879 22.769C25.8863 22.6024 25.8863 22.4357 25.879 22.269C25.8097 21.1177 25.3553 20.144 24.516 19.348C23.6767 18.552 22.6713 18.154 21.5 18.154C20.3287 18.154 19.3233 18.552 18.484 19.348C17.6447 20.144 17.19 21.1177 17.12 22.269C17.1127 22.4357 17.1127 22.6024 17.12 22.769C17.128 22.9357 17.15 23.1024 17.186 23.269L14.116 23.27ZM16.5 17.98L18.135 16.366L16.5 14.75L14.884 16.366L16.5 17.98ZM26 16.77C26.276 16.77 26.5117 16.672 26.707 16.476C26.9023 16.28 27 16.0444 27 15.769C27 15.4937 26.9023 15.2584 26.707 15.063C26.5117 14.8677 26.276 14.7697 26 14.769C25.724 14.7684 25.4883 14.8664 25.293 15.063C25.0977 15.2597 25 15.495 25 15.769C25 16.043 25.0977 16.2787 25.293 16.476C25.4883 16.6734 25.724 16.772 26 16.77ZM15.5 30.731V29.323C15.5 28.9324 15.608 28.567 15.824 28.227C16.04 27.887 16.3313 27.637 16.698 27.477C17.4633 27.1324 18.246 26.8704 19.046 26.691C19.846 26.5117 20.664 26.4224 21.5 26.423C22.336 26.4237 23.154 26.513 23.954 26.691C24.754 26.869 25.5367 27.131 26.302 27.477C26.6687 27.637 26.96 27.887 27.176 28.227C27.392 28.567 27.5 28.9324 27.5 29.323V30.731H15.5ZM21.5 25.038C20.8027 25.038 20.2117 24.7957 19.727 24.311C19.2423 23.827 19 23.236 19 22.538C19 21.84 19.2423 21.249 19.727 20.765C20.2117 20.281 20.8027 20.0387 21.5 20.038C22.1973 20.0374 22.7883 20.2797 23.273 20.765C23.7577 21.2504 24 21.8414 24 22.538C24 23.2347 23.7577 23.8257 23.273 24.311C22.7883 24.7964 22.1973 25.0387 21.5 25.038Z"
+                                    fill="#0FA36B" />
+                            </svg>
+
+                        </div>
+                        <p class="text-2xl font-semibold text-gray-900">{{ stats.active.toLocaleString() }}</p>
+                    </div>
                 </div>
 
                 <!-- Inactive Users -->
-                <div class="bg-white rounded-xl shadow-sm p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-sm font-medium text-gray-600">Inactive Users</h3>
-                        <div class="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-                            </svg>
-                        </div>
+                <div class="bg-white rounded-xl shadow-sm">
+                    <div class="flex items-center justify-between mb-4 bg-[#F6F6F6] px-6 py-4">
+                        <h3 class="font-medium text-gray-600">Inactive Users</h3>
                     </div>
-                    <p class="text-3xl font-bold text-gray-900">{{ stats.inactive.toLocaleString() }}</p>
+                    <div class="p-6 py-4 pb-8 space-y-3">
+                        <div class="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center">
+                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect width="40" height="40" rx="9" fill="#FCEBFF" />
+                                <path
+                                    d="M31.5311 20.3751L29.3951 16.8321C29.2388 16.5748 29.019 16.3619 28.7569 16.2138C28.4949 16.0657 28.1991 15.9873 27.8981 15.9861H26.2211V15.7371C26.2211 15.3775 26.1501 15.0214 26.0121 14.6894C25.8742 14.3573 25.6719 14.0557 25.4171 13.8021C24.9019 13.2887 24.2044 13.0003 23.4771 13.0001H13.4941C12.9508 12.9965 12.4187 13.1551 11.966 13.4556C11.5134 13.7561 11.1607 14.1849 10.9531 14.6871C10.8158 15.02 10.7464 15.377 10.7491 15.7371V24.6951C10.7497 25.1158 10.9026 25.522 11.1797 25.8386C11.4568 26.1552 11.8392 26.3607 12.2561 26.4171C12.2514 26.5071 12.2514 26.5967 12.2561 26.6861C12.2525 27.1102 12.3347 27.5307 12.4976 27.9223C12.6605 28.3139 12.9008 28.6686 13.2041 28.9651C13.5017 29.2748 13.858 29.5223 14.2522 29.6932C14.6463 29.864 15.0705 29.9547 15.5001 29.9601C16.3574 29.9523 17.1777 29.6091 17.7851 29.0041C18.392 28.4 18.7368 27.5813 18.7451 26.7251C18.7502 26.6425 18.7502 26.5596 18.7451 26.4771H24.2541C24.249 26.5596 24.249 26.6425 24.2541 26.7251C24.2504 27.1494 24.3325 27.57 24.4954 27.9618C24.6583 28.3536 24.8987 28.7085 25.2021 29.0051C25.5 29.3151 25.8566 29.5627 26.2511 29.7335C26.6456 29.9044 27.0702 29.995 27.5001 30.0001C28.3574 29.9923 29.1777 29.6491 29.7851 29.0441C30.3916 28.4398 30.7361 27.6212 30.7441 26.7651C30.7493 26.6821 30.7493 26.599 30.7441 26.5161H31.5001C31.6974 26.5132 31.8858 26.4338 32.0255 26.2946C32.1653 26.1554 32.2455 25.9673 32.2491 25.7701V22.8941C32.2491 22.0041 32.0001 21.1321 31.5311 20.3751ZM17.2371 26.6851C17.2374 26.9137 17.1916 27.14 17.1024 27.3504C17.0132 27.5609 16.8825 27.7513 16.7181 27.9101C16.3854 28.2262 15.944 28.4024 15.4851 28.4024C15.0262 28.4024 14.5848 28.2262 14.2521 27.9101C14.0899 27.7483 13.9615 27.5558 13.8743 27.344C13.7871 27.1322 13.7429 26.9051 13.7441 26.6761C13.7394 26.4395 13.7872 26.2049 13.8841 25.9891C14.0161 25.6761 14.2431 25.4121 14.5321 25.2321C14.8277 25.0367 15.1759 24.9362 15.5301 24.9441C15.8681 24.9441 16.1981 25.0441 16.4781 25.2321C16.7651 25.4151 16.9911 25.6781 17.1281 25.9891C17.2261 26.2041 17.2781 26.4391 17.2771 26.6761L17.2371 26.6851ZM20.4811 21.7091H15.4911C15.2269 21.7088 14.9736 21.604 14.7864 21.4176C14.5992 21.2312 14.4934 20.9782 14.4921 20.7141C14.4918 20.583 14.5175 20.4532 14.5676 20.3321C14.6177 20.211 14.6912 20.101 14.7839 20.0085C14.8767 19.9159 14.9868 19.8426 15.108 19.7928C15.2292 19.7429 15.3591 19.7175 15.4901 19.7181H20.4811C20.7453 19.7186 20.9985 19.8236 21.1855 20.0102C21.3725 20.1969 21.478 20.4499 21.4791 20.7141C21.4792 20.845 21.4535 20.9747 21.4033 21.0957C21.3532 21.2167 21.2796 21.3265 21.1869 21.419C21.0942 21.5114 20.9841 21.5847 20.8629 21.6345C20.7418 21.6842 20.6121 21.7096 20.4811 21.7091ZM20.4811 18.2851H15.4911C15.2269 18.2848 14.9736 18.18 14.7864 17.9936C14.5992 17.8072 14.4934 17.5542 14.4921 17.2901C14.492 17.1591 14.5177 17.0294 14.5679 16.9084C14.618 16.7875 14.6916 16.6776 14.7843 16.5851C14.877 16.4927 14.9871 16.4194 15.1083 16.3697C15.2294 16.3199 15.3591 16.2945 15.4901 16.2951H20.4811C20.7451 16.2956 20.9982 16.4005 21.1852 16.5869C21.3721 16.7733 21.4778 17.0261 21.4791 17.2901C21.4792 17.421 21.4535 17.5507 21.4033 17.6717C21.3532 17.7927 21.2796 17.9025 21.1869 17.995C21.0942 18.0874 20.9841 18.1607 20.8629 18.2105C20.7418 18.2602 20.6121 18.2856 20.4811 18.2851ZM29.2151 26.6851C29.2153 26.9137 29.1693 27.1401 29.08 27.3506C28.9906 27.561 28.8597 27.7513 28.6951 27.9101C28.3625 28.2259 27.9213 28.402 27.4626 28.402C27.0039 28.402 26.5627 28.2259 26.2301 27.9101C26.0678 27.7483 25.9392 27.556 25.8518 27.3441C25.7644 27.1323 25.72 26.9052 25.7211 26.6761C25.7169 26.3135 25.8329 25.9597 26.0511 25.6701C26.2971 25.3431 26.6501 25.1101 27.0491 25.0131H27.2991C27.3448 25.0022 27.3924 25.0022 27.4381 25.0131H27.6381C27.9411 25.0481 28.2301 25.1611 28.4761 25.3421C28.7231 25.5231 28.9161 25.7671 29.0351 26.0491C29.1341 26.2641 29.1851 26.4991 29.1851 26.7351L29.2151 26.6851Z"
+                                    fill="#9A0FB5" />
+                                <path d="M27.4603 24.9341C27.4143 24.923 27.3663 24.923 27.3203 24.9341H27.4603Z"
+                                    fill="black" />
+                            </svg>
+
+                        </div>
+                        <p class="text-2xl font-semibold text-gray-900">{{ stats.inactive.toLocaleString() }}</p>
+                    </div>
                 </div>
 
                 <!-- Pending Users -->
-                <div class="bg-white rounded-xl shadow-sm p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-sm font-medium text-gray-600">Pending Users</h3>
-                        <div class="w-12 h-12 bg-orange-50 rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
+                <div class="bg-white rounded-xl shadow-sm">
+                    <div class="flex items-center justify-between mb-4 bg-[#F6F6F6] px-6 py-4">
+                        <h3 class="font-medium text-gray-600">Pending Users</h3>
                     </div>
-                    <p class="text-3xl font-bold text-gray-900">{{ stats.pending.toLocaleString() }}</p>
+                    <div class="p-6 py-4 pb-8 space-y-3">
+                        <div class="w-12 h-12 bg-orange-50 rounded-lg flex items-center justify-center">
+                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect width="40" height="40" rx="9" fill="#FFF1E0" />
+                                <path
+                                    d="M21.5 11.5C15.98 11.5 11.5 15.98 11.5 21.5C11.5 27.02 15.98 31.5 21.5 31.5C27.02 31.5 31.5 27.02 31.5 21.5C31.5 15.98 27.02 11.5 21.5 11.5ZM16.5 23C15.67 23 15 22.33 15 21.5C15 20.67 15.67 20 16.5 20C17.33 20 18 20.67 18 21.5C18 22.33 17.33 23 16.5 23ZM21.5 23C20.67 23 20 22.33 20 21.5C20 20.67 20.67 20 21.5 20C22.33 20 23 20.67 23 21.5C23 22.33 22.33 23 21.5 23ZM26.5 23C25.67 23 25 22.33 25 21.5C25 20.67 25.67 20 26.5 20C27.33 20 28 20.67 28 21.5C28 22.33 27.33 23 26.5 23Z"
+                                    fill="#FF9A26" />
+                            </svg>
+
+                        </div>
+                        <p class="text-2xl font-semibold text-gray-900">{{ stats.pending.toLocaleString() }}</p>
+                    </div>
                 </div>
             </div>
 
             <!-- User Management Table -->
-            <div class="bg-white rounded-xl shadow-sm p-6">
+            <div class="p-6">
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-lg font-semibold text-gray-900">User Management</h3>
                     <div class="flex items-center gap-3">
                         <button @click="showFilterModal = true"
-                            class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                            </svg>
+                            class="flex items-center gap-2 px-4 py-2 bg-[#EAF7FF] rounded-lg hover:bg-gray-50 transition-colors">
+                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M14.0001 12V19.88C14.0401 20.18 13.9401 20.5 13.7101 20.71C13.6176 20.8027 13.5077 20.8762 13.3868 20.9264C13.2658 20.9766 13.1361 21.0024 13.0051 21.0024C12.8742 21.0024 12.7445 20.9766 12.6235 20.9264C12.5025 20.8762 12.3926 20.8027 12.3001 20.71L10.2901 18.7C10.1811 18.5933 10.0982 18.4629 10.0479 18.319C9.99763 18.175 9.98127 18.0213 10.0001 17.87V12H9.97013L4.21013 4.62C4.04774 4.41153 3.97446 4.14726 4.00632 3.88493C4.03817 3.6226 4.17257 3.38355 4.38013 3.22C4.57013 3.08 4.78013 3 5.00013 3H19.0001C19.2201 3 19.4301 3.08 19.6201 3.22C19.8277 3.38355 19.9621 3.6226 19.9939 3.88493C20.0258 4.14726 19.9525 4.41153 19.7901 4.62L14.0301 12H14.0001Z" fill="#005B8F"/>
+</svg>
+
                             <span class="text-sm font-medium">Filter</span>
                         </button>
                         <button @click="exportUsers"
-                            class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                            </svg>
+                            class="flex items-center gap-2 px-4 py-2 bg-[#005B8F] text-white rounded-lg transition-colors">
+                          <svg width="18" height="16" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_2004_1048)">
+<path d="M3.01562 0C1.9125 0 1.01562 0.896875 1.01562 2V14C1.01562 15.1031 1.9125 16 3.01562 16H11.0156C12.1187 16 13.0156 15.1031 13.0156 14V11H15.4563L14.4875 11.9688C14.1938 12.2625 14.1938 12.7375 14.4875 13.0281C14.7812 13.3187 15.2563 13.3219 15.5469 13.0281L17.7969 10.7781C18.0906 10.4844 18.0906 10.0094 17.7969 9.71875L15.5469 7.46875C15.2531 7.175 14.7781 7.175 14.4875 7.46875C14.1969 7.7625 14.1938 8.2375 14.4875 8.52812L15.4563 9.49687H13.0156V5.325C13.0156 4.79375 12.8062 4.28438 12.4312 3.90937L9.1 0.584375C8.725 0.209375 8.21875 0 7.6875 0H3.01562ZM11.1875 5.5H8.26562C7.85 5.5 7.51562 5.16563 7.51562 4.75V1.82812L11.1875 5.5ZM7.01562 10.25C7.01562 9.83438 7.35 9.5 7.76562 9.5H11.0156V11H7.76562C7.35 11 7.01562 10.6656 7.01562 10.25Z" fill="white"/>
+</g>
+<defs>
+<clipPath id="clip0_2004_1048">
+<rect width="18" height="16" fill="white"/>
+</clipPath>
+</defs>
+</svg>
+
                             <span class="text-sm font-medium">Export</span>
                         </button>
                     </div>
                 </div>
 
                 <!-- Table -->
-                <div class="overflow-x-auto">
-                    <table class="w-full">
+                <div class="overflow-x-auto rounded-xl border-[0.5px] border-gray-50">
+                    <table class="w-full rounded-t-xl">
                         <thead>
-                            <tr class="border-b border-gray-200">
-                                <th class="text-left py-4 px-4 text-sm font-semibold text-gray-700">SN</th>
-                                <th class="text-left py-4 px-4 text-sm font-semibold text-gray-700">Name</th>
-                                <th class="text-left py-4 px-4 text-sm font-semibold text-gray-700">Email</th>
-                                <th class="text-left py-4 px-4 text-sm font-semibold text-gray-700">Location</th>
-                                <th class="text-left py-4 px-4 text-sm font-semibold text-gray-700">Role</th>
-                                <th class="text-left py-4 px-4 text-sm font-semibold text-gray-700">Actions</th>
-                                <th class="text-left py-4 px-4 text-sm font-semibold text-gray-700">Actions</th>
+                            <tr class="border-b bg-[#F6F6F6]  border-gray-100">
+                                <th class="text-left py-6 px-4 text-sm font-semibold text-gray-700">SN</th>
+                                <th class="text-left py-6 px-4 text-sm font-semibold text-gray-700">Name</th>
+                                <th class="text-left py-6 px-4 text-sm font-semibold text-gray-700">Email</th>
+                                <th class="text-left py-6 px-4 text-sm font-semibold text-gray-700">Location</th>
+                                <th class="text-left py-6 px-4 text-sm font-semibold text-gray-700">Role</th>
+                                <th class="text-left py-6 px-4 text-sm font-semibold text-gray-700">Actions</th>
+                                <th class="text-left py-6 px-4 text-sm font-semibold text-gray-700">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="(user, index) in filteredUsers" :key="user.id"
-                                class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                                <td class="py-4 px-4 text-sm text-gray-900">{{ index + 1 }}</td>
-                                <td class="py-4 px-4 text-sm text-gray-900">{{ user.name }}</td>
-                                <td class="py-4 px-4 text-sm text-gray-700">{{ user.email }}</td>
-                                <td class="py-4 px-4">
+                                class="border-b border-gray-50 hover:bg-gray-25 transition-colors">
+                                <td class="py-6 px-4 text-sm text-gray-900">{{ index + 1 }}</td>
+                                <td class="py-6 px-4 text-sm text-gray-900">{{ user.name }}</td>
+                                <td class="py-6 px-4 text-sm text-gray-700">{{ user.email }}</td>
+                                <td class="py-6 px-4">
                                     <div class="flex items-center gap-2 text-sm text-gray-600">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -127,25 +181,25 @@
                                         {{ user.location }}
                                     </div>
                                 </td>
-                                <td class="py-4 px-4">
-                                    <span class="px-3 py-1 rounded-full text-xs font-medium"
+                                <td class="py-6 px-4">
+                                    <span class="px-3 py-2.5 rounded-full text-xs font-medium"
                                         :class="getRoleBadgeClass(user.role)">
                                         {{ user.role }}
                                     </span>
                                 </td>
-                                <td class="py-4 px-4">
+                                <td class="py-6 px-4">
                                     <div class="flex items-center gap-2">
                                         <button @click="unblockUser(user)"
-                                            class="px-3 py-1 bg-green-50 text-green-700 rounded text-xs font-medium hover:bg-green-100 transition-colors">
+                                            class="px-3 py-2.5 bg-[#E4F3ED] text-[#007B2D] rounded-full text-xs font-medium transition-colors">
                                             Unblock
                                         </button>
                                         <button @click="blockUser(user)"
-                                            class="px-3 py-1 bg-red-50 text-red-700 rounded text-xs font-medium hover:bg-red-100 transition-colors">
+                                            class="px-3 py-2.5 bg-[#FFEBEB] text-[#FF0000] rounded-full text-xs font-medi transition-colors">
                                             Block
                                         </button>
                                     </div>
                                 </td>
-                                <td class="py-4 px-4">
+                                <td class="py-6 px-4">
                                     <div class="flex items-center gap-3">
                                         <button @click="openEditUserModal(user)"
                                             class="text-gray-600 hover:text-blue-600 transition-colors" title="Edit">
@@ -155,7 +209,7 @@
                                             </svg>
                                         </button>
                                         <button @click="activateUser(user)"
-                                            class="px-3 py-1 bg-green-50 text-green-700 rounded text-xs font-medium hover:bg-green-100 transition-colors">
+                                            class="px-3 py-2.5 bg-[#E4F3ED] text-[#007B2D] rounded-full text-xs font-medium transition-colors">
                                             Activate
                                         </button>
                                     </div>
@@ -173,21 +227,21 @@
                 class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
                 @click.self="closeAddUserModal">
                 <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full p-8 max-h-[90vh] overflow-y-auto">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Add New User</h2>
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6">Add New User</h2>
 
                     <form @submit.prevent="handleAddUser" class="space-y-5">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">First name</label>
                                 <input v-model="addUserForm.firstName" type="text" placeholder="Joe"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="custom-input"
                                     required />
                             </div>
 
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Last name</label>
                                 <input v-model="addUserForm.lastName" type="text" placeholder="Joe"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="custom-input"
                                     required />
                             </div>
                         </div>
@@ -195,52 +249,33 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
                             <input v-model="addUserForm.email" type="email" placeholder="Joe"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                class="custom-input"
                                 required />
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                                 <input v-model="addUserForm.phone" type="tel" placeholder="Joe"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="custom-input"
                                     required />
                             </div>
 
+
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Site Location</label>
-                                <select v-model="addUserForm.location"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    required>
-                                    <option value="">Ikeja medical Center</option>
-                                    <option value="Ikeja medical Centre">Ikeja medical Centre</option>
-                                    <option value="Lagos General Hospital">Lagos General Hospital</option>
-                                    <option value="Yaba Medical Center">Yaba Medical Center</option>
-                                </select>
+                                <UiSelectInput label="Site Location" :options="siteLocation" position="standalone" v-model="addUserForm.location" />
                             </div>
-                        </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Roles</label>
-                            <select v-model="addUserForm.role"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                required>
-                                <option value="">Supervisor</option>
-                                <option value="Admin">Admin</option>
-                                <option value="Auditor">Auditor</option>
-                                <option value="Site Manager">Site Manager</option>
-                                <option value="Lab Technician">Lab Technician</option>
-                                <option value="Supervisor">Supervisor</option>
-                            </select>
+                            <UiSelectInput label="Roles" :options="roles" position="standalone" v-model="addUserForm.role" />
                         </div>
 
                         <div class="flex gap-3 pt-4">
                             <button type="button" @click="closeAddUserModal"
-                                class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                                class="flex-1 px-6 py-3 border-[0.5px] border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors font-medium">
                                 Cancel
                             </button>
                             <button type="submit" :disabled="isSubmitting"
-                                class="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2 disabled:opacity-50">
+                                class="flex-1 px-6 py-3 bg-[#005B8F] text-white rounded-xl  transition-colors font-medium flex items-center justify-center gap-2 disabled:opacity-50">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 4v16m8-8H4" />
@@ -266,14 +301,14 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">First name</label>
                                 <input v-model="editUserForm.firstName" type="text" placeholder="Joe"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="custom-input"
                                     required />
                             </div>
 
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Last name</label>
                                 <input v-model="editUserForm.lastName" type="text" placeholder="Joe"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="custom-input"
                                     required />
                             </div>
                         </div>
@@ -281,50 +316,32 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
                             <input v-model="editUserForm.email" type="email" placeholder="Joe"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                class="custom-input"
                                 required />
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                                 <input v-model="editUserForm.phone" type="tel" placeholder="Joe"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="custom-input"
                                     required />
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Site Location</label>
-                                <select v-model="editUserForm.location"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    required>
-                                    <option value="Ikeja medical Centre">Ikeja medical Centre</option>
-                                    <option value="Lagos General Hospital">Lagos General Hospital</option>
-                                    <option value="Yaba Medical Center">Yaba Medical Center</option>
-                                </select>
+                                 <UiSelectInput label="Site Location" :options="siteLocation" position="standalone" v-model="editUserForm.location" />
                             </div>
-                        </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Roles</label>
-                            <select v-model="editUserForm.role"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                required>
-                                <option value="Admin">Admin</option>
-                                <option value="Auditor">Auditor</option>
-                                <option value="Site Manager">Site Manager</option>
-                                <option value="Lab Technician">Lab Technician</option>
-                                <option value="Supervisor">Supervisor</option>
-                            </select>
+                             <UiSelectInput label="Roles" :options="roles" position="standalone" v-model="editUserForm.role" />
                         </div>
 
                         <div class="flex gap-3 pt-4">
                             <button type="button" @click="closeEditUserModal"
-                                class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                                class="flex-1 px-6 py-3 border-[0.5px] border-gray-100 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors font-medium">
                                 Cancel
                             </button>
                             <button type="submit" :disabled="isSubmitting"
-                                class="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50">
+                                class="flex-1 px-6 py-3 bg-[#005B8F] text-white rounded-xl  transition-colors font-medium disabled:opacity-50">
                                 {{ isSubmitting ? 'Saving...' : 'Save' }}
                             </button>
                         </div>
@@ -376,7 +393,7 @@
 
                         <div class="flex gap-3 pt-4">
                             <button @click="applyFilters"
-                                class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                                class="flex-1 bg-[#005B8F] text-white px-4 py-2 rounded-lg  transition-colors font-medium">
                                 Apply Filters
                             </button>
                             <button @click="resetFilters"
@@ -477,13 +494,20 @@ const filteredUsers = computed(() => {
 
     return result
 })
+const roles = ref([
+   'Supervisor',  'Admin', 'Auditor', 'Site Manager', 'Lab Technician', 'Supervisor'
+])
+
+const siteLocation = ref([
+   'Ikeja medical Center',  'Ikeja medical Centre', 'Lagos General Hospital', 'Yaba Medical Center'
+])
 
 const getRoleBadgeClass = (role: string) => {
     const classes: Record<string, string> = {
-        'Admin': 'bg-green-100 text-green-700',
-        'Auditor': 'bg-green-100 text-green-700',
-        'Site Manager': 'bg-blue-100 text-blue-700',
-        'Lab Technician': 'bg-orange-100 text-orange-700'
+        'Admin': 'bg-[#E4F3ED] text-[#007B2D]',
+        'Auditor': 'bg-[#E4F3ED] text-[#007E2F]',
+        'Site Manager': 'bg-[#EDF4FF] text-[#0056E2]',
+        'Lab Technician': 'bg-[#F9ECE2] text-[#FF6800]'
     }
     return classes[role] || 'bg-gray-100 text-gray-700'
 }

@@ -17,9 +17,9 @@
                 >
                   <Icon name="heroicons:arrow-left" class="w-6 h-6 text-gray-600" />
                 </button>
-                <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Biospecimen Details</h2>
+                <h2 class="text-2xl font-bold text-gray-900">Biospecimen Details</h2>
               </div>
-              <button class="px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2 shadow-md">
+              <button class="px-4 py-2.5 bg-[#005B8F] text-white rounded-lg  transition flex items-center gap-2 shadow-md">
                 <Icon name="heroicons:arrow-down-tray" class="w-5 h-5" />
                 <span class="text-sm font-medium">Download Biosample</span>
               </button>
@@ -113,7 +113,7 @@
             <Transition name="fade" mode="out-in">
               <!-- Clinical Information Tab -->
               <div v-if="activeTab === 'clinical'" class="space-y-6">
-                <h3 class="text-xl font-bold text-gray-900 mb-4">Patient Clinical Data</h3>
+                <h3 class="text-lg font-bold text-gray-900 mb-4">Patient Clinical Data</h3>
                 
                 <div class="space-y-4">
                   <div class="flex justify-between items-start py-3 border-b border-gray-100">
@@ -150,7 +150,7 @@
 
               <!-- Demographic Information Tab -->
               <div v-else-if="activeTab === 'demographic'" class="space-y-6">
-                <h3 class="text-xl font-bold text-gray-900 mb-4">Patient Demographic Data</h3>
+                <h3 class="text-lg font-bold text-gray-900 mb-4">Patient Demographic Data</h3>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div class="space-y-4">
@@ -191,7 +191,7 @@
 
               <!-- Epi Information Tab -->
               <div v-else-if="activeTab === 'epi'" class="space-y-6">
-                <h3 class="text-xl font-bold text-gray-900 mb-4">Epidemiological Information</h3>
+                <h3 class="text-lg font-bold text-gray-900 mb-4">Epidemiological Information</h3>
                 
                 <div class="bg-gray-50 rounded-lg p-6 text-center">
                   <Icon name="heroicons:document-text" class="w-16 h-16 text-gray-300 mx-auto mb-3" />
@@ -202,7 +202,7 @@
 
             <!-- Edit Button -->
             <div class="mt-8 pt-6 border-t border-gray-200 flex justify-end">
-              <button class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2 shadow-md">
+              <button class="px-6 py-3 bg-[#005B8F] text-white rounded-lg  transition flex items-center gap-2 shadow-md">
                 <Icon name="heroicons:pencil-square" class="w-5 h-5" />
                 <span class="font-medium">Edit</span>
               </button>

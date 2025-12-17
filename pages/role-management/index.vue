@@ -4,8 +4,9 @@
     <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       <!-- Page Header -->
-      <div class="mb-6 sm:mb-8">
-        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Role Management</h1>
+<div class="flex justify-between items-center">
+        <div class="mb-6 sm:mb-8">
+        <h1 class="text-2xl font-bold text-gray-900">Role Management</h1>
         <p class="mt-2 text-sm sm:text-base text-gray-600">
           Define and manage access roles across iCCaREPO sites and modules.
         </p>
@@ -15,7 +16,7 @@
       <div class="mb-6">
         <button
           @click="openAddRoleModal"
-          class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+          class="flex items-center gap-2 px-4 py-2 bg-[#005B8F] text-white rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -23,6 +24,7 @@
           Add New Role
         </button>
       </div>
+</div>
 
       <!-- Roles Table -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
@@ -51,40 +53,40 @@
         </div>
 
         <!-- Desktop Table View -->
-        <div class="hidden lg:block overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
+        <div class="hidden lg:block overflow-x-auto border-[0.5px] border-gray-50">
+          <table class="min-w-full divide-y-[0.5px] divide-gray-5-">
+            <thead class="bg-gray-25">
               <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   SN
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Role
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Permission
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
+            <tbody class="bg-white divide-y-[0.5px] divide-gray-50">
               <tr
                 v-for="(role, index) in roles"
                 :key="role.id"
-                class="hover:bg-gray-50"
+                class="hover:bg-gray-25"
               >
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-900">
                   {{ index + 1 }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-900">
                   {{ role.name }}
                 </td>
-                <td class="px-6 py-4 text-sm text-gray-600">
+                <td class="px-6 py-6 text-sm text-gray-600">
                   {{ role.permission }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                <td class="px-6 py-6 whitespace-nowrap text-sm">
                   <button
                     @click="openDeleteModal(role)"
                     class="text-red-600 hover:text-red-800"
@@ -141,7 +143,7 @@
                     v-model="newRole.name"
                     type="text"
                     placeholder="e.g Admin"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    class="custom-input"
                   />
                 </div>
 
@@ -154,7 +156,7 @@
                     <button
                       @click="togglePermissionDropdown"
                       type="button"
-                      class="w-full px-3 py-2 text-left border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                      class="w-full px-3 py-3.5 text-left border-[0.5px] border-gray-100 rounded-lg focus:outline-none  outline-none bg-white"
                     >
                       <span v-if="selectedPermissions.length === 0" class="text-gray-400">
                         Select permissions
@@ -168,19 +170,19 @@
                     <Transition name="dropdown">
                       <div
                         v-if="showPermissionDropdown"
-                        class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
+                        class="absolute z-10 w-full mt-1 bg-white border-[0.5px] border-gray-100 rounded-md shadow-lg max-h-60 overflow-auto"
                       >
                         <div class="py-2">
                           <label
                             v-for="permission in availablePermissions"
                             :key="permission.id"
-                            class="flex items-center px-4 py-2 hover:bg-gray-50 cursor-pointer"
+                            class="flex items-center px-4 py-2 hover:bg-gray-25 cursor-pointer"
                           >
                             <input
                               type="checkbox"
                               :value="permission.id"
                               v-model="selectedPermissions"
-                              class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                              class="custom-checkbox"
                             />
                             <span class="ml-3 text-sm text-gray-900">{{ permission.name }}</span>
                           </label>
@@ -214,16 +216,16 @@
               </div>
 
               <!-- Modal Footer -->
-              <div class="flex justify-end gap-3 px-6 py-4 bg-gray-50 border-t border-gray-200">
+              <div class="flex justify-end gap-3 px-6 py-4 bg-gray-25 border-t border-gray-100">
                 <button
                   @click="closeAddRoleModal"
-                  class="px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  class="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border-[0.5px] border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   Cancel
                 </button>
                 <button
                   @click="saveRole"
-                  class="px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  class="px-6 py-2.5 text-sm font-medium text-white bg-[#005B8F] rounded-md  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   Save Role
                 </button>
@@ -279,16 +281,16 @@
               </div>
 
               <!-- Modal Footer -->
-              <div class="flex justify-center gap-3 px-6 py-4 bg-gray-50">
+              <div class="flex justify-between items-center w-full gap-3 px-6 py-4 bg-gray-50">
                 <button
                   @click="closeDeleteModal"
-                  class="px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                  class="px-6 py-3 text-sm w-full font-medium text-sm text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                 >
                   Cancel
                 </button>
                 <button
                   @click="confirmDelete"
-                  class="px-6 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                  class="px-6 py-3 text-sm w-full font-medium text-sm text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                 >
                   Yes, Delete
                 </button>

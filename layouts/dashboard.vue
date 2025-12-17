@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex">
+  <div class="min-h-screen bg-gray-25 flex">
     <!-- Sidebar -->
     <aside class="w-64 bg-white shadow-sm fixed h-full overflow-y-auto">
       <!-- Logo -->
@@ -180,7 +180,7 @@
 
             <!-- User Profile -->
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+              <div class="w-10 h-10 bg-[#005B8F] rounded-full flex items-center justify-center text-white font-semibold">
                 RM
               </div>
               <div class="text-sm">

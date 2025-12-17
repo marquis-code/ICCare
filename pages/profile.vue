@@ -5,16 +5,16 @@
     <div class="flex">
 
       <!-- Main Content -->
-      <main class="flex-1 p-4 md:p-6 lg:p-8">
-        <div class="max-w-5xl mx-auto">
+      <main class="flex-1">
+        <div class="mx-auto">
           <!-- Page Title -->
           <div class="mb-6">
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-900">My Profile</h1>
+            <h1 class="text-xl  font-bold text-gray-900">My Profile</h1>
             <p class="text-sm text-gray-600 mt-1">Manage your personal information, credentials, and system preferences.</p>
           </div>
 
           <!-- Profile Card -->
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+          <div class="bg-white rounded-lg shadow-sm border-[0.5px] border-gray-50 p-6 mb-6">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
               <div class="flex items-center gap-4">
                 <img 
@@ -34,7 +34,7 @@
               
               <button 
                 @click="editMode = !editMode"
-                class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2 justify-center shadow-sm"
+                class="px-6 py-2.5 bg-[#005B8F] text-white rounded-lg  transition flex items-center gap-2 justify-center shadow-sm"
               >
                 <Icon name="heroicons:pencil-square" class="w-5 h-5" />
                 <span>Edit</span>
@@ -43,7 +43,7 @@
           </div>
 
           <!-- Tabs Content -->
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div class="bg-white rounded-lg shadow-sm border-[0.5px] border-gray-50">
             <!-- Tabs Navigation -->
             <div class="border-b border-gray-200">
               <div class="flex flex-wrap gap-2 md:gap-8 px-4 md:px-6">
