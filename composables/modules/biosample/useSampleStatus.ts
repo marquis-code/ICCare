@@ -1,28 +1,21 @@
 import { ref } from "vue"
-import { auth_api } from "@/api_factory/modules/auth"
+import { biosample_api } from "@/api_factory/modules/biosample"
 import { useCustomToast } from "@/composables/core/useCustomToast"
 
-export const useForgotPassword = () => {
+export const useSampleStatus = () => {
   const loading = ref(false)
+  const status = ref(null)
   const { showToast } = useCustomToast()
 
-  const resetPassword = async (payload: {
-    email: string
-    new_password: string
-  }) => {
+  const getSampleStatus = async (uuid: string) => {
     loading.value = true
     try {
-      const res = (await auth_api.$_forgot_password(payload)) as any
+      const res = (await biosample_api.$_get_sample_status(uuid)) as any
       if (res.type !== "ERROR") {
-        showToast({
-          title: "Success",
-          message: "Password reset initiated successfully",
-          toastType: "success",
-          duration: 3000,
-        })
+        status.value = res.data
         return res.data
       } else {
-        const errorMsg = res?.data?.detail?.[0]?.msg || res?.data?.error || "Failed to reset password"
+        const errorMsg = res?.data?.detail?.[0]?.msg || res?.data?.error || "Failed to fetch sample status"
         showToast({
           title: "Error",
           message: errorMsg,
@@ -46,6 +39,7 @@ export const useForgotPassword = () => {
 
   return {
     loading,
-    resetPassword
+    status,
+    getSampleStatus
   }
 }

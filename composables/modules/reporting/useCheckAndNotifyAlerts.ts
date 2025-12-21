@@ -1,28 +1,33 @@
 import { ref } from "vue"
-import { auth_api } from "@/api_factory/modules/auth"
+import { reporting_api } from "@/api_factory/modules/reporting"
 import { useCustomToast } from "@/composables/core/useCustomToast"
 
-export const useForgotPassword = () => {
+export const useCheckAndNotifyAlerts = () => {
   const loading = ref(false)
   const { showToast } = useCustomToast()
 
-  const resetPassword = async (payload: {
-    email: string
-    new_password: string
-  }) => {
+  const checkAndNotifyAlerts = async (
+    current_value: number,
+    payload: {
+      item: string
+      units: string
+      threshold: number
+      admin_notes: string
+    }
+  ) => {
     loading.value = true
     try {
-      const res = (await auth_api.$_forgot_password(payload)) as any
+      const res = (await reporting_api.$_check_and_notify_alerts(current_value, payload)) as any
       if (res.type !== "ERROR") {
         showToast({
           title: "Success",
-          message: "Password reset initiated successfully",
+          message: "Alert check completed successfully",
           toastType: "success",
           duration: 3000,
         })
         return res.data
       } else {
-        const errorMsg = res?.data?.detail?.[0]?.msg || res?.data?.error || "Failed to reset password"
+        const errorMsg = res?.data?.detail?.[0]?.msg || res?.data?.error || "Failed to check alerts"
         showToast({
           title: "Error",
           message: errorMsg,
@@ -46,6 +51,6 @@ export const useForgotPassword = () => {
 
   return {
     loading,
-    resetPassword
+    checkAndNotifyAlerts
   }
 }

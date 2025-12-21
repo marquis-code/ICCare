@@ -1,28 +1,21 @@
 import { ref } from "vue"
-import { auth_api } from "@/api_factory/modules/auth"
+import { reporting_api } from "@/api_factory/modules/reporting"
 import { useCustomToast } from "@/composables/core/useCustomToast"
 
-export const useForgotPassword = () => {
+export const useGetUtilizationLevel = () => {
   const loading = ref(false)
+  const utilizationData = ref(null)
   const { showToast } = useCustomToast()
 
-  const resetPassword = async (payload: {
-    email: string
-    new_password: string
-  }) => {
+  const getUtilizationLevel = async (freezer_id: string) => {
     loading.value = true
     try {
-      const res = (await auth_api.$_forgot_password(payload)) as any
+      const res = (await reporting_api.$_get_utilization_level(freezer_id)) as any
       if (res.type !== "ERROR") {
-        showToast({
-          title: "Success",
-          message: "Password reset initiated successfully",
-          toastType: "success",
-          duration: 3000,
-        })
+        utilizationData.value = res.data
         return res.data
       } else {
-        const errorMsg = res?.data?.detail?.[0]?.msg || res?.data?.error || "Failed to reset password"
+        const errorMsg = res?.data?.detail?.[0]?.msg || res?.data?.error || "Failed to fetch utilization data"
         showToast({
           title: "Error",
           message: errorMsg,
@@ -46,6 +39,7 @@ export const useForgotPassword = () => {
 
   return {
     loading,
-    resetPassword
+    utilizationData,
+    getUtilizationLevel
   }
 }

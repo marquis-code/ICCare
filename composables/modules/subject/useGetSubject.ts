@@ -1,28 +1,21 @@
 import { ref } from "vue"
-import { auth_api } from "@/api_factory/modules/auth"
+import { subject_api } from "@/api_factory/modules/subject"
 import { useCustomToast } from "@/composables/core/useCustomToast"
 
-export const useForgotPassword = () => {
+export const useGetSubject = () => {
   const loading = ref(false)
+  const subject = ref(null)
   const { showToast } = useCustomToast()
 
-  const resetPassword = async (payload: {
-    email: string
-    new_password: string
-  }) => {
+  const getSubject = async (subject_token: string) => {
     loading.value = true
     try {
-      const res = (await auth_api.$_forgot_password(payload)) as any
+      const res = (await subject_api.$_get_subject(subject_token)) as any
       if (res.type !== "ERROR") {
-        showToast({
-          title: "Success",
-          message: "Password reset initiated successfully",
-          toastType: "success",
-          duration: 3000,
-        })
+        subject.value = res.data
         return res.data
       } else {
-        const errorMsg = res?.data?.detail?.[0]?.msg || res?.data?.error || "Failed to reset password"
+        const errorMsg = res?.data?.detail?.[0]?.msg || res?.data?.error || "Failed to fetch subject data"
         showToast({
           title: "Error",
           message: errorMsg,
@@ -46,6 +39,7 @@ export const useForgotPassword = () => {
 
   return {
     loading,
-    resetPassword
+    subject,
+    getSubject
   }
 }

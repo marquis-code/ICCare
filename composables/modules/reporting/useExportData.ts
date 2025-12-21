@@ -1,28 +1,28 @@
 import { ref } from "vue"
-import { auth_api } from "@/api_factory/modules/auth"
+import { reporting_api } from "@/api_factory/modules/reporting"
 import { useCustomToast } from "@/composables/core/useCustomToast"
 
-export const useForgotPassword = () => {
+export const useExportData = () => {
   const loading = ref(false)
   const { showToast } = useCustomToast()
 
-  const resetPassword = async (payload: {
-    email: string
-    new_password: string
+  const exportData = async (payload: {
+    items_to_export: string[]
+    format: string
   }) => {
     loading.value = true
     try {
-      const res = (await auth_api.$_forgot_password(payload)) as any
+      const res = (await reporting_api.$_export_data(payload)) as any
       if (res.type !== "ERROR") {
         showToast({
           title: "Success",
-          message: "Password reset initiated successfully",
+          message: `Data exported successfully in ${payload.format.toUpperCase()} format`,
           toastType: "success",
           duration: 3000,
         })
         return res.data
       } else {
-        const errorMsg = res?.data?.detail?.[0]?.msg || res?.data?.error || "Failed to reset password"
+        const errorMsg = res?.data?.detail?.[0]?.msg || res?.data?.error || "Failed to export data"
         showToast({
           title: "Error",
           message: errorMsg,
@@ -46,6 +46,6 @@ export const useForgotPassword = () => {
 
   return {
     loading,
-    resetPassword
+    exportData
   }
 }

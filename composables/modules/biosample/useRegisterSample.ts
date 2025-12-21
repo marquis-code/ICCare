@@ -1,28 +1,44 @@
 import { ref } from "vue"
-import { auth_api } from "@/api_factory/modules/auth"
+import { biosample_api } from "@/api_factory/modules/biosample"
 import { useCustomToast } from "@/composables/core/useCustomToast"
 
-export const useForgotPassword = () => {
+export const useRegisterSample = () => {
   const loading = ref(false)
+  const sample = ref(null)
   const { showToast } = useCustomToast()
 
-  const resetPassword = async (payload: {
-    email: string
-    new_password: string
+  const registerSample = async (payload: {
+    site_id: string
+    sample_category_id: string
+    sample_serial_no: string
+    sample_label: string
+    free_fields?: Record<string, any>
+    storage_location: {
+      site: string
+      freezer: string
+      rack: string
+      box: string
+      position: number
+    }
+    collection_date: string
+    collection_time: string
+    researcher_info: string
+    field_collector_info: string
   }) => {
     loading.value = true
     try {
-      const res = (await auth_api.$_forgot_password(payload)) as any
+      const res = (await biosample_api.$_register_sample(payload)) as any
       if (res.type !== "ERROR") {
+        sample.value = res.data
         showToast({
           title: "Success",
-          message: "Password reset initiated successfully",
+          message: "Sample registered successfully",
           toastType: "success",
           duration: 3000,
         })
         return res.data
       } else {
-        const errorMsg = res?.data?.detail?.[0]?.msg || res?.data?.error || "Failed to reset password"
+        const errorMsg = res?.data?.detail?.[0]?.msg || res?.data?.error || "Failed to register sample"
         showToast({
           title: "Error",
           message: errorMsg,
@@ -46,6 +62,7 @@ export const useForgotPassword = () => {
 
   return {
     loading,
-    resetPassword
+    sample,
+    registerSample
   }
 }
