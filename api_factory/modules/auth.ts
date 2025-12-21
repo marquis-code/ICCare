@@ -9,7 +9,7 @@ export const auth_api = {
     password: string
     password_confirm: string
   }) => {
-    return GATEWAY_ENDPOINT.post('/signup', payload)
+    return GATEWAY_ENDPOINT.post('/auth/signup', payload)
   },
 
   // Sign in user
@@ -17,7 +17,7 @@ export const auth_api = {
     email: string
     password: string
   }) => {
-    return GATEWAY_ENDPOINT.post('/signin', payload)
+    return GATEWAY_ENDPOINT.post('/auth/signin', payload)
   },
 
   // Handle 2FA OTP authentication
@@ -25,7 +25,7 @@ export const auth_api = {
     email: string
     otp: string
   }) => {
-    return GATEWAY_ENDPOINT.post('/signin-otp', payload)
+    return GATEWAY_ENDPOINT.post('/auth/signin-otp', payload)
   },
 
   // Initiate forgot password flow
@@ -33,19 +33,19 @@ export const auth_api = {
     email: string
     new_password: string
   }) => {
-    return GATEWAY_ENDPOINT.post('/forgot-password', payload)
+    return GATEWAY_ENDPOINT.post('/auth/forgot-password', payload)
   },
 
   // Refresh access token
   $_refresh_token: (payload: {
     refresh_token: string
   }) => {
-    return GATEWAY_ENDPOINT.post('/refresh', payload)
+    return GATEWAY_ENDPOINT.post('/auth/refresh', payload)
   },
 
   // Get current authenticated user
   $_get_current_user: () => {
-    return GATEWAY_ENDPOINT.get('/me')
+    return GATEWAY_ENDPOINT.get('/auth/me')
   },
 
   // Create new role

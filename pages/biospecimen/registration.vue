@@ -1,5 +1,4 @@
 <template>
-  <NuxtLayout name="dashboard">
     <div class="min-h-screen ">
 
 
@@ -77,7 +76,7 @@
               </button>
 
 
-              <button @click="showBatchImportModal = true"
+              <!-- <button @click="showBatchImportModal = true"
                 class="bg-[#005B8F] text-white px-4 py-2.5 rounded-lg  transition-colors flex items-center gap-2 shadow-sm">
                 <svg width="18" height="16" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <g clip-path="url(#clip0_2108_3013)">
@@ -92,7 +91,7 @@
                   </defs>
                 </svg>
                 <span class="text-sm font-medium">Batch import</span>
-              </button>
+              </button> -->
             </section>
 
 
@@ -233,7 +232,6 @@
       <BiospecimenConfirmActionModal v-model="showConfirmModal" :action="confirmAction"
         @confirmed="handleActionConfirmed" />
     </div>
-  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
@@ -476,4 +474,8 @@ watch(dateRange, (newRange) => {
   filters.value.dateStart = newRange.from;
   filters.value.dateEnd = newRange.to;
 }, { deep: true });
+
+definePageMeta({
+    layout: 'dashboard'
+})
 </script>

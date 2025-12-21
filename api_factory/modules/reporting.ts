@@ -4,44 +4,50 @@ export const reporting_api = {
   // Get dashboard data
   $_get_dashboard_data: (site_id?: string) => {
     const params = site_id ? { site_id } : {}
-    return GATEWAY_ENDPOINT.get('/reports/dashboard-data', { params })
+    return GATEWAY_ENDPOINT.get('/reporting/dashboard-data', { params })
   },
 
   // Get utilization level for freezer
   $_get_utilization_level: (freezer_id: string) => {
-    return GATEWAY_ENDPOINT.get(`/reports/utilization/${freezer_id}`)
+    return GATEWAY_ENDPOINT.get(`/reporting/utilization/${freezer_id}`)
   },
 
   // Export data
   $_export_data: (payload: {
-    items_to_export: string[]
     format: string
+    start_date: string
+    end_date: string
+    filters?: {
+      sample_type?: string
+      site?: string
+    }
   }) => {
-    return GATEWAY_ENDPOINT.post('/reports/export', payload)
+    return GATEWAY_ENDPOINT.post('/reporting/export', payload)
   },
 
   // Schedule report
   $_schedule_report: (payload: {
     report_name: string
-    scheduled_period: string
-    recipient_emails: string[]
-    recipient_roles: string[]
+    format: string
+    frequency: string
+    recipients: string[]
+    filters?: {
+      sample_type?: string
+    }
   }) => {
-    return GATEWAY_ENDPOINT.post('/reports/schedule', payload)
+    return GATEWAY_ENDPOINT.post('/reporting/schedule', payload)
   },
 
-  // Check and notify alerts
-  $_check_and_notify_alerts: (
-    current_value: number,
-    payload: {
-      item: string
-      units: string
-      threshold: number
-      admin_notes: string
+  // Export audit logs
+  $_export_audit_logs: (payload: {
+    format: string
+    start_date: string
+    end_date: string
+    filters?: {
+      action?: string
+      status?: string
     }
-  ) => {
-    return GATEWAY_ENDPOINT.post('/reports/alerts/check-and-notify', payload, {
-      params: { current_value }
-    })
+  }) => {
+    return GATEWAY_ENDPOINT.post('/audit/export', payload)
   }
 }

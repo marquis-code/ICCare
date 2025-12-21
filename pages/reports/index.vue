@@ -278,7 +278,7 @@ interface Filters {
 
 // State
 const selectedDatasets = ref<string[]>([])
-const dateRange = ref<DateRange>({ from: '', to: '' })
+                                                                  
 const filters = ref<Filters>({
   site: '',
   sampleType: ''
