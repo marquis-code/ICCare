@@ -37,6 +37,10 @@ export const useCurrentUser = () => {
     }
   }
 
+  onMounted(() => {
+    fetchCurrentUser()
+  })
+  
   return {
     loading,
     user,

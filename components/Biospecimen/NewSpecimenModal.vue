@@ -29,7 +29,7 @@
             </div>
 
             <!-- Progress Steps -->
-            <div class="mb-10">
+          <div class="mb-10">
               <div class="flex items-center justify-between relative">
                 <!-- Step 1 -->
                 <div class="flex flex-col items-center flex-1 relative z-10">

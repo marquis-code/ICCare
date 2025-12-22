@@ -1,350 +1,386 @@
 <template>
-    <div class="min-h-screen ">
+  <div class="min-h-screen">
+    <div class="flex">
+      <!-- Main Content -->
+      <main class="flex-1 p-4 md:p-6">
+        <div class="mb-6 space-y-6">
+          <!-- Page Header -->
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <h1 class="text-2xl font-bold text-gray-900">BioSpecimen Registration</h1>
+            <button 
+              @click="showNewSpecimenModal = true"
+              class="bg-[#005B8F] text-white px-4 py-2.5 rounded-lg hover:bg-[#004a73] transition-colors flex items-center gap-2 justify-center shadow-sm"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <span class="font-medium">Register Biospecimen</span>
+            </button>
+          </div>
 
-
-      <div class="flex">
-
-
-        <!-- Main Content -->
-        <main class="flex-1 p-4 md:p-6">
-          <div class="mb-6 space-y-6">
-            <!-- Page Header -->
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-              <h1 class="text-xl font-semibold text-gray-900">BioSpecimen Tracking</h1>
-              <button @click="showTransferModal = true"
-                class="bg-[#005B8F] text-white px-4 py-2.5 rounded-lg  transition-colors flex items-center gap-2 justify-center shadow-sm">
-                <svg width="18" height="16" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <g clip-path="url(#clip0_2108_3013)">
-                    <path
-                      d="M3.01562 0C1.9125 0 1.01562 0.896875 1.01562 2V14C1.01562 15.1031 1.9125 16 3.01562 16H11.0156C12.1187 16 13.0156 15.1031 13.0156 14V11H15.4563L14.4875 11.9688C14.1938 12.2625 14.1938 12.7375 14.4875 13.0281C14.7812 13.3187 15.2563 13.3219 15.5469 13.0281L17.7969 10.7781C18.0906 10.4844 18.0906 10.0094 17.7969 9.71875L15.5469 7.46875C15.2531 7.175 14.7781 7.175 14.4875 7.46875C14.1969 7.7625 14.1938 8.2375 14.4875 8.52812L15.4563 9.49687H13.0156V5.325C13.0156 4.79375 12.8062 4.28438 12.4312 3.90937L9.1 0.584375C8.725 0.209375 8.21875 0 7.6875 0H3.01562ZM11.1875 5.5H8.26562C7.85 5.5 7.51562 5.16563 7.51562 4.75V1.82812L11.1875 5.5ZM7.01562 10.25C7.01562 9.83438 7.35 9.5 7.76562 9.5H11.0156V11H7.76562C7.35 11 7.01562 10.6656 7.01562 10.25Z"
-                      fill="white" />
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_2108_3013">
-                      <rect width="18" height="16" fill="white" />
-                    </clipPath>
-                  </defs>
-                </svg>
-                <span>View Transfer Details</span>
-              </button>
+          <!-- Filters Section -->
+          <section class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+            <!-- Type Filter -->
+            <div class="md:col-span-2">
+              <UiSelectInput 
+                label="All Types" 
+                :options="typeOptions" 
+                position="standalone" 
+                v-model="filters.type"
+              />
             </div>
 
-            <!-- Filters -->
-            <section class="grid grid-cols-3 gap-6">
-              <div>
-                <UiSelectInput label="Status" :options="sites" position="standalone" v-model="filters.status" />
-              </div>
-
-              <!-- Date Range Picker -->
-              <div>
-                <DateRangePicker v-model="dateRange" placeholder="Date Range" label="Filter by date" />
-              </div>
-
-              <div>
-                <input v-model="filterText" type="text" placeholder="Filter Table" class="custom-input" />
-              </div>
-            </section>
-
-            <section class="grid grid-cols-3 gap-6">
-
-              <div class="flex gap-2">
-                <button @click="applyFilters"
-                  class="flex-1 bg-[#005B8F] text-white px-6 py-2.5 rounded-lg hover:bg-[#004a73] transition-colors text-sm font-medium shadow-sm">
-                  Search
-                </button>
-                <button @click="clearFilters"
-                  class="flex-1 border border-blue-600 text-blue-600 px-6 py-2.5 rounded-lg hover:bg-blue-50 transition-colors text-sm font-medium">
-                  Clear
-                </button>
-              </div>
-                            <button @click="showNewSpecimenModal = true"
-                class="bg-[#005B8F] text-white px-4 py-2.5 rounded-lg  transition-colors flex items-center gap-2 shadow-sm">
-                <svg width="18" height="16" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <g clip-path="url(#clip0_2108_3013)">
-                    <path
-                      d="M3.01562 0C1.9125 0 1.01562 0.896875 1.01562 2V14C1.01562 15.1031 1.9125 16 3.01562 16H11.0156C12.1187 16 13.0156 15.1031 13.0156 14V11H15.4563L14.4875 11.9688C14.1938 12.2625 14.1938 12.7375 14.4875 13.0281C14.7812 13.3187 15.2563 13.3219 15.5469 13.0281L17.7969 10.7781C18.0906 10.4844 18.0906 10.0094 17.7969 9.71875L15.5469 7.46875C15.2531 7.175 14.7781 7.175 14.4875 7.46875C14.1969 7.7625 14.1938 8.2375 14.4875 8.52812L15.4563 9.49687H13.0156V5.325C13.0156 4.79375 12.8062 4.28438 12.4312 3.90937L9.1 0.584375C8.725 0.209375 8.21875 0 7.6875 0H3.01562ZM11.1875 5.5H8.26562C7.85 5.5 7.51562 5.16563 7.51562 4.75V1.82812L11.1875 5.5ZM7.01562 10.25C7.01562 9.83438 7.35 9.5 7.76562 9.5H11.0156V11H7.76562C7.35 11 7.01562 10.6656 7.01562 10.25Z"
-                      fill="white" />
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_2108_3013">
-                      <rect width="18" height="16" fill="white" />
-                    </clipPath>
-                  </defs>
-                </svg>
-
-                <span class="text-sm font-medium">New Biospecimen</span>
-              </button>
-
-
-              <!-- <button @click="showBatchImportModal = true"
-                class="bg-[#005B8F] text-white px-4 py-2.5 rounded-lg  transition-colors flex items-center gap-2 shadow-sm">
-                <svg width="18" height="16" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <g clip-path="url(#clip0_2108_3013)">
-                    <path
-                      d="M3.01562 0C1.9125 0 1.01562 0.896875 1.01562 2V14C1.01562 15.1031 1.9125 16 3.01562 16H11.0156C12.1187 16 13.0156 15.1031 13.0156 14V11H15.4563L14.4875 11.9688C14.1938 12.2625 14.1938 12.7375 14.4875 13.0281C14.7812 13.3187 15.2563 13.3219 15.5469 13.0281L17.7969 10.7781C18.0906 10.4844 18.0906 10.0094 17.7969 9.71875L15.5469 7.46875C15.2531 7.175 14.7781 7.175 14.4875 7.46875C14.1969 7.7625 14.1938 8.2375 14.4875 8.52812L15.4563 9.49687H13.0156V5.325C13.0156 4.79375 12.8062 4.28438 12.4312 3.90937L9.1 0.584375C8.725 0.209375 8.21875 0 7.6875 0H3.01562ZM11.1875 5.5H8.26562C7.85 5.5 7.51562 5.16563 7.51562 4.75V1.82812L11.1875 5.5ZM7.01562 10.25C7.01562 9.83438 7.35 9.5 7.76562 9.5H11.0156V11H7.76562C7.35 11 7.01562 10.6656 7.01562 10.25Z"
-                      fill="white" />
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_2108_3013">
-                      <rect width="18" height="16" fill="white" />
-                    </clipPath>
-                  </defs>
-                </svg>
-                <span class="text-sm font-medium">Batch import</span>
-              </button> -->
-            </section>
-
-
-            <!-- Approval Table -->
-            <div v-if="pendingApprovals.length > 0"
-              class="bg-white rounded-lg shadow-sm max-w-lg overflow-hidden mb-6 border-[0.5px] border-gray-100">
-              <div class="px-4 py-6 bg-gray-50 border-b-[0.5px] border-gray-50">
-                <h3 class="text-sm font-semibold text-gray-700">Pending Approvals</h3>
-              </div>
-              <div class="overflow-x-auto">
-                <table class="w-full">
-                  <thead class="bg-gray-25 border-b-[0.5px] border-gray-50">
-                    <tr>
-                      <th class="px-4 py-6 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">SN
-                      </th>
-                      <th class="px-4 py-6 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Sample ID</th>
-                      <th class="px-4 py-6 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y-[0.5px] divide-gray-50 bg-white">
-                    <tr v-for="(specimen, idx) in pendingApprovals" :key="specimen.id"
-                      class="hover:bg-gray-50 transition">
-                      <td class="px-4 py-6 text-sm text-gray-900">{{ idx + 1 }}</td>
-                      <td class="px-4 py-6 text-sm text-gray-900">
-                        <div class="flex items-center gap-2">
-                          <span class="font-medium">{{ specimen.sampleId }}</span>
-                          <button @click="copyToClipboard(specimen.sampleId)"
-                            class="text-gray-400 hover:text-gray-600 transition">
-                            <Icon name="heroicons:clipboard-document" class="w-4 h-4" />
-                          </button>
-                        </div>
-                      </td>
-                      <td class="px-4 py-6 text-sm">
-                        <div class="flex gap-2">
-                          <button @click="openConfirmModal('approve', specimen.id)"
-                            class="bg-green-100 text-green-700 px-4 py-1.5 rounded-full hover:bg-green-200 transition text-sm font-medium">
-                            Approve
-                          </button>
-                          <button @click="openConfirmModal('reject', specimen.id)"
-                            class="bg-red-100 text-red-700 px-4 py-1.5 rounded-full hover:bg-red-200 transition text-sm font-medium">
-                            Reject
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+            <!-- Location Filter -->
+            <div class="md:col-span-2">
+              <UiSelectInput 
+                label="All Locations" 
+                :options="locationOptions" 
+                position="standalone" 
+                v-model="filters.location"
+              />
             </div>
 
-            <!-- Main Tracking Table -->
-            <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-50">
-              <div class="px-4 py-6 bg-gray-50 border-b border-gray-200">
-                <h3 class="font-semibold text-gray-700">All Biospecimens</h3>
-              </div>
-              <div class="overflow-x-auto">
-                <table class="w-full">
-                  <thead class="bg-gray-25 border-b-[0.5px] border-gray-50">
-                    <tr>
-                      <th class="px-4 py-6 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">SN
-                      </th>
-                      <th class="px-4 py-6 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Sample ID</th>
-                      <th class="px-4 py-6 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Current Location</th>
-                      <th class="px-4 py-6 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Previous Location</th>
-                      <th class="px-4 py-6 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Move
-                        On</th>
-                      <th class="px-4 py-6 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Collector Info</th>
-                      <th class="px-4 py-6 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Description</th>
-                      <th class="px-4 py-6 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Status</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y-[0.5px] divide-gray-50 bg-white">
-                    <tr v-for="specimen in filteredSpecimens" :key="specimen.id" @click="openDetailsModal(specimen)"
-                      class="hover:bg-gray-25 cursor-pointer transition">
-                      <td class="px-4 py-6 text-sm text-gray-900">{{ specimen.id }}</td>
-                      <td class="px-4 py-6 text-sm text-gray-900">
-                        <div class="flex items-center gap-2">
-                          <span class="font-medium">{{ specimen.sampleId }}</span>
-                          <button @click.stop="copyToClipboard(specimen.sampleId)"
-                            class="text-gray-400 hover:text-gray-600 transition">
-                            <Icon name="heroicons:clipboard-document" class="w-4 h-4" />
-                          </button>
-                        </div>
-                      </td>
-                      <td class="px-4 py-6 text-sm text-gray-700">
-                        <div class="flex items-center gap-2">
-                          <Icon name="heroicons:map-pin" class="w-4 h-4 text-gray-400 flex-shrink-0" />
-                          <span>{{ specimen.currentLocation }}</span>
-                        </div>
-                      </td>
-                      <td class="px-4 py-6 text-sm text-gray-700">
-                        <div class="flex items-center gap-2">
-                          <Icon name="heroicons:map-pin" class="w-4 h-4 text-gray-400 flex-shrink-0" />
-                          <span>{{ specimen.previousLocation }}</span>
-                        </div>
-                      </td>
-                      <td class="px-4 py-6 text-sm text-gray-700">{{ specimen.moveOn }}</td>
-                      <td class="px-4 py-6 text-sm text-gray-700">{{ specimen.collectorInfo }}</td>
-                      <td class="px-4 py-6 text-sm text-gray-700">{{ specimen.description }}</td>
-                      <td class="px-4 py-6 text-sm">
-                        <span :class="getStatusClass(specimen.status)"
-                          class="inline-flex px-3 py-1 rounded-full text-xs font-medium">
-                          {{ specimen.status }}
-                        </span>
-                      </td>
-                    </tr>
-                    <tr v-if="filteredSpecimens.length === 0">
-                      <td colspan="8" class="px-4 py-12 text-center">
-                        <Icon name="heroicons:document-magnifying-glass" class="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                        <p class="text-gray-500 text-sm">No specimens found</p>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+            <!-- Date Range Filter -->
+            <div class="md:col-span-2">
+              <DateRangePicker 
+                v-model="filters.dateRange" 
+                label="Date Range" 
+                placeholder="Select date range" 
+              />
+            </div>
+
+            <!-- Search Input -->
+            <div class="md:col-span-3">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Filter Table</label>
+              <input 
+                v-model="filterText" 
+                type="text" 
+                placeholder="Filter Table" 
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#005B8F] focus:border-transparent"
+              />
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="md:col-span-3 flex gap-2">
+              <button
+                @click="applyFilters"
+                class="flex-1 bg-[#005B8F] text-white px-6 py-2.5 rounded-lg hover:bg-[#004a73] transition-colors text-sm font-medium shadow-sm"
+              >
+                Search
+              </button>
+              <button
+                @click="clearFilters"
+                class="flex-1 border border-[#005B8F] text-[#005B8F] px-6 py-2.5 rounded-lg hover:bg-blue-50 transition-colors text-sm font-medium"
+              >
+                Clear Filter
+              </button>
+            </div>
+          </section>
+
+          <!-- Main Tracking Table -->
+          <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100">
+            <div class="overflow-x-auto">
+              <table class="w-full min-w-max">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      SN
+                    </th>
+                    <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Sample ID
+                    </th>
+                    <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Location
+                    </th>
+                    <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Type
+                    </th>
+                    <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Collection Date/Time
+                    </th>
+                    <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Collector Info
+                    </th>
+                    <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Clinical Info
+                    </th>
+                    <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Demo_Info_ID
+                    </th>
+                    <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Epi_Info_ID
+                    </th>
+                    <th class="px-4 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 bg-white">
+                  <tr 
+                    v-for="(specimen, index) in filteredSpecimens" 
+                    :key="specimen.id"
+                    class="hover:bg-gray-50 transition"
+                  >
+                    <td class="px-4 py-4 text-sm text-gray-900">
+                      {{ index + 1 }}
+                    </td>
+                    <td class="px-4 py-4 text-sm text-gray-900">
+                      <div class="flex items-center gap-2">
+                        <span class="font-medium">{{ specimen.sampleId }}</span>
+                        <button 
+                          @click="copyToClipboard(specimen.sampleId)"
+                          class="text-gray-400 hover:text-gray-600 transition"
+                        >
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                    <td class="px-4 py-4 text-sm text-gray-700">
+                      <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                        </svg>
+                        <span>{{ specimen.location }}</span>
+                      </div>
+                    </td>
+                    <td class="px-4 py-4 text-sm">
+                      <span 
+                        :class="getTypeClass(specimen.type)"
+                        class="inline-flex px-3 py-1 rounded-full text-xs font-medium"
+                      >
+                        {{ specimen.type }}
+                      </span>
+                    </td>
+                    <td class="px-4 py-4 text-sm text-gray-700">
+                      {{ specimen.collectionDateTime }}
+                    </td>
+                    <td class="px-4 py-4 text-sm text-gray-700">
+                      {{ specimen.collectorInfo }}
+                    </td>
+                    <td class="px-4 py-4 text-sm">
+                      <button 
+                        @click="viewClinicalInfo(specimen.clinicalInfo)"
+                        class="text-[#005B8F] hover:text-[#004a73] font-medium hover:underline"
+                      >
+                        {{ specimen.clinicalInfo }}
+                      </button>
+                    </td>
+                    <td class="px-4 py-4 text-sm">
+                      <button 
+                        @click="viewDemoInfo(specimen.demoInfoId)"
+                        class="text-[#005B8F] hover:text-[#004a73] font-medium hover:underline"
+                      >
+                        {{ specimen.demoInfoId }}
+                      </button>
+                    </td>
+                    <td class="px-4 py-4 text-sm">
+                      <button 
+                        @click="viewEpiInfo(specimen.epiInfoId)"
+                        class="text-[#005B8F] hover:text-[#004a73] font-medium hover:underline"
+                      >
+                        {{ specimen.epiInfoId }}
+                      </button>
+                    </td>
+                    <td class="px-4 py-4 text-sm">
+                      <button 
+                        @click="openDetailsModal(specimen)"
+                        class="p-2 hover:bg-gray-100 rounded-lg transition"
+                      >
+                        <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                          <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                        </svg>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr v-if="filteredSpecimens.length === 0">
+                    <td colspan="10" class="px-4 py-12 text-center">
+                      <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      <p class="text-gray-500 text-sm">No specimens found</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
-        </main>
-      </div>
-
-      <!-- Modals -->
-      <BiospecimenNewSpecimenModal v-model="showNewSpecimenModal" @saved="handleSpecimenSaved" />
-
-      <BiospecimenBatchImportModal v-model="showBatchImportModal" @imported="handleBatchImported" />
-
-      <BiospecimenDetailsModal v-model="showDetailsModal" :specimen="selectedSpecimen" />
-
-      <BiospecimenTransferModal v-model="showTransferModal" />
-
-      <BiospecimenConfirmActionModal v-model="showConfirmModal" :action="confirmAction"
-        @confirmed="handleActionConfirmed" />
+        </div>
+      </main>
     </div>
+
+    <!-- Modals -->
+    <BiospecimenNewSpecimenModal v-model="showNewSpecimenModal" @saved="handleSpecimenSaved" />
+    <BiospecimenDetailsModal v-model="showDetailsModal" :specimen="selectedSpecimen" />
+  </div>
 </template>
 
 <script setup lang="ts">
-import type { BioSpecimen } from '~/types/biospecimen';
-import DateRangePicker, { type DateRange } from '~/components/DateRangePicker.vue';
+import { ref, computed, watch } from 'vue';
+import type { DateRange } from '~/components/DateRangePicker.vue';
+import { useGetAllSamples } from "@/composables/modules/biosample/useGetAllSamples"
+interface BioSpecimen {
+  id: number;
+  sampleId: string;
+  location: string;
+  type: string;
+  collectionDateTime: string;
+  collectorInfo: string;
+  clinicalInfo: string;
+  demoInfoId: string;
+  epiInfoId: string;
+}
+
+const { samples, loading } = useGetAllSamples()
 
 // State
 const filterText = ref('');
 const filters = ref({
-  status: '',
-  dateStart: '',
-  dateEnd: ''
+  type: 'All Types',
+  location: 'All Locations',
+  dateRange: { from: '', to: '' } as DateRange
 });
 
-const dateRange = ref<DateRange>({ from: '', to: '' });
-
 const showNewSpecimenModal = ref(false);
-const showBatchImportModal = ref(false);
 const showDetailsModal = ref(false);
-const showTransferModal = ref(false);
-const showConfirmModal = ref(false);
-
 const selectedSpecimen = ref<BioSpecimen | null>(null);
-const confirmAction = ref<{ type: 'approve' | 'reject', id: number } | null>(null);
 
-const sites = ref([
-  'All Status',
-  'Confirmed',
-  'Moved',
-  'Approved',
-  'Requested',
-  'Rejected'
+// Filter Options
+const typeOptions = ref([
+  'All Types',
+  'Serum',
+  'Plasma',
+  'Tissue',
+  'DNA',
+  'RNA',
+  'Pending'
 ]);
 
-// Sample data - Replace with API call
+const locationOptions = ref([
+  'All Locations',
+  'Ikeja medical centre',
+  'Freezer B-105, Rack 1-A',
+  'Freezer A-301, Rack 2-B',
+  'Cold Storage Unit 5'
+]);
+
+// Sample data
 const specimens = ref<BioSpecimen[]>([
   {
     id: 1,
     sampleId: 'MH-2024-0023',
-    currentLocation: 'Freezer B-105, Rack 1-A',
-    previousLocation: 'Freezer A-301, Rack 2-B',
-    moveOn: '2024-01-15',
+    location: 'Ikeja medical centre',
+    type: 'Serum',
+    collectionDateTime: 'Jan 15, 2024, 09:30 AM',
     collectorInfo: 'John Romans',
-    description: 'Clinical trial transfer',
-    status: 'Confirmed'
+    clinicalInfo: 'CLI-00234',
+    demoInfoId: 'DEM-00234',
+    epiInfoId: 'EPI-00234'
   },
   {
     id: 2,
-    sampleId: 'MH-2024-0024',
-    currentLocation: 'Freezer B-105, Rack 1-A',
-    previousLocation: 'Freezer A-301, Rack 2-B',
-    moveOn: '2024-01-20',
+    sampleId: 'MH-2024-0023',
+    location: 'Ikeja medical centre',
+    type: 'Plasma',
+    collectionDateTime: 'Jan 15, 2024, 09:30 AM',
     collectorInfo: 'John Romans',
-    description: 'Department relocation',
-    status: 'Moved'
+    clinicalInfo: 'CLI-00234',
+    demoInfoId: 'DEM-00234',
+    epiInfoId: 'EPI-00234'
   },
   {
     id: 3,
-    sampleId: 'MH-2024-0025',
-    currentLocation: 'Freezer B-105, Rack 1-A',
-    previousLocation: 'Freezer A-301, Rack 2-B',
-    moveOn: '2024-02-01',
+    sampleId: 'MH-2024-0023',
+    location: 'Ikeja medical centre',
+    type: 'Tissue',
+    collectionDateTime: 'Jan 15, 2024, 09:30 AM',
     collectorInfo: 'John Romans',
-    description: 'Research project transfer',
-    status: 'Approved'
+    clinicalInfo: 'CLI-00234',
+    demoInfoId: 'DEM-00234',
+    epiInfoId: 'EPI-00234'
   },
   {
     id: 4,
-    sampleId: 'MH-2024-0026',
-    currentLocation: 'Freezer B-105, Rack 1-A',
-    previousLocation: 'Freezer A-301, Rack 2-B',
-    moveOn: '2024-02-10',
+    sampleId: 'MH-2024-0023',
+    location: 'Ikeja medical centre',
+    type: 'DNA',
+    collectionDateTime: 'Jan 15, 2024, 09:30 AM',
     collectorInfo: 'John Romans',
-    description: 'Pending approval',
-    status: 'Requested'
+    clinicalInfo: 'CLI-00234',
+    demoInfoId: 'DEM-00234',
+    epiInfoId: 'EPI-00234'
   },
   {
     id: 5,
-    sampleId: 'MH-2024-0027',
-    currentLocation: 'Freezer B-105, Rack 1-A',
-    previousLocation: 'Freezer A-301, Rack 2-B',
-    moveOn: '2024-02-15',
+    sampleId: 'MH-2024-0023',
+    location: 'Ikeja medical centre',
+    type: 'Tissue',
+    collectionDateTime: 'Jan 15, 2024, 09:30 AM',
     collectorInfo: 'John Romans',
-    description: 'Transfer rejected',
-    status: 'Rejected'
+    clinicalInfo: 'CLI-00234',
+    demoInfoId: 'DEM-00234',
+    epiInfoId: 'EPI-00234'
   },
   {
     id: 6,
-    sampleId: 'MH-2024-0028',
-    currentLocation: 'Ikeja medical centre',
-    previousLocation: 'Ikeja medical centre',
-    moveOn: '2024-03-01',
+    sampleId: 'MH-2024-0023',
+    location: 'Ikeja medical centre',
+    type: 'Serum',
+    collectionDateTime: 'Jan 15, 2024, 09:30 AM',
     collectorInfo: 'John Romans',
-    description: 'Storage confirmed',
-    status: 'Confirmed'
+    clinicalInfo: 'CLI-00234',
+    demoInfoId: 'DEM-00234',
+    epiInfoId: 'EPI-00234'
   },
   {
     id: 7,
-    sampleId: 'MH-2024-0029',
-    currentLocation: 'Ikeja medical centre',
-    previousLocation: 'Ikeja medical centre',
-    moveOn: '2024-03-15',
+    sampleId: 'MH-2024-0023',
+    location: 'Ikeja medical centre',
+    type: 'Plasma',
+    collectionDateTime: 'Jan 15, 2024, 09:30 AM',
     collectorInfo: 'John Romans',
-    description: 'Transfer approved',
-    status: 'Approved'
+    clinicalInfo: 'CLI-00234',
+    demoInfoId: 'DEM-00234',
+    epiInfoId: 'EPI-00234'
+  },
+  {
+    id: 8,
+    sampleId: 'MH-2024-0023',
+    location: 'Ikeja medical centre',
+    type: 'Tissue',
+    collectionDateTime: 'Jan 15, 2024, 09:30 AM',
+    collectorInfo: 'John Romans',
+    clinicalInfo: 'CLI-00234',
+    demoInfoId: 'DEM-00234',
+    epiInfoId: 'EPI-00234'
+  },
+  {
+    id: 9,
+    sampleId: 'MH-2024-0023',
+    location: 'Ikeja medical centre',
+    type: 'DNA',
+    collectionDateTime: 'Jan 15, 2024, 09:30 AM',
+    collectorInfo: 'John Romans',
+    clinicalInfo: 'CLI-00234',
+    demoInfoId: 'DEM-00234',
+    epiInfoId: 'EPI-00234'
+  },
+  {
+    id: 10,
+    sampleId: 'MH-2024-0023',
+    location: 'Ikeja medical centre',
+    type: 'Pending',
+    collectionDateTime: 'Jan 15, 2024, 09:30 AM',
+    collectorInfo: 'John Romans',
+    clinicalInfo: 'CLI-00234',
+    demoInfoId: 'DEM-00234',
+    epiInfoId: 'EPI-00234'
   }
 ]);
 
 // Computed
-const pendingApprovals = computed(() => {
-  return specimens.value.filter(s => s.status === 'Requested').slice(0, 3);
-});
-
 const filteredSpecimens = computed(() => {
   let filtered = specimens.value;
 
@@ -353,34 +389,41 @@ const filteredSpecimens = computed(() => {
     const search = filterText.value.toLowerCase();
     filtered = filtered.filter(s =>
       s.sampleId.toLowerCase().includes(search) ||
-      s.description.toLowerCase().includes(search) ||
+      s.location.toLowerCase().includes(search) ||
+      s.type.toLowerCase().includes(search) ||
       s.collectorInfo.toLowerCase().includes(search) ||
-      s.currentLocation.toLowerCase().includes(search)
+      s.clinicalInfo.toLowerCase().includes(search) ||
+      s.demoInfoId.toLowerCase().includes(search) ||
+      s.epiInfoId.toLowerCase().includes(search)
     );
   }
 
-  // Filter by status
-  if (filters.value.status && filters.value.status !== 'All Status') {
-    filtered = filtered.filter(s => s.status === filters.value.status);
+  // Filter by type
+  if (filters.value.type && filters.value.type !== 'All Types') {
+    filtered = filtered.filter(s => s.type === filters.value.type);
   }
 
-  // Filter by date range (start)
-  if (filters.value.dateStart) {
-    const startDate = new Date(filters.value.dateStart);
+  // Filter by location
+  if (filters.value.location && filters.value.location !== 'All Locations') {
+    filtered = filtered.filter(s => s.location === filters.value.location);
+  }
+
+  // Filter by date range
+  if (filters.value.dateRange.from) {
+    const startDate = new Date(filters.value.dateRange.from);
     startDate.setHours(0, 0, 0, 0);
     filtered = filtered.filter(s => {
-      const specimenDate = new Date(s.moveOn);
+      const specimenDate = new Date(s.collectionDateTime);
       specimenDate.setHours(0, 0, 0, 0);
       return specimenDate >= startDate;
     });
   }
 
-  // Filter by date range (end)
-  if (filters.value.dateEnd) {
-    const endDate = new Date(filters.value.dateEnd);
+  if (filters.value.dateRange.to) {
+    const endDate = new Date(filters.value.dateRange.to);
     endDate.setHours(23, 59, 59, 999);
     filtered = filtered.filter(s => {
-      const specimenDate = new Date(s.moveOn);
+      const specimenDate = new Date(s.collectionDateTime);
       return specimenDate <= endDate;
     });
   }
@@ -389,32 +432,23 @@ const filteredSpecimens = computed(() => {
 });
 
 // Methods
-const getStatusClass = (status: string): string => {
+const getTypeClass = (type: string): string => {
   const classes: Record<string, string> = {
-    'Confirmed': 'bg-green-100 text-green-700',
-    'Moved': 'bg-blue-100 text-blue-700',
-    'Approved': 'bg-orange-100 text-orange-700',
-    'Requested': 'bg-pink-100 text-pink-700',
-    'Rejected': 'bg-red-100 text-red-700'
+    'Serum': 'bg-green-100 text-green-700',
+    'Plasma': 'bg-blue-100 text-blue-700',
+    'Tissue': 'bg-orange-100 text-orange-700',
+    'DNA': 'bg-pink-100 text-pink-700',
+    'RNA': 'bg-purple-100 text-purple-700',
+    'Pending': 'bg-yellow-100 text-yellow-700'
   };
-  return classes[status] || 'bg-gray-100 text-gray-700';
-};
-
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
+  return classes[type] || 'bg-gray-100 text-gray-700';
 };
 
 const copyToClipboard = async (text: string) => {
   try {
     await navigator.clipboard.writeText(text);
     console.log('Copied to clipboard:', text);
+    // You can add a toast notification here
   } catch (err) {
     console.error('Failed to copy:', err);
   }
@@ -428,16 +462,10 @@ const applyFilters = () => {
 const clearFilters = () => {
   filterText.value = '';
   filters.value = {
-    status: '',
-    dateStart: '',
-    dateEnd: ''
+    type: 'All Types',
+    location: 'All Locations',
+    dateRange: { from: '', to: '' }
   };
-  dateRange.value = { from: '', to: '' };
-};
-
-const openConfirmModal = (type: 'approve' | 'reject', id: number) => {
-  confirmAction.value = { type, id };
-  showConfirmModal.value = true;
 };
 
 const openDetailsModal = (specimen: BioSpecimen) => {
@@ -445,16 +473,19 @@ const openDetailsModal = (specimen: BioSpecimen) => {
   showDetailsModal.value = true;
 };
 
-const handleActionConfirmed = () => {
-  if (confirmAction.value) {
-    const { type, id } = confirmAction.value;
-    const specimen = specimens.value.find(s => s.id === id);
-    if (specimen) {
-      specimen.status = type === 'approve' ? 'Approved' : 'Rejected';
-    }
-  }
-  showConfirmModal.value = false;
-  confirmAction.value = null;
+const viewClinicalInfo = (clinicalInfo: string) => {
+  console.log('View clinical info:', clinicalInfo);
+  // Implement navigation or modal for clinical info
+};
+
+const viewDemoInfo = (demoInfoId: string) => {
+  console.log('View demo info:', demoInfoId);
+  // Implement navigation or modal for demo info
+};
+
+const viewEpiInfo = (epiInfoId: string) => {
+  console.log('View epi info:', epiInfoId);
+  // Implement navigation or modal for epi info
 };
 
 const handleSpecimenSaved = (data: any) => {
@@ -463,19 +494,7 @@ const handleSpecimenSaved = (data: any) => {
   // await fetchSpecimens();
 };
 
-const handleBatchImported = (data: any) => {
-  console.log('Batch import completed:', data);
-  // Refresh specimens list from API
-  // await fetchSpecimens();
-};
-
-// Watch dateRange changes and sync with filters
-watch(dateRange, (newRange) => {
-  filters.value.dateStart = newRange.from;
-  filters.value.dateEnd = newRange.to;
-}, { deep: true });
-
 definePageMeta({
-    layout: 'dashboard'
-})
+  layout: 'dashboard'
+});
 </script>

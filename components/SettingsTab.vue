@@ -29,13 +29,13 @@
         </div>
 
         <!-- In-App Notifications -->
-        <div class="bg-gray-25 rounded-lg p-5 flex items-center justify-between">
+        <!-- <div class="bg-gray-25 rounded-lg p-5 flex items-center justify-between">
           <div class="flex-1">
             <h4 class="text-base font-semibold text-gray-900 mb-1">In-App Notifications</h4>
             <p class="text-sm text-gray-600">Manage your personal information, credentials, and system preferences.</p>
           </div>
           <UiCustomToggle v-model="formData.inAppNotifications" />
-        </div>
+        </div> -->
 
         <!-- Push Notifications -->
         <div class="bg-gray-25 rounded-lg p-5 flex items-center justify-between">
@@ -54,7 +54,7 @@
         @click="handleSave"
         class="px-8 py-3 bg-[#005B8F] text-white rounded-xl  transition font-medium shadow-sm"
       >
-        Save Role
+        Save Changes
       </button>
     </div>
   </div>

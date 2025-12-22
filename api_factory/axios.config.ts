@@ -86,11 +86,11 @@ instanceArray.forEach((instance) => {
         };
       }
       if (err.response.status === 401) {
-        console.log(err.response.data.error)
+        console.log(err?.response?.data?.detail)
         logOut();
         showToast({
           title: "Error",
-          message: err?.response?.data?.message || err?.response?.data?.error || "An error occured",
+          message: err?.response?.data?.detail || "An error occured",
           toastType: "error",
           duration: 3000
         });
@@ -102,7 +102,7 @@ instanceArray.forEach((instance) => {
         if (err.response.data.message) {
           showToast({
             title: "Error",
-            message: err?.response?.data?.message || err?.response?.data?.error || "An error occured",
+            message: err?.response?.data?.detail || "An error occured",
             toastType: "error",
             duration: 3000
           });
@@ -114,7 +114,7 @@ instanceArray.forEach((instance) => {
       } else if (err.response.status === 500) {
         showToast({
           title: "Error",
-          message: err?.response?.data?.message || err?.response?.data?.error || "An error occured",
+          message: err?.response?.data?.detail || "An error occured",
           toastType: "error",
           duration: 3000
         });
@@ -125,7 +125,7 @@ instanceArray.forEach((instance) => {
       } else if (err.response.status === 409) {
         showToast({
           title: "Error",
-          message: err?.response?.data?.message || err?.response?.data?.error || "An error occured",
+          message: err?.response?.data?.detail || "An error occured",
           toastType: "error",
           duration: 3000
         });

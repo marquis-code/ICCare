@@ -51,7 +51,7 @@
           type="submit"
           class="px-6 py-3 bg-[#005B8F] text-white rounded-xl  transition font-medium shadow-sm"
         >
-          Save Role
+          Save Changes
         </button>
       </div>
     </form>

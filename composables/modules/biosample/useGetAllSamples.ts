@@ -37,6 +37,10 @@ export const useGetAllSamples = () => {
     }
   }
 
+  onMounted(() => {
+    getAllSamples()
+  })
+
   return {
     loading,
     samples,

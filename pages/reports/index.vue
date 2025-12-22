@@ -2,7 +2,7 @@
   <NuxtLayout name="dashboard">
     <div class="min-h-screen">
       <!-- Main Content -->
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <div class="px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <!-- Page Header -->
         <div class="mb-6 sm:mb-8">
           <h1 class="text-2xl font-semibold text-gray-900">Reports</h1>
@@ -262,6 +262,7 @@ interface ReportData {
   type: string
 }
 
+const dateRange = ref<DateRange>({ from: '', to: '' });
 
 const sites = ref([
   'Memorial Hospital', 'Central Hospital', 'General Hospital'
@@ -297,6 +298,8 @@ const datasetOptions: MultiSelectOption[] = [
   { value: 'genomic', label: 'Genomic Data' },
   { value: 'imaging', label: 'Imaging Data' }
 ]
+
+
 
 // Sample Data - Extended
 const allData = ref<ReportData[]>([

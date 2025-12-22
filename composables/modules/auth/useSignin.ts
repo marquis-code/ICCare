@@ -2,12 +2,14 @@ import { ref } from "vue"
 import { auth_api } from "@/api_factory/modules/auth"
 import { useCustomToast } from "@/composables/core/useCustomToast"
 import { useRouter } from "vue-router"
+import { useUser } from "@/composables/modules/auth/user"
 
 export const useSignin = () => {
   const loading = ref(false)
   const authData = ref(null)
   const { showToast } = useCustomToast()
   const router = useRouter()
+  const { createUser } = useUser()
 
   const signin = async (payload: {
     email: string
@@ -16,16 +18,9 @@ export const useSignin = () => {
     loading.value = true
     try {
       const res = (await auth_api.$_signin(payload)) as any
+      console
       if (res.type !== "ERROR") {
-        authData.value = res.data
-        
-        // Store tokens if present
-        if (res.data.access_token) {
-          localStorage.setItem('access_token', res.data.access_token)
-        }
-        if (res.data.refresh_token) {
-          localStorage.setItem('refresh_token', res.data.refresh_token)
-        }
+        createUser(res.data)
         
         showToast({
           title: "Success",
@@ -33,25 +28,9 @@ export const useSignin = () => {
           toastType: "success",
           duration: 3000,
         })
+        router.push('/dashboard')
         return res.data
-      } else {
-        const errorMsg = res?.data?.detail?.[0]?.msg || res?.data?.error || "Failed to sign in"
-        showToast({
-          title: "Error",
-          message: errorMsg,
-          toastType: "error",
-          duration: 3000,
-        })
-        return null
       }
-    } catch (error: any) {
-      showToast({
-        title: "Error",
-        message: error?.message || "Something went wrong",
-        toastType: "error",
-        duration: 3000,
-      })
-      return null
     } finally {
       loading.value = false
     }
@@ -59,7 +38,6 @@ export const useSignin = () => {
 
   return {
     loading,
-    authData,
     signin
   }
 }

@@ -1,3 +1,4 @@
+
 <template>
   <NuxtLayout name="dashboard">
     <div class="min-h-screen">
@@ -12,16 +13,16 @@
             </div>
 
             <!-- Profile Card -->
-            <div class="bg-white rounded-lg shadow-sm border-[0.5px] border-gray-100 p-6 mb-6">
+            <div class="bg-white rounded-lg  border-[0.5px] border-gray-100 p-6 mb-6">
               <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                 <div class="flex items-center gap-4">
-                  <img 
-                    src="https://api.dicebear.com/7.x/avataaars/svg?seed=Adaeze"
-                    alt="Profile"
-                    class="w-20 h-20 rounded-full object-cover border-2 border-gray-100"
-                  />
+                  <div 
+                    class="w-20 h-20 rounded-full bg-[#005B8F] flex items-center justify-center text-white text-2xl font-bold border-2 border-gray-100"
+                  >
+                    {{ userInitials }}
+                  </div>
                   <div>
-                    <h2 class="text-xl font-bold text-gray-900">Dr. Adaeze Bello</h2>
+                    <h2 class="text-xl font-bold text-gray-900">{{ fullName }}</h2>
                     <p class="text-sm text-gray-700 mt-1 font-medium">Site Manager</p>
                     <p class="text-sm text-gray-500 mt-0.5">Lagos Biobank – Site A</p>
                     <span class="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
@@ -30,9 +31,9 @@
                   </div>
                 </div>
                 
-                <button 
+                <!-- <button 
                   @click="editMode = !editMode"
-                  class="px-6 py-2.5 bg-[#005B8F] text-white rounded-lg hover:bg-[#004a73] transition flex items-center gap-2 justify-center shadow-sm font-medium"
+                  class="px-6 py-2.5 bg-[#005B8F] text-white rounded-lg hover:bg-[#004a73] transition flex items-center gap-2 justify-center  font-medium"
                 >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M18.988 2.01221L21.988 5.01221L19.701 7.30021L16.701 4.30021L18.988 2.01221ZM8 16.0002H11L18.287 8.71321L15.287 5.71321L8 13.0002V16.0002Z" fill="white"/>
@@ -40,12 +41,12 @@
 </svg>
 
                   <span>Edit</span>
-                </button>
+                </button> -->
               </div>
             </div>
 
             <!-- Tabs Content -->
-            <div class="bg-white rounded-lg shadow-sm border-[0.5px] border-gray-100">
+            <div class="bg-white rounded-lg  border-[0.5px] border-gray-100">
               <!-- Tabs Navigation -->
               <div class="border-b border-gray-100">
                 <div class="flex flex-wrap gap-0 px-4 md:px-6">
@@ -102,13 +103,13 @@
               </div>
 
               <!-- Tab Content -->
-              <div class="p-6 md:p-8">
-                <Transition name="fade" mode="out-in">
-                  <PersonalInfoTab v-if="activeTab === 'personal'" key="personal" :editMode="editMode" />
-                  <SecurityTab v-else-if="activeTab === 'security'" key="security" />
-                  <SettingsTab v-else-if="activeTab === 'settings'" key="settings" />
-                </Transition>
-              </div>
+         <div class="p-6 md:p-8">
+            <Transition name="fade" mode="out-in">
+              <PersonalInfoTab v-if="activeTab === 'personal'" key="personal" :user="user" />
+              <SecurityTab v-else-if="activeTab === 'security'" key="security" />
+              <SettingsTab v-else-if="activeTab === 'settings'" key="settings" />
+            </Transition>
+          </div>
             </div>
           </div>
         </main>
@@ -118,10 +119,26 @@
 </template>
 
 <script setup lang="ts">
+import { useCurrentUser } from "@/composables/modules/auth/useCurrentUser"
+
 const activeTab = ref<'personal' | 'security' | 'settings'>('personal');
 const editMode = ref(false);
-</script>
 
+const { loading, user } = useCurrentUser();
+
+// Computed properties for user display
+const fullName = computed(() => {
+  if (!user.value) return 'User';
+  return `${user.value.first_name || ''} ${user.value.last_name || ''}`.trim() || 'User';
+});
+
+const userInitials = computed(() => {
+  if (!user.value) return 'U';
+  const firstName = user.value.first_name || '';
+  const lastName = user.value.last_name || '';
+  return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() || 'U';
+});
+</script>
 <style scoped>
 .fade-enter-active,
 .fade-leave-active {

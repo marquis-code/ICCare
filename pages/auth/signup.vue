@@ -148,12 +148,17 @@ const handleSignup = async () => {
     return
   }
 
+   // Split full name into first and last name
+  const nameParts = signupForm.value.fullname.trim().split(/\s+/)
+  const firstName = nameParts[0] || ''
+  const lastName = nameParts.slice(1).join(' ') || nameParts[0] || ''
+
   const payloadObj = {
-    first_name: signupForm.value.fullname,
-    last_name: signupForm.value.fullname,
+    first_name: firstName,
+    last_name: lastName,
     email: signupForm.value.email,
-    password: signupForm.value.confirmPassword,
-    password_confirm: signupForm.value.password
+    password: signupForm.value.password,
+    password_confirm: signupForm.value.confirmPassword
   }
 
   await signup(payloadObj)

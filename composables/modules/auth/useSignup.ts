@@ -20,6 +20,7 @@ export const useSignup = () => {
     try {
       const res = (await auth_api.$_signup(payload)) as any
       if (res.type !== "ERROR") {
+        router.push('/')
         user.value = res.data
         showToast({
           title: "Success",
@@ -28,24 +29,7 @@ export const useSignup = () => {
           duration: 3000,
         })
         return res.data
-      } else {
-        const errorMsg = res?.data?.detail?.[0]?.msg || res?.data?.error || "Failed to create account"
-        showToast({
-          title: "Error",
-          message: errorMsg,
-          toastType: "error",
-          duration: 3000,
-        })
-        return null
-      }
-    } catch (error: any) {
-      showToast({
-        title: "Error",
-        message: error?.message || "Something went wrong",
-        toastType: "error",
-        duration: 3000,
-      })
-      return null
+      } 
     } finally {
       loading.value = false
     }

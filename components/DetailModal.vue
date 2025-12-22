@@ -154,23 +154,55 @@
               </div>
             </div>
 
-            <!-- Modal Footer -->
-            <div class="flex flex-col sm:flex-row items-center justify-end gap-3 px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-lg">
-              <button
-                @click="exportDetails"
-                class="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                Export
-              </button>
-              <button
-                @click="closeModal"
-                class="w-full sm:w-auto px-6 py-2 bg-[#005B8F] text-white rounded-md hover:bg-[#004a73] focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                Close
-              </button>
+            <!-- Modal Footer with Download Options -->
+            <div class="bg-blue-900 px-4 py-4 sm:px-6 rounded-b-lg">
+              <div class="flex flex-col space-y-3">
+                <!-- Download Options Header -->
+                <div class="flex items-center justify-between">
+                  <span class="text-white font-medium text-sm sm:text-base">Download Options:</span>
+                </div>
+                
+                <!-- Export Buttons -->
+                <div class="flex flex-col sm:flex-row items-center gap-3">
+                  <div class="flex flex-wrap gap-3 justify-center sm:justify-start flex-1">
+                    <button
+                      @click="downloadData('csv')"
+                      class="flex items-center gap-2 px-4 py-2 bg-white text-blue-900 rounded-md hover:bg-gray-100 transition-colors text-sm font-medium"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      CSV
+                    </button>
+                    <button
+                      @click="downloadData('excel')"
+                      class="flex items-center gap-2 px-4 py-2 bg-white text-blue-900 rounded-md hover:bg-gray-100 transition-colors text-sm font-medium"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      EXCEL
+                    </button>
+                    <button
+                      @click="downloadData('json')"
+                      class="flex items-center gap-2 px-4 py-2 bg-white text-blue-900 rounded-md hover:bg-gray-100 transition-colors text-sm font-medium"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      JSON
+                    </button>
+                  </div>
+                  
+                  <!-- Close Button -->
+                  <button
+                    @click="closeModal"
+                    class="w-full sm:w-auto px-6 py-2 bg-white text-blue-900 rounded-md hover:bg-gray-100 transition-colors font-medium"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </transition>
@@ -180,7 +212,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { watch } from 'vue'
 
 interface ReportData {
   id: number
@@ -218,10 +250,105 @@ const closeModal = () => {
   emit('close')
 }
 
-const exportDetails = () => {
-  if (props.data) {
-    emit('export', props.data)
+const downloadData = (format: 'csv' | 'excel' | 'json') => {
+  if (!props.data) return
+
+  if (format === 'csv') {
+    downloadCSV(props.data)
+  } else if (format === 'excel') {
+    downloadExcel(props.data)
+  } else if (format === 'json') {
+    downloadJSON(props.data)
   }
+}
+
+const downloadCSV = (data: ReportData) => {
+  const headers = ['Field', 'Value']
+  const csvRows = [headers.join(',')]
+
+  const fields = [
+    ['Sample ID', data.id.toString().padStart(8, '0')],
+    ['Data Set', `"${data.dataSet}"`],
+    ['Site Location', `"${data.site}"`],
+    ['Sample Type', data.type],
+    ['Date From', data.dateFrom],
+    ['Date To', data.dateTo],
+    ['Status', 'Active'],
+    ['Additional Notes', '"Sample collected and processed according to standard protocols. Storage conditions maintained at -80°C."']
+  ]
+
+  fields.forEach(([field, value]) => {
+    csvRows.push(`"${field}",${value}`)
+  })
+
+  const csvContent = csvRows.join('\n')
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+  const link = document.createElement('a')
+  const url = URL.createObjectURL(blob)
+
+  link.setAttribute('href', url)
+  link.setAttribute('download', `biosample_${data.id}_details.csv`)
+  link.style.visibility = 'hidden'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+
+const downloadExcel = (data: ReportData) => {
+  let table = '<table><thead><tr><th>Field</th><th>Value</th></tr></thead><tbody>'
+
+  const fields = [
+    ['Sample ID', data.id.toString().padStart(8, '0')],
+    ['Data Set', data.dataSet],
+    ['Site Location', data.site],
+    ['Sample Type', data.type],
+    ['Date From', data.dateFrom],
+    ['Date To', data.dateTo],
+    ['Status', 'Active'],
+    ['Additional Notes', 'Sample collected and processed according to standard protocols. Storage conditions maintained at -80°C.']
+  ]
+
+  fields.forEach(([field, value]) => {
+    table += `<tr><td>${field}</td><td>${value}</td></tr>`
+  })
+
+  table += '</tbody></table>'
+
+  const blob = new Blob([table], { type: 'application/vnd.ms-excel' })
+  const link = document.createElement('a')
+  const url = URL.createObjectURL(blob)
+
+  link.setAttribute('href', url)
+  link.setAttribute('download', `biosample_${data.id}_details.xls`)
+  link.style.visibility = 'hidden'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+
+const downloadJSON = (data: ReportData) => {
+  const exportData = {
+    sampleId: data.id.toString().padStart(8, '0'),
+    dataSet: data.dataSet,
+    siteLocation: data.site,
+    sampleType: data.type,
+    dateFrom: data.dateFrom,
+    dateTo: data.dateTo,
+    status: 'Active',
+    additionalNotes: 'Sample collected and processed according to standard protocols. Storage conditions maintained at -80°C.'
+  }
+
+  const jsonContent = JSON.stringify(exportData, null, 2)
+  const blob = new Blob([jsonContent], { type: 'application/json' })
+  const link = document.createElement('a')
+  const url = URL.createObjectURL(blob)
+
+  link.setAttribute('href', url)
+  link.setAttribute('download', `biosample_${data.id}_details.json`)
+  link.style.visibility = 'hidden'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
 }
 
 // Prevent body scroll when modal is open
