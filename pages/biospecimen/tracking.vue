@@ -175,13 +175,13 @@
                   <!-- Pending tabs: Approve/Reject buttons -->
                   <div v-if="!isCompletedTab" class="flex gap-2">
                     <button 
-                      @click="rejectItem(item)"
+                      @click="openRejectModal(item)"
                       class="px-3 py-1 text-xs border border-red-300 text-red-600 rounded hover:bg-red-50 transition"
                     >
                       Reject
                     </button>
                     <button 
-                      @click="approveItem(item)"
+                      @click="openApproveModal(item)"
                       class="px-3 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200 transition"
                     >
                       Approve
@@ -523,6 +523,138 @@
         </div>
       </div>
     </Teleport>
+
+
+        <!-- Approve Confirmation Modal -->
+    <Teleport to="body">
+      <div
+        v-if="showApproveModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+        @click.self="closeApproveModal"
+      >
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+          <div class="p-6">
+            <!-- Icon -->
+            <div class="flex justify-center mb-4">
+              <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <h2 class="text-xl font-bold text-gray-900 text-center mb-2">Approve Request</h2>
+            <p class="text-sm text-gray-600 text-center mb-6">
+              Are you sure you want to approve this {{ getRequestType }} request for sample <span class="font-semibold">{{ selectedItem?.sampleId }}</span>?
+            </p>
+
+            <!-- Sample Details -->
+            <div class="bg-gray-50 rounded-lg p-4 mb-6 space-y-2">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Source:</span>
+                <span class="text-gray-900 font-medium">{{ selectedItem?.sourceLocation }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Destination:</span>
+                <span class="text-gray-900 font-medium">{{ selectedItem?.destinationLocation }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Requested By:</span>
+                <span class="text-gray-900 font-medium">{{ selectedItem?.requestedBy }}</span>
+              </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex gap-3">
+              <button
+                @click="closeApproveModal"
+                class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                @click="confirmApprove"
+                class="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium"
+              >
+                Approve
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
+    <!-- Reject Confirmation Modal -->
+    <Teleport to="body">
+      <div
+        v-if="showRejectModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+        @click.self="closeRejectModal"
+      >
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+          <div class="p-6">
+            <!-- Icon -->
+            <div class="flex justify-center mb-4">
+              <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <h2 class="text-xl font-bold text-gray-900 text-center mb-2">Reject Request</h2>
+            <p class="text-sm text-gray-600 text-center mb-6">
+              Are you sure you want to reject this {{ getRequestType }} request for sample <span class="font-semibold">{{ selectedItem?.sampleId }}</span>?
+            </p>
+
+            <!-- Sample Details -->
+            <div class="bg-gray-50 rounded-lg p-4 mb-4 space-y-2">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Source:</span>
+                <span class="text-gray-900 font-medium">{{ selectedItem?.sourceLocation }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Destination:</span>
+                <span class="text-gray-900 font-medium">{{ selectedItem?.destinationLocation }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-600">Requested By:</span>
+                <span class="text-gray-900 font-medium">{{ selectedItem?.requestedBy }}</span>
+              </div>
+            </div>
+
+            <!-- Reason Input -->
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Reason for Rejection</label>
+              <textarea
+                v-model="rejectionReason"
+                rows="3"
+                placeholder="Please provide a reason for rejecting this request..."
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none text-sm"
+              ></textarea>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex gap-3">
+              <button
+                @click="closeRejectModal"
+                class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                @click="confirmReject"
+                class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium"
+              >
+                Reject
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -591,8 +723,11 @@ const isCompletedTab = computed(() => {
   return activeTab.value === 'completeMovement' || activeTab.value === 'completeDisposal'
 })
 
-definePageMeta({
-  layout: 'dashboard'
+// Computed property to get request type based on active tab
+const getRequestType = computed(() => {
+  return activeTab.value === 'pendingMovement' || activeTab.value === 'completeMovement' 
+    ? 'movement' 
+    : 'disposal'
 })
 
 // Sample data
@@ -609,7 +744,7 @@ const sampleData = ref<BioSpecimen[]>([
   },
   {
     id: '2',
-    sampleId: 'MH-12343023',
+    sampleId: 'MH-12343024',
     sourceLocation: 'Freezer 9-156, Rack 1A',
     destinationLocation: 'Freezer A-201, Rack 2-B',
     requestedDate: 'Jan 15, 2024, 09:30 AM',
@@ -619,13 +754,43 @@ const sampleData = ref<BioSpecimen[]>([
   },
   {
     id: '3',
-    sampleId: 'MH-12343023',
+    sampleId: 'MH-12343025',
     sourceLocation: 'Freezer 9-156, Rack 1A',
     destinationLocation: 'Freezer A-201, Rack 2-B',
     requestedDate: 'Jan 15, 2024, 09:30 AM',
     approvedDate: 'Jan 15, 2024, 09:30 AM',
     requestedBy: 'John Ramirez',
     status: 'pendingMovement'
+  },
+  {
+    id: '8',
+    sampleId: 'MH-12343026',
+    sourceLocation: 'Freezer 9-156, Rack 1A',
+    destinationLocation: 'Biohazard Disposal Unit',
+    requestedDate: 'Jan 16, 2024, 10:15 AM',
+    approvedDate: 'Jan 16, 2024, 10:15 AM',
+    requestedBy: 'Sarah Johnson',
+    status: 'pendingDisposal'
+  },
+  {
+    id: '9',
+    sampleId: 'MH-12343027',
+    sourceLocation: 'Freezer 8-105, Rack 3C',
+    destinationLocation: 'Biohazard Disposal Unit',
+    requestedDate: 'Jan 16, 2024, 11:00 AM',
+    approvedDate: 'Jan 16, 2024, 11:00 AM',
+    requestedBy: 'Mike Davis',
+    status: 'pendingDisposal'
+  },
+  {
+    id: '10',
+    sampleId: 'MH-12343028',
+    sourceLocation: 'Cold Storage Unit 5',
+    destinationLocation: 'Biohazard Disposal Unit',
+    requestedDate: 'Jan 16, 2024, 02:30 PM',
+    approvedDate: 'Jan 16, 2024, 02:30 PM',
+    requestedBy: 'Emily Chen',
+    status: 'pendingDisposal'
   },
   {
     id: '4',
@@ -641,7 +806,7 @@ const sampleData = ref<BioSpecimen[]>([
   },
   {
     id: '5',
-    sampleId: 'MH-2024-0023',
+    sampleId: 'MH-2024-0024',
     sourceLocation: 'Freezer B-105, Rack 1-A',
     destinationLocation: 'Freezer A-301, Rack 2-B',
     requestedDate: 'Jan 15, 2024, 09:30 AM',
@@ -653,7 +818,7 @@ const sampleData = ref<BioSpecimen[]>([
   },
   {
     id: '6',
-    sampleId: 'MH-2024-0023',
+    sampleId: 'MH-2024-0025',
     sourceLocation: 'Freezer B-105, Rack 1-A',
     destinationLocation: 'Freezer A-301, Rack 2-B',
     requestedDate: 'Jan 15, 2024, 09:30 AM',
@@ -665,7 +830,7 @@ const sampleData = ref<BioSpecimen[]>([
   },
   {
     id: '7',
-    sampleId: 'MH-2024-0023',
+    sampleId: 'MH-2024-0026',
     sourceLocation: 'Freezer B-105, Rack 1-A',
     destinationLocation: 'Freezer A-301, Rack 2-B',
     requestedDate: 'Jan 15, 2024, 09:30 AM',
@@ -674,6 +839,30 @@ const sampleData = ref<BioSpecimen[]>([
     status: 'completeMovement',
     description: 'Emergency relocation due to equipment maintenance',
     completionStatus: 'Moved'
+  },
+  {
+    id: '11',
+    sampleId: 'MH-2024-0027',
+    sourceLocation: 'Freezer B-105, Rack 1-A',
+    destinationLocation: 'Biohazard Disposal Unit',
+    requestedDate: 'Jan 10, 2024, 09:00 AM',
+    approvedDate: 'Jan 10, 2024, 10:00 AM',
+    requestedBy: 'Dr. Amanda White',
+    status: 'completeDisposal',
+    description: 'Sample expired - standard disposal protocol',
+    completionStatus: 'Confirmed'
+  },
+  {
+    id: '12',
+    sampleId: 'MH-2024-0028',
+    sourceLocation: 'Cold Storage Unit 5',
+    destinationLocation: 'Biohazard Disposal Unit',
+    requestedDate: 'Jan 12, 2024, 02:00 PM',
+    approvedDate: 'Jan 12, 2024, 03:30 PM',
+    requestedBy: 'Dr. Robert Lee',
+    status: 'completeDisposal',
+    description: 'Contaminated sample - immediate disposal required',
+    completionStatus: 'Confirmed'
   }
 ])
 
@@ -686,7 +875,10 @@ const filteredData = computed(() => {
 const showRequestMovementModal = ref(false)
 const showRequestDisposalModal = ref(false)
 const showViewDetailsModal = ref(false)
+const showApproveModal = ref(false)
+const showRejectModal = ref(false)
 const selectedItem = ref<BioSpecimen | null>(null)
+const rejectionReason = ref('')
 
 const movementForm = ref({
   sampleId: '',
@@ -744,6 +936,42 @@ const closeViewDetailsModal = () => {
   selectedItem.value = null
 }
 
+const openApproveModal = (item: BioSpecimen) => {
+  selectedItem.value = item
+  showApproveModal.value = true
+}
+
+const closeApproveModal = () => {
+  showApproveModal.value = false
+  selectedItem.value = null
+}
+
+const openRejectModal = (item: BioSpecimen) => {
+  selectedItem.value = item
+  showRejectModal.value = true
+}
+
+const closeRejectModal = () => {
+  showRejectModal.value = false
+  selectedItem.value = null
+  rejectionReason.value = ''
+}
+
+const confirmApprove = () => {
+  console.log('Approved item:', selectedItem.value)
+  // Add your approval logic here
+  // You might want to update the item status, make an API call, etc.
+  closeApproveModal()
+}
+
+const confirmReject = () => {
+  console.log('Rejected item:', selectedItem.value)
+  console.log('Rejection reason:', rejectionReason.value)
+  // Add your rejection logic here
+  // You might want to update the item status, make an API call, etc.
+  closeRejectModal()
+}
+
 const submitMovementRequest = () => {
   console.log('Movement request:', movementForm.value)
   closeRequestMovementModal()
@@ -752,16 +980,6 @@ const submitMovementRequest = () => {
 const submitDisposalRequest = () => {
   console.log('Disposal request:', disposalForm.value)
   closeRequestDisposalModal()
-}
-
-const approveItem = (item: BioSpecimen) => {
-  console.log('Approving item:', item)
-  // Add your approval logic here
-}
-
-const rejectItem = (item: BioSpecimen) => {
-  console.log('Rejecting item:', item)
-  // Add your rejection logic here
 }
 
 const applyFilters = () => {
@@ -787,4 +1005,4 @@ const getInitials = (name: string) => {
 definePageMeta({
     layout: 'dashboard'
 })
-</script>
+</script> 
