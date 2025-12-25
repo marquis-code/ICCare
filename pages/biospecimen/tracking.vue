@@ -1,7 +1,8 @@
 <template>
   <div class="min-h-screen">
-    <div class="">
+    <div class="flex">
       <!-- Header -->
+       <main class="mx-auto max-w-7xl">
       <div class="mb-6">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <h1 class="text-2xl font-bold text-gray-900">BioSpecimen Tracking</h1>
@@ -9,7 +10,7 @@
           <div class="flex flex-wrap gap-2">
             <button
               @click="openRequestMovementModal"
-              class="px-4 py-3 bg-[#005B8F] text-white rounded hover:bg-[#004a73] transition flex items-center gap-2 text-sm"
+              class="px-4 py-6 bg-[#005B8F] text-white rounded hover:bg-[#004a73] transition flex items-center gap-2 text-sm"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -18,7 +19,7 @@
             </button>
             <button
               @click="openRequestDisposalModal"
-              class="px-4 py-3 bg-[#005B8F] text-white rounded hover:bg-[#004a73] transition flex items-center gap-2 text-sm"
+              class="px-4 py-6 bg-[#005B8F] text-white rounded hover:bg-[#004a73] transition flex items-center gap-2 text-sm"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -32,20 +33,16 @@
       <!-- Filters -->
       <div class="bg-white rounded-lg shadow-sm p-4 md:p-6 mb-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          <UiSelectInput 
-            label="All Status" 
-            :options="statusOptions" 
-            position="standalone" 
-            v-model="filters.status"
-          />
-          
-          <DateRangePicker 
-            v-model="filters.dateRange1" 
-            label="Date Range" 
-            placeholder="Select date range" 
-          />
-          
-          <div class="flex items-end gap-2">
+             <UiSelectInput 
+                  label="Status" 
+                  :options="statusOptions" 
+                  position="standalone" 
+                   v-model="filters.status"
+                />
+                <UiAnimatedInput label="Start date"  type="date" v-model="filters.dateRange.from" />
+              <UiAnimatedInput label="End date" type="date" v-model="filters.dateRange.to" />
+        </div>
+        <div class="space-x-6">
             <button
               @click="applyFilters"
               class="flex-1 px-4 py-2 bg-[#005B8F] text-white rounded hover:bg-[#004a73] transition text-sm font-medium"
@@ -59,78 +56,36 @@
               Clear Filter
             </button>
           </div>
-        </div>
       </div>
 
-      <!-- Tabs -->
+      <!-- Pending Movement Section -->
       <div class="bg-white rounded-lg shadow-sm mb-6">
-        <div class="border-b-[0.5px] border-gray-200 overflow-x-auto">
-          <div class="flex min-w-max md:min-w-0">
-            <button
-              v-for="tab in tabs"
-              :key="tab.key"
-              @click="activeTab = tab.key"
-              :class="[
-                'px-6 py-6 text-sm font-medium whitespace-nowrap transition',
-                activeTab === tab.key
-                  ? 'text-[#005B8F] border-b-2 border-[#005B8F]'
-                  : 'text-gray-600 hover:text-gray-900'
-              ]"
-            >
-              {{ tab.label }}
-              <span
-                v-if="tab.count !== undefined"
-                :class="[
-                  'ml-2 px-2 py-0.5 rounded-full text-xs',
-                  tab.key === 'pendingMovement' ? 'bg-orange-100 text-orange-700' :
-                  tab.key === 'pendingDisposal' ? 'bg-red-100 text-red-700' :
-                  'bg-green-100 text-green-700'
-                ]"
-              >
-                {{ tab.count }}
-              </span>
-            </button>
+        <div class="border-b border-gray-200 px-6 py-4">
+          <div class="flex items-center gap-2">
+            <h2 class="text-base font-medium text-gray-900">Pending Movement</h2>
+            <span class="px-2 py-0.5 rounded-full text-xs bg-orange-100 text-orange-700 font-medium">
+              {{ pendingMovementData.length }}
+            </span>
           </div>
         </div>
 
-        <!-- Table -->
         <div class="overflow-x-auto">
           <table class="w-full min-w-max">
-            <thead class="bg-gray-25">
+            <thead class="bg-gray-50">
               <tr>
-                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                  Sample ID
-                </th>
-                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                  Source Location
-                </th>
-                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                  Destination Location
-                </th>
-                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                  Requested Date
-                </th>
-                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                  Approved Date
-                </th>
-                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                  Requested By
-                </th>
-                <th v-if="isCompletedTab" class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                  Description
-                </th>
-                <th v-if="isCompletedTab" class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                  Status
-                </th>
-                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                  Action
-                </th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Sample ID</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Source Location</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Destination Location</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Requested Date</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Approved Date</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Requested By</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Action</th>
               </tr>
             </thead>
-            <tbody class="bg-white divide-y-[0.5px] divide-gray-100">
-              <tr v-for="item in filteredData" :key="item.id" class="hover:bg-gray-25">
-                <td class="px-4 py-6 text-sm text-gray-900">{{ item.sampleId }}</td>
-                <td class="px-4 py-6 text-sm text-gray-600">
+            <tbody class="bg-white divide-y divide-gray-100">
+              <tr v-for="item in pendingMovementData" :key="item.id" class="hover:bg-gray-50">
+                <td class="px-4 py-4 text-sm text-gray-900">{{ item.sampleId }}</td>
+                <td class="px-4 py-4 text-sm text-gray-600">
                   <div class="flex items-center gap-1">
                     <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
@@ -138,7 +93,7 @@
                     {{ item.sourceLocation }}
                   </div>
                 </td>
-                <td class="px-4 py-6 text-sm text-gray-600">
+                <td class="px-4 py-4 text-sm text-gray-600">
                   <div class="flex items-center gap-1">
                     <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
@@ -146,34 +101,11 @@
                     {{ item.destinationLocation }}
                   </div>
                 </td>
-                <td class="px-4 py-6 text-sm text-gray-600">{{ item.requestedDate }}</td>
-                <td class="px-4 py-6 text-sm text-gray-600">{{ item.approvedDate }}</td>
-                <td class="px-4 py-6 text-sm text-gray-600">{{ item.requestedBy }}</td>
-                
-                <!-- Description column for completed tabs -->
-                <td v-if="isCompletedTab" class="px-4 py-6 text-sm text-gray-600">
-                  {{ item.description || 'N/A' }}
-                </td>
-                
-                <!-- Status column for completed tabs -->
-                <td v-if="isCompletedTab" class="px-4 py-6 text-sm">
-                  <span 
-                    :class="[
-                      'px-3 py-1 rounded-full text-xs font-medium',
-                      item.completionStatus === 'Confirmed' ? 'bg-green-100 text-green-700' :
-                      item.completionStatus === 'Moved' ? 'bg-blue-100 text-blue-700' :
-                      item.completionStatus === 'Approved' ? 'bg-orange-100 text-orange-700' :
-                      'bg-gray-100 text-gray-700'
-                    ]"
-                  >
-                    {{ item.completionStatus }}
-                  </span>
-                </td>
-                
-                <!-- Action column -->
-                <td class="px-4 py-6 text-sm">
-                  <!-- Pending tabs: Approve/Reject buttons -->
-                  <div v-if="!isCompletedTab" class="flex gap-2">
+                <td class="px-4 py-4 text-sm text-gray-600">{{ item.requestedDate }}</td>
+                <td class="px-4 py-4 text-sm text-gray-600">{{ item.approvedDate }}</td>
+                <td class="px-4 py-4 text-sm text-gray-600">{{ item.requestedBy }}</td>
+                <td class="px-4 py-4 text-sm">
+                  <div class="flex gap-2">
                     <button 
                       @click="openRejectModal(item)"
                       class="px-3 py-1 text-xs border border-red-300 text-red-600 rounded hover:bg-red-50 transition"
@@ -187,10 +119,147 @@
                       Approve
                     </button>
                   </div>
-                  
-                  <!-- Completed tabs: View Details button -->
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pending Disposal Section -->
+      <div class="bg-white rounded-lg shadow-sm mb-6">
+        <div class="border-b border-gray-200 px-6 py-4">
+          <div class="flex items-center gap-2">
+            <h2 class="text-base font-medium text-gray-900">Pending Disposal</h2>
+            <span class="px-2 py-0.5 rounded-full text-xs bg-red-100 text-red-700 font-medium">
+              {{ pendingDisposalData.length }}
+            </span>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-max">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Sample ID</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Source Location</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Destination Location</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Requested Date</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Approved Date</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Requested By</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Status</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Action</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-100">
+              <tr v-for="item in pendingDisposalData" :key="item.id" class="hover:bg-gray-50">
+                <td class="px-4 py-4 text-sm text-gray-900">{{ item.sampleId }}</td>
+                <td class="px-4 py-4 text-sm text-gray-600">
+                  <div class="flex items-center gap-1">
+                    <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                    </svg>
+                    {{ item.sourceLocation }}
+                  </div>
+                </td>
+                <td class="px-4 py-4 text-sm text-gray-600">
+                  <div class="flex items-center gap-1">
+                    <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                    </svg>
+                    {{ item.destinationLocation }}
+                  </div>
+                </td>
+                <td class="px-4 py-4 text-sm text-gray-600">{{ item.requestedDate }}</td>
+                <td class="px-4 py-4 text-sm text-gray-600">{{ item.approvedDate }}</td>
+                <td class="px-4 py-4 text-sm text-gray-600">{{ item.requestedBy }}</td>
+                <td class="px-4 py-4 text-sm text-gray-600">-</td>
+                <td class="px-4 py-4 text-sm">
+                  <div class="flex gap-2">
+                    <button 
+                      @click="openRejectModal(item)"
+                      class="px-3 py-1 text-xs border border-red-300 text-red-600 rounded hover:bg-red-50 transition"
+                    >
+                      Reject
+                    </button>
+                    <button 
+                      @click="openApproveModal(item)"
+                      class="px-3 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200 transition"
+                    >
+                      Approve
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Complete Movement Section -->
+      <div class="bg-white rounded-lg shadow-sm mb-6">
+        <div class="border-b border-gray-200 px-6 py-4">
+          <div class="flex items-center gap-2">
+            <h2 class="text-base font-medium text-gray-900">Complete Movement</h2>
+            <span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700 font-medium">
+              {{ completeMovementData.length }}
+            </span>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-max">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Sample ID</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Source Location</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Destination Location</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Requested Date</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Approved Date</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Requested By</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Description</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Status</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Action</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-100">
+              <tr v-for="item in completeMovementData" :key="item.id" class="hover:bg-gray-50">
+                <td class="px-4 py-4 text-sm text-gray-900">{{ item.sampleId }}</td>
+                <td class="px-4 py-4 text-sm text-gray-600">
+                  <div class="flex items-center gap-1">
+                    <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                    </svg>
+                    {{ item.sourceLocation }}
+                  </div>
+                </td>
+                <td class="px-4 py-4 text-sm text-gray-600">
+                  <div class="flex items-center gap-1">
+                    <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                    </svg>
+                    {{ item.destinationLocation }}
+                  </div>
+                </td>
+                <td class="px-4 py-4 text-sm text-gray-600">{{ item.requestedDate }}</td>
+                <td class="px-4 py-4 text-sm text-gray-600">{{ item.approvedDate }}</td>
+                <td class="px-4 py-4 text-sm text-gray-600">{{ item.requestedBy }}</td>
+                <td class="px-4 py-4 text-sm text-gray-600">{{ item.description || 'N/A' }}</td>
+                <td class="px-4 py-4 text-sm">
+                  <span 
+                    :class="[
+                      'px-3 py-1 rounded-full text-xs font-medium',
+                      item.completionStatus === 'Confirmed' ? 'bg-green-100 text-green-700' :
+                      item.completionStatus === 'Moved' ? 'bg-blue-100 text-blue-700' :
+                      item.completionStatus === 'Approved' ? 'bg-orange-100 text-orange-700' :
+                      'bg-gray-100 text-gray-700'
+                    ]"
+                  >
+                    {{ item.completionStatus }}
+                  </span>
+                </td>
+                <td class="px-4 py-4 text-sm">
                   <button 
-                    v-else
                     @click="openViewDetailsModal(item)"
                     class="p-2 hover:bg-gray-100 rounded transition"
                   >
@@ -205,6 +274,86 @@
           </table>
         </div>
       </div>
+
+      <!-- Complete Disposal Section -->
+      <div class="bg-white rounded-lg shadow-sm mb-6">
+        <div class="border-b border-gray-200 px-6 py-4">
+          <div class="flex items-center gap-2">
+            <h2 class="text-base font-medium text-gray-900">Complete Disposal</h2>
+            <span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700 font-medium">
+              {{ completeDisposalData.length }}
+            </span>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-max">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Sample ID</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Source Location</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Destination Location</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Requested Date</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Approved Date</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Requested By</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Description</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Status</th>
+                <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Action</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-100">
+              <tr v-for="item in completeDisposalData" :key="item.id" class="hover:bg-gray-50">
+                <td class="px-4 py-4 text-sm text-gray-900">{{ item.sampleId }}</td>
+                <td class="px-4 py-4 text-sm text-gray-600">
+                  <div class="flex items-center gap-1">
+                    <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                    </svg>
+                    {{ item.sourceLocation }}
+                  </div>
+                </td>
+                <td class="px-4 py-4 text-sm text-gray-600">
+                  <div class="flex items-center gap-1">
+                    <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                    </svg>
+                    {{ item.destinationLocation }}
+                  </div>
+                </td>
+                <td class="px-4 py-4 text-sm text-gray-600">{{ item.requestedDate }}</td>
+                <td class="px-4 py-4 text-sm text-gray-600">{{ item.approvedDate }}</td>
+                <td class="px-4 py-4 text-sm text-gray-600">{{ item.requestedBy }}</td>
+                <td class="px-4 py-4 text-sm text-gray-600">{{ item.description || 'N/A' }}</td>
+                <td class="px-4 py-4 text-sm">
+                  <span 
+                    :class="[
+                      'px-3 py-1 rounded-full text-xs font-medium',
+                      item.completionStatus === 'Confirmed' ? 'bg-green-100 text-green-700' :
+                      item.completionStatus === 'Moved' ? 'bg-blue-100 text-blue-700' :
+                      item.completionStatus === 'Approved' ? 'bg-orange-100 text-orange-700' :
+                      'bg-gray-100 text-gray-700'
+                    ]"
+                  >
+                    {{ item.completionStatus }}
+                  </span>
+                </td>
+                <td class="px-4 py-4 text-sm">
+                  <button 
+                    @click="openViewDetailsModal(item)"
+                    class="p-2 hover:bg-gray-100 rounded transition"
+                  >
+                    <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                      <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
     </div>
 
     <!-- Request Movement Modal -->
@@ -226,48 +375,37 @@
             <div class="space-y-4">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Sample ID</label>
-                  <input
+                  <UiAnimatedInput
+                  label="Sample ID"
                     v-model="movementForm.sampleId"
                     type="text"
-                    placeholder="xxx"
-                    class="custom-input"
                   />
                 </div>
 
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Requested By</label>
-                  <input
+                  <UiAnimatedInput
+                   label="Requested By"
                     v-model="movementForm.requestedBy"
                     type="text"
-                    placeholder="xxx"
-                    class="custom-input"
                   />
                 </div>
               </div>
 
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <UiSelectInput 
-                  label="Destination Location" 
-                  :options="locationOptions" 
-                  position="standalone" 
-                  v-model="movementForm.destinationLocation"
-                />
+                <div>
+                  <UiSelectInput v-model="movementForm.destinationLocation" :options="locationOptions" label="Destination Location" />
+                </div>
 
-                <UiSelectInput 
-                  label="Source Location" 
-                  :options="locationOptions" 
-                  position="standalone" 
-                  v-model="movementForm.sourceLocation"
-                />
+                <div>
+                  <UiSelectInput v-model="movementForm.sourceLocation" label="Source Location" :options="locationOptions" />
+                </div>
               </div>
 
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Requested Date</label>
-                <input
+                <UiAnimatedInput
                   v-model="movementForm.requestedDate"
                   type="date"
-                  class="custom-input"
                 />
               </div>
 
@@ -324,35 +462,31 @@
                   v-model="disposalForm.reasons"
                   rows="3"
                   placeholder="sample input but not"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#005B8F] focus:border-transparent resize-none"
+                  class="custom-input"
                 ></textarea>
               </div>
 
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <UiSelectInput 
-                  label="Disposal Method" 
-                  :options="disposalMethodOptions" 
-                  position="standalone" 
-                  v-model="disposalForm.method"
-                />
+                <div>
+                  <UiSelectInput label="Disposal Method" :options="disposalMethodOptions" v-model="disposalForm.method" />
+                </div>
 
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Requested By</label>
-                  <input
+                  <UiAnimatedInput
                     v-model="disposalForm.requestedBy"
                     type="text"
-                    placeholder="xxx"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#005B8F] focus:border-transparent"
+                    label="Requested By"
+
                   />
                 </div>
               </div>
 
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Disposal Date</label>
-                <input
+                <UiAnimatedInput
                   v-model="disposalForm.date"
                   type="date"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#005B8F] focus:border-transparent"
+                  label="Disposal Date"
                 />
               </div>
             </div>
@@ -385,7 +519,6 @@
       >
         <div class="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
           <div class="p-6">
-            <!-- Modal Header -->
             <div class="flex items-center justify-between mb-6">
               <div class="flex items-center gap-3">
                 <div class="p-2 bg-blue-100 rounded-lg">
@@ -409,9 +542,7 @@
               </button>
             </div>
 
-            <!-- Details Content -->
             <div v-if="selectedItem" class="space-y-6">
-              <!-- Sample Information -->
               <div>
                 <h3 class="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wide">Sample Information</h3>
                 <div class="bg-gray-50 rounded-lg p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -436,7 +567,6 @@
                 </div>
               </div>
 
-              <!-- Location Details -->
               <div>
                 <h3 class="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wide">Location Details</h3>
                 <div class="bg-gray-50 rounded-lg p-4 space-y-4">
@@ -472,7 +602,6 @@
                 </div>
               </div>
 
-              <!-- Timeline -->
               <div>
                 <h3 class="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wide">Timeline</h3>
                 <div class="bg-gray-50 rounded-lg p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -487,7 +616,6 @@
                 </div>
               </div>
 
-              <!-- Personnel -->
               <div>
                 <h3 class="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wide">Personnel</h3>
                 <div class="bg-gray-50 rounded-lg p-4">
@@ -501,7 +629,6 @@
                 </div>
               </div>
 
-              <!-- Description -->
               <div v-if="selectedItem.description">
                 <h3 class="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wide">Description</h3>
                 <div class="bg-gray-50 rounded-lg p-4">
@@ -510,7 +637,6 @@
               </div>
             </div>
 
-            <!-- Modal Footer -->
             <div class="flex justify-end gap-3 mt-6 pt-6 border-t border-gray-200">
               <button
                 @click="closeViewDetailsModal"
@@ -524,8 +650,7 @@
       </div>
     </Teleport>
 
-
-        <!-- Approve Confirmation Modal -->
+    <!-- Approve Confirmation Modal -->
     <Teleport to="body">
       <div
         v-if="showApproveModal"
@@ -534,7 +659,6 @@
       >
         <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
           <div class="p-6">
-            <!-- Icon -->
             <div class="flex justify-center mb-4">
               <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
                 <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -543,13 +667,11 @@
               </div>
             </div>
 
-            <!-- Content -->
             <h2 class="text-xl font-bold text-gray-900 text-center mb-2">Approve Request</h2>
             <p class="text-sm text-gray-600 text-center mb-6">
               Are you sure you want to approve this {{ getRequestType }} request for sample <span class="font-semibold">{{ selectedItem?.sampleId }}</span>?
             </p>
 
-            <!-- Sample Details -->
             <div class="bg-gray-50 rounded-lg p-4 mb-6 space-y-2">
               <div class="flex justify-between text-sm">
                 <span class="text-gray-600">Source:</span>
@@ -565,7 +687,6 @@
               </div>
             </div>
 
-            <!-- Buttons -->
             <div class="flex gap-3">
               <button
                 @click="closeApproveModal"
@@ -594,7 +715,6 @@
       >
         <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
           <div class="p-6">
-            <!-- Icon -->
             <div class="flex justify-center mb-4">
               <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
                 <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -603,13 +723,11 @@
               </div>
             </div>
 
-            <!-- Content -->
             <h2 class="text-xl font-bold text-gray-900 text-center mb-2">Reject Request</h2>
             <p class="text-sm text-gray-600 text-center mb-6">
               Are you sure you want to reject this {{ getRequestType }} request for sample <span class="font-semibold">{{ selectedItem?.sampleId }}</span>?
             </p>
 
-            <!-- Sample Details -->
             <div class="bg-gray-50 rounded-lg p-4 mb-4 space-y-2">
               <div class="flex justify-between text-sm">
                 <span class="text-gray-600">Source:</span>
@@ -625,18 +743,16 @@
               </div>
             </div>
 
-            <!-- Reason Input -->
             <div class="mb-6">
               <label class="block text-sm font-medium text-gray-700 mb-2">Reason for Rejection</label>
               <textarea
                 v-model="rejectionReason"
                 rows="3"
                 placeholder="Please provide a reason for rejecting this request..."
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none text-sm"
+                class="custom-input"
               ></textarea>
             </div>
 
-            <!-- Buttons -->
             <div class="flex gap-3">
               <button
                 @click="closeRejectModal"
@@ -682,8 +798,7 @@ interface BioSpecimen {
 // Filters
 const filters = ref({
   status: 'All Status',
-  dateRange1: { from: '', to: '' } as DateRange,
-  dateRange2: { from: '', to: '' } as DateRange
+  dateRange: { from: '', to: '' } as DateRange
 })
 
 const statusOptions = ref([
@@ -707,28 +822,6 @@ const disposalMethodOptions = ref([
   'Chemical Treatment',
   'Biohazard Disposal'
 ])
-
-// Tabs
-const activeTab = ref('pendingMovement')
-
-const tabs = computed(() => [
-  { key: 'pendingMovement', label: 'Pending Movement', count: 3 },
-  { key: 'pendingDisposal', label: 'Pending Disposal', count: 3 },
-  { key: 'completeMovement', label: 'Complete Movement', count: 4 },
-  { key: 'completeDisposal', label: 'Complete Disposal', count: 2 }
-])
-
-// Check if current tab is a completed tab
-const isCompletedTab = computed(() => {
-  return activeTab.value === 'completeMovement' || activeTab.value === 'completeDisposal'
-})
-
-// Computed property to get request type based on active tab
-const getRequestType = computed(() => {
-  return activeTab.value === 'pendingMovement' || activeTab.value === 'completeMovement' 
-    ? 'movement' 
-    : 'disposal'
-})
 
 // Sample data
 const sampleData = ref<BioSpecimen[]>([
@@ -866,9 +959,27 @@ const sampleData = ref<BioSpecimen[]>([
   }
 ])
 
-// Filtered data based on active tab
-const filteredData = computed(() => {
-  return sampleData.value.filter(item => item.status === activeTab.value)
+// Filtered data for each section
+const pendingMovementData = computed(() => {
+  return sampleData.value.filter(item => item.status === 'pendingMovement')
+})
+
+const pendingDisposalData = computed(() => {
+  return sampleData.value.filter(item => item.status === 'pendingDisposal')
+})
+
+const completeMovementData = computed(() => {
+  return sampleData.value.filter(item => item.status === 'completeMovement')
+})
+
+const completeDisposalData = computed(() => {
+  return sampleData.value.filter(item => item.status === 'completeDisposal')
+})
+
+// Computed property to get request type based on selected item
+const getRequestType = computed(() => {
+  if (!selectedItem.value) return 'movement'
+  return selectedItem.value.status.includes('Movement') ? 'movement' : 'disposal'
 })
 
 // Modals
@@ -960,7 +1071,6 @@ const closeRejectModal = () => {
 const confirmApprove = () => {
   console.log('Approved item:', selectedItem.value)
   // Add your approval logic here
-  // You might want to update the item status, make an API call, etc.
   closeApproveModal()
 }
 
@@ -968,7 +1078,6 @@ const confirmReject = () => {
   console.log('Rejected item:', selectedItem.value)
   console.log('Rejection reason:', rejectionReason.value)
   // Add your rejection logic here
-  // You might want to update the item status, make an API call, etc.
   closeRejectModal()
 }
 
@@ -989,8 +1098,7 @@ const applyFilters = () => {
 const clearFilters = () => {
   filters.value = {
     status: 'All Status',
-    dateRange1: { from: '', to: '' },
-    dateRange2: { from: '', to: '' }
+    dateRange: { from: '', to: '' }
   }
 }
 
@@ -1003,6 +1111,6 @@ const getInitials = (name: string) => {
 }
 
 definePageMeta({
-    layout: 'dashboard'
+  layout: 'dashboard'
 })
-</script> 
+</script>

@@ -22,7 +22,7 @@
               </svg>
             </div>
             <input id="email" v-model="loginForm.email" type="email" placeholder="Example@email.com"
-              class="custom-input" required />
+              class="custom-input-icons" required />
           </div>
         </div>
 
@@ -36,7 +36,7 @@
               </svg>
             </div>
             <input id="password" v-model="loginForm.password" :type="showPassword ? 'text' : 'password'"
-              placeholder="••••••••••••••••" class="custom-input" required />
+              placeholder="••••••••••••••••" class="custom-input-icons" required />
             <button type="button" @click="showPassword = !showPassword"
               class="absolute inset-y-0 right-0 pr-3 flex items-center">
               <svg v-if="!showPassword" class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor"

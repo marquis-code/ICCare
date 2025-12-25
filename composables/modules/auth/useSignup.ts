@@ -19,6 +19,7 @@ export const useSignup = () => {
     loading.value = true
     try {
       const res = (await auth_api.$_signup(payload)) as any
+      console.log(res, 'response here')
       if (res.type !== "ERROR") {
         router.push('/')
         user.value = res.data

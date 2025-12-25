@@ -153,5 +153,9 @@ input[type=number] {
 }
 
 .custom-input {
+  @apply w-full px-4 pl-4 py-4 text-sm outline-none focus:border focus:border-[#004979] rounded-xl bg-[#1A1A1B09]  focus:bg-white pr-10
+}
+
+.custom-input-icons {
   @apply w-full px-4 pl-10 py-4 text-sm outline-none focus:border focus:border-[#004979] rounded-xl bg-[#1A1A1B09]  focus:bg-white pr-10
 }
