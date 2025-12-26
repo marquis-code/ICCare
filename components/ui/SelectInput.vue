@@ -1,4 +1,4 @@
-  <template>
+<template>
     <div class="mb-2">
       <div class="relative input-container" ref="containerRef">
         <!-- Floating Label -->
@@ -24,7 +24,16 @@
           ]"
         >
           <span class="text-[#1A1A1B]">
-            {{ selectedLabel || placeholder }}
+            <!-- Custom selected label slot -->
+            <slot 
+              v-if="slots['selected-label'] && selectedOption" 
+              name="selected-label" 
+              :option="selectedOption"
+            />
+            <!-- Default selected label -->
+            <template v-else>
+              {{ selectedLabel || placeholder }}
+            </template>
           </span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -71,7 +80,12 @@
               @click="selectOption(option)"
               class="p-3 font-medium hover:bg-gray-25 m-1 rounded-lg cursor-pointer transition-colors text-sm text-[#1A1A1B]"
             >
-              {{ getLabel(option) }}
+              <!-- Custom option slot -->
+              <slot v-if="slots.default" :option="option" :index="index" />
+              <!-- Default option display -->
+              <template v-else>
+                {{ getLabel(option) }}
+              </template>
             </div>
             
             <!-- No results message -->
@@ -105,7 +119,7 @@
   interface Props {
     modelValue?: string | number
     label: string
-    options: Array<string | { label?: string, value?: string, name?: string, code?: string, [key: string]: any }>
+    options?: Array<string | { label?: string, value?: string, name?: string, code?: string, [key: string]: any }>
     placeholder?: string
     disabled?: boolean
     errorMessage?: string
@@ -115,6 +129,7 @@
   }
   const props = withDefaults(defineProps<Props>(), {
     modelValue: '',
+    options: () => [],
     placeholder: '',
     disabled: false,
     errorMessage: '',
@@ -122,6 +137,12 @@
     hasError: false,
     position: 'standalone'
   })
+  
+  // Slots
+  const slots = defineSlots<{
+    default?: (props: { option: any, index: number }) => any
+    'selected-label'?: (props: { option: any }) => any
+  }>()
   
   // Emits
   const emit = defineEmits<{
@@ -190,6 +211,13 @@
       return optValue === props.modelValue
     })
     return found ? getLabel(found) : ''
+  })
+  
+  const selectedOption = computed(() => {
+    return props.options.find((opt) => {
+      const optValue = getValue(opt)
+      return optValue === props.modelValue
+    })
   })
   
   // Filter options based on search query
