@@ -547,79 +547,100 @@
       </main>
     </div>
 
-    <!-- Global Search Modal -->
-    <Teleport to="body">
-      <transition
-        enter-active-class="transition ease-out duration-200"
-        enter-from-class="opacity-0"
-        enter-to-class="opacity-100"
-        leave-active-class="transition ease-in duration-150"
-        leave-from-class="opacity-100"
-        leave-to-class="opacity-0"
-      >
-        <div 
-          v-if="showSearchModal"
-          class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center pt-10 lg:pt-20 px-4"
-          @click.self="showSearchModal = false"
-        >
-          <div class="w-full max-w-2xl bg-[#1a2942] rounded-lg shadow-2xl overflow-hidden">
-            <div class="p-4">
-              <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
-                <input
-                  ref="searchInput"
-                  v-model="searchQuery"
-                  type="text"
-                  placeholder="Search..."
-                  class="block w-full pl-12 pr-20 py-3 bg-[#243447] border-none rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  @keyup.esc="showSearchModal = false"
-                />
-                <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
-                  <span class="text-xs text-gray-400 bg-[#1a2942] px-2 py-1 rounded border border-gray-600">esc</span>
-                </div>
-              </div>
+ <!-- Global Search Modal -->
+<Teleport to="body">
+  <transition
+    enter-active-class="transition ease-out duration-200"
+    enter-from-class="opacity-0"
+    enter-to-class="opacity-100"
+    leave-active-class="transition ease-in duration-150"
+    leave-from-class="opacity-100"
+    leave-to-class="opacity-0"
+  >
+    <div 
+      v-if="showSearchModal"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center pt-10 lg:pt-20 px-4"
+      @click.self="showSearchModal = false"
+    >
+      <div class="w-full max-w-2xl bg-white rounded-lg shadow-2xl overflow-hidden">
+        <!-- Search Input -->
+        <div class="p-4 border-b border-gray-200">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
             </div>
+            <input
+              ref="searchInput"
+              v-model="searchQuery"
+              type="text"
+              placeholder="Search pages, features..."
+              class="block w-full pl-12 pr-20 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-[#005B8F] focus:border-[#005B8F] focus:outline-none"
+              @keyup.esc="showSearchModal = false"
+            />
+            <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
+              <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded border border-gray-300">ESC</span>
+            </div>
+          </div>
+        </div>
 
-            <div class="px-4 pb-4">
-              <h3 class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Application UI</h3>
+        <!-- Search Results -->
+        <div class="max-h-96 overflow-y-auto">
+          <div v-if="filteredSearchResults.length === 0" class="p-8 text-center">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p class="mt-2 text-sm text-gray-600">No results found for "{{ searchQuery }}"</p>
+          </div>
+
+          <div v-else class="p-2">
+            <!-- Group by category -->
+            <div v-for="(items, category) in groupedResults" :key="category" class="mb-4">
+              <h3 class="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                {{ category }}
+              </h3>
               <div class="space-y-1">
-                <NuxtLink
-                  v-for="item in filteredSearchResults"
+                <button
+                  v-for="item in items"
                   :key="item.path"
-                  :to="item.path"
-                  @click="showSearchModal = false"
-                  class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-blue-600 transition-colors group"
-                  :class="{ 'bg-blue-600': item.highlighted }"
+                  @click="navigateToPage(item.path)"
+                  class="w-full flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-[#005B8F]/5 transition-colors group text-left"
                 >
-                  <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center group-hover:bg-blue-500/30">
-                    <component :is="item.icon" class="w-5 h-5 text-blue-400" />
+                  <div class="w-10 h-10 bg-[#005B8F]/10 rounded-lg flex items-center justify-center group-hover:bg-[#005B8F]/20 transition-colors">
+                    <svg class="w-5 h-5 text-[#005B8F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
                   </div>
-                  <div>
-                    <p class="text-sm font-medium text-white">{{ item.category }}</p>
-                    <p class="text-xs text-gray-400">{{ item.title }}</p>
+                  <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-900">{{ item.title }}</p>
+                    <p class="text-xs text-gray-500">{{ item.path }}</p>
                   </div>
-                  <svg class="w-4 h-4 text-gray-400 ml-auto opacity-0 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  <svg class="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                   </svg>
-                </NuxtLink>
-              </div>
-
-              <div class="mt-4 flex items-center justify-end gap-2 text-xs text-gray-400">
-                <span>Search by</span>
-                <svg class="h-4" viewBox="0 0 60 20" fill="none">
-                  <path d="M20 10c0 5.523-4.477 10-10 10S0 15.523 0 10 4.477 0 10 0s10 4.477 10 10z" fill="currentColor"/>
-                  <text x="30" y="15" fill="currentColor" style="font-size: 12px; font-weight: 600;">algolia</text>
-                </svg>
+                </button>
               </div>
             </div>
           </div>
         </div>
-      </transition>
-    </Teleport>
+
+        <!-- Footer -->
+        <div class="p-3 border-t border-gray-200 bg-gray-50">
+          <div class="flex items-center justify-between text-xs text-gray-500">
+            <span>Press ESC to close</span>
+            <div class="flex items-center gap-2">
+              <kbd class="px-2 py-1 bg-white border border-gray-300 rounded text-gray-700">↑↓</kbd>
+              <span>to navigate</span>
+              <kbd class="px-2 py-1 bg-white border border-gray-300 rounded text-gray-700">↵</kbd>
+              <span>to select</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </transition>
+</Teleport>
 
     <!-- Logout Confirmation Modal -->
     <Teleport to="body">
@@ -691,6 +712,76 @@ const mobileMenuOpen = ref(false)
 const searchQuery = ref('')
 const searchInput = ref<HTMLInputElement | null>(null)
 const { user } = useUser()
+
+// Complete list of all navigable pages
+const searchResults = [
+  {
+    path: '/dashboard',
+    category: 'Core Operations',
+    title: 'Dashboard',
+    icon: 'dashboard'
+  },
+  {
+    path: '/biospecimen/attributes',
+    category: 'Biospecimen Management',
+    title: 'Attributes',
+    icon: 'biospecimen'
+  },
+  {
+    path: '/biospecimen/registration',
+    category: 'Biospecimen Management',
+    title: 'Registration',
+    icon: 'biospecimen'
+  },
+  {
+    path: '/biospecimen/tracking',
+    category: 'Biospecimen Management',
+    title: 'Tracking',
+    icon: 'biospecimen'
+  },
+  {
+    path: '/biospecimen/bulk-upload',
+    category: 'Biospecimen Management',
+    title: 'Bulk Upload',
+    icon: 'biospecimen'
+  },
+  {
+    path: '/user-management/manage-user',
+    category: 'User Management',
+    title: 'Manage User',
+    icon: 'users'
+  },
+  {
+    path: '/user-management/manage-role',
+    category: 'User Management',
+    title: 'Manage Role',
+    icon: 'users'
+  },
+  {
+    path: '/reports',
+    category: 'Core Operations',
+    title: 'Reporting',
+    icon: 'reports'
+  },
+  {
+    path: '/activity-log',
+    category: 'Core Operations',
+    title: 'Activity Log',
+    icon: 'activity'
+  },
+  {
+    path: '/notification',
+    category: 'Core Operations',
+    title: 'Notifications',
+    icon: 'notification'
+  },
+  {
+    path: '/profile',
+    category: 'User',
+    title: 'Profile',
+    icon: 'profile'
+  }
+]
 // Sample notifications
 const notifications = ref([
   {
@@ -748,35 +839,65 @@ const toggleUserManagement = () => {  // Add this function
   userManagementOpen.value = !userManagementOpen.value
 }
 
-// Search results data
-const searchResults = [
-  {
-    path: '/dashboard',
-    category: 'Data Display',
-    title: 'Description Lists',
-    highlighted: true
-  },
-  {
-    path: '/reports',
-    category: 'Data Display',
-    title: 'Stats'
-  },
-  {
-    path: '/biospecimen-tracking',
-    category: 'Data Display',
-    title: 'Calendars'
-  }
-]
+// // Search results data
+// const searchResults = [
+//   {
+//     path: '/dashboard',
+//     category: 'Data Display',
+//     title: 'Description Lists',
+//     highlighted: true
+//   },
+//   {
+//     path: '/reports',
+//     category: 'Data Display',
+//     title: 'Stats'
+//   },
+//   {
+//     path: '/biospecimen-tracking',
+//     category: 'Data Display',
+//     title: 'Calendars'
+//   }
+// ]
 
+// const filteredSearchResults = computed(() => {
+//   if (!searchQuery.value) return searchResults
+  
+//   const query = searchQuery.value.toLowerCase()
+//   return searchResults.filter(item => 
+//     item.title.toLowerCase().includes(query) || 
+//     item.category.toLowerCase().includes(query)
+//   )
+// })
+
+// Filter results based on search query
 const filteredSearchResults = computed(() => {
   if (!searchQuery.value) return searchResults
   
   const query = searchQuery.value.toLowerCase()
   return searchResults.filter(item => 
     item.title.toLowerCase().includes(query) || 
-    item.category.toLowerCase().includes(query)
+    item.category.toLowerCase().includes(query) ||
+    item.path.toLowerCase().includes(query)
   )
 })
+
+// Group results by category
+const groupedResults = computed(() => {
+  const grouped: Record<string, typeof searchResults> = {}
+  filteredSearchResults.value.forEach(item => {
+    if (!grouped[item.category]) {
+      grouped[item.category] = []
+    }
+    grouped[item.category].push(item)
+  })
+  return grouped
+})
+
+const navigateToPage = async (path: string) => {
+  await navigateTo(path)
+  showSearchModal.value = false
+  searchQuery.value = ''
+}
 
 const isActiveRoute = (path: string) => {
   // Check if current route starts with the given path

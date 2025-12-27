@@ -27,6 +27,7 @@ interface _GlobalComponents {
     'DateRangePicker': typeof import("../components/DateRangePicker.vue")['default']
     'DetailModal': typeof import("../components/DetailModal.vue")['default']
     'EmptyState': typeof import("../components/EmptyState.vue")['default']
+    'GlobalSearch': typeof import("../components/GlobalSearch.vue")['default']
     'LoadingSpinner': typeof import("../components/LoadingSpinner.vue")['default']
     'MultiSelect': typeof import("../components/MultiSelect.vue")['default']
     'NotificationDetail': typeof import("../components/NotificationDetail.vue")['default']
@@ -92,6 +93,7 @@ interface _GlobalComponents {
     'LazyDateRangePicker': LazyComponent<typeof import("../components/DateRangePicker.vue")['default']>
     'LazyDetailModal': LazyComponent<typeof import("../components/DetailModal.vue")['default']>
     'LazyEmptyState': LazyComponent<typeof import("../components/EmptyState.vue")['default']>
+    'LazyGlobalSearch': LazyComponent<typeof import("../components/GlobalSearch.vue")['default']>
     'LazyLoadingSpinner': LazyComponent<typeof import("../components/LoadingSpinner.vue")['default']>
     'LazyMultiSelect': LazyComponent<typeof import("../components/MultiSelect.vue")['default']>
     'LazyNotificationDetail': LazyComponent<typeof import("../components/NotificationDetail.vue")['default']>
@@ -163,6 +165,7 @@ export const DatePickerInput: typeof import("../components/DatePickerInput.vue")
 export const DateRangePicker: typeof import("../components/DateRangePicker.vue")['default']
 export const DetailModal: typeof import("../components/DetailModal.vue")['default']
 export const EmptyState: typeof import("../components/EmptyState.vue")['default']
+export const GlobalSearch: typeof import("../components/GlobalSearch.vue")['default']
 export const LoadingSpinner: typeof import("../components/LoadingSpinner.vue")['default']
 export const MultiSelect: typeof import("../components/MultiSelect.vue")['default']
 export const NotificationDetail: typeof import("../components/NotificationDetail.vue")['default']
@@ -228,6 +231,7 @@ export const LazyDatePickerInput: LazyComponent<typeof import("../components/Dat
 export const LazyDateRangePicker: LazyComponent<typeof import("../components/DateRangePicker.vue")['default']>
 export const LazyDetailModal: LazyComponent<typeof import("../components/DetailModal.vue")['default']>
 export const LazyEmptyState: LazyComponent<typeof import("../components/EmptyState.vue")['default']>
+export const LazyGlobalSearch: LazyComponent<typeof import("../components/GlobalSearch.vue")['default']>
 export const LazyLoadingSpinner: LazyComponent<typeof import("../components/LoadingSpinner.vue")['default']>
 export const LazyMultiSelect: LazyComponent<typeof import("../components/MultiSelect.vue")['default']>
 export const LazyNotificationDetail: LazyComponent<typeof import("../components/NotificationDetail.vue")['default']>

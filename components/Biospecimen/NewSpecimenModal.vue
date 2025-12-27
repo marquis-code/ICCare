@@ -1298,18 +1298,38 @@ const close = () => {
     emit('update:modelValue', false);
   }
 };
+
 const save = async () => {
   if (!validateStep(currentStep.value)) {
     return;
   }
   formData.value.storage_location.site = formData.value.site_id;
+  
+  // Convert 12-hour format time to 24-hour format (HH:mm:ss)
+  const convertTo24Hour = (time12h) => {
+    if (!time12h) return null;
+    
+    const [time, modifier] = time12h.split(' ');
+    let [hours, minutes] = time.split(':');
+    
+    if (hours === '12') {
+      hours = '00';
+    }
+    
+    if (modifier === 'PM') {
+      hours = parseInt(hours, 10) + 12;
+    }
+    
+    return `${hours.toString().padStart(2, '0')}:${minutes}:00`;
+  };
+  
   const payload = {
     site_id: formData.value.site_id,
     sample_category_id: formData.value.sample_category_id,
     sample_serial_no: formData.value.sample_serial_no,
     sample_label: formData.value.sample_label,
     collection_date: formData.value.collection_date,
-    collection_time: formData.value.collection_time,
+    collection_time: convertTo24Hour(formData.value.collection_time),
     researcher_info: formData.value.researcher_info,
     field_collector_info: formData.value.field_collector_info,
     storage_location: {
@@ -1338,6 +1358,46 @@ const save = async () => {
     emit('update:modelValue', false);
   }
 };
+// const save = async () => {
+//   if (!validateStep(currentStep.value)) {
+//     return;
+//   }
+//   formData.value.storage_location.site = formData.value.site_id;
+//   const payload = {
+//     site_id: formData.value.site_id,
+//     sample_category_id: formData.value.sample_category_id,
+//     sample_serial_no: formData.value.sample_serial_no,
+//     sample_label: formData.value.sample_label,
+//     collection_date: formData.value.collection_date,
+//     collection_time: formData.value.collection_time,
+//     researcher_info: formData.value.researcher_info,
+//     field_collector_info: formData.value.field_collector_info,
+//     storage_location: {
+//       site: formData.value.storage_location.site,
+//       freezer: formData.value.storage_location.freezer,
+//       rack: formData.value.storage_location.rack,
+//       box: formData.value.storage_location.box,
+//       position: formData.value.storage_location.position
+//     },
+//     free_fields: formData.value.free_fields,
+//     files: uploadedFiles.value.map(f => ({
+//       name: f.name,
+//       size: f.size,
+//       type: f.type,
+//       data: f.file,
+//       url: f.url,
+//       isUrl: f.isUrl
+//     })),
+//     ...(isEditMode.value && props.editData?.uuid ? { uuid: props.editData.uuid } : {})
+//   };
+//   const result = await registerSample(payload);
+//   if (result) {
+//     emit('saved', { ...result, isEdit: isEditMode.value });
+//     currentStep.value = 1;
+//     resetForm();
+//     emit('update:modelValue', false);
+//   }
+// };
 </script>
 <style scoped>
 /* Modal animations */
