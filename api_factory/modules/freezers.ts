@@ -7,21 +7,22 @@ export const freezers_api = {
     freezer_name: string
     site_id: string
     temperature: string
-    capacity: number
-    description: string
+    manufacturer: string
+    model: string
+    serial_number: string
   }) => {
-    return GATEWAY_ENDPOINT.post('/attributes/freezers/', payload)
+    return GATEWAY_ENDPOINT.post('/biospecimen/attributes/freezers/', payload)
   },
 
   // Get all freezers (optionally filtered by site)
   $_get_freezers: (site_id?: string, active_only: boolean = true) => {
     const params: any = { active_only }
     if (site_id) params.site_id = site_id
-    return GATEWAY_ENDPOINT.get('/attributes/freezers/', { params })
+    return GATEWAY_ENDPOINT.get('/biospecimen/attributes/freezers/', { params })
   },
 
   // Get a specific freezer by ID
   $_get_freezer: (freezer_id: string) => {
-    return GATEWAY_ENDPOINT.get(`/attributes/freezers/${freezer_id}`)
+    return GATEWAY_ENDPOINT.get(`/biospecimen/attributes/freezers/${freezer_id}`)
   }
 }

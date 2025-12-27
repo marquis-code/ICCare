@@ -7,13 +7,13 @@ export const useGetCategories = () => {
   const categories = ref<any[]>([])
   const { showToast } = useCustomToast()
 
-  const getCategories = async (active_only: boolean = true) => {
+  const getCategories = async (active_only: boolean = false) => {
     loading.value = true
     try {
       const res = (await categories_api.$_get_categories(active_only)) as any
       if (res.type !== "ERROR") {
-        categories.value = res.data
-        return res.data
+        categories.value = res.data.categories
+        return res.data.categories
       } else {
         const errorMsg = res?.data?.detail?.[0]?.msg || res?.data?.error || "Failed to fetch categories"
         showToast({

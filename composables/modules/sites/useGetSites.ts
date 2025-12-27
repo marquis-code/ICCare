@@ -7,13 +7,13 @@ export const useGetSites = () => {
   const sites = ref<any[]>([])
   const { showToast } = useCustomToast()
 
-  const getSites = async (active_only: boolean = true) => {
+  const getSites = async (active_only: boolean = false) => {
     loading.value = true
     try {
       const res = (await sites_api.$_get_sites(active_only)) as any
       if (res.type !== "ERROR") {
-        sites.value = res.data
-        return res.data
+        sites.value = res?.data?.sites
+        return res?.data?.sites
       } else {
         const errorMsg = res?.data?.detail?.[0]?.msg || res?.data?.error || "Failed to fetch sites"
         showToast({

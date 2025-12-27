@@ -2,15 +2,15 @@
   <div class="min-h-screen">
     <div class="flex">
       <!-- Header -->
-       <main class="mx-auto max-w-7xl">
+       <main class="mx-auto container">
       <div class="mb-6">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <h1 class="text-2xl font-bold text-gray-900">BioSpecimen Tracking</h1>
+          <h1 class="text-xl font-bold text-gray-900">BioSpecimen Tracking</h1>
           
           <div class="flex flex-wrap gap-2">
             <button
               @click="openRequestMovementModal"
-              class="px-4 py-6 bg-[#005B8F] text-white rounded hover:bg-[#004a73] transition flex items-center gap-2 text-sm"
+              class="px-4 py-3 bg-[#005B8F] text-white rounded hover:bg-[#004a73] transition flex items-center gap-2 text-sm"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -19,7 +19,7 @@
             </button>
             <button
               @click="openRequestDisposalModal"
-              class="px-4 py-6 bg-[#005B8F] text-white rounded hover:bg-[#004a73] transition flex items-center gap-2 text-sm"
+              class="px-4 py-3 bg-[#005B8F] text-white rounded hover:bg-[#004a73] transition flex items-center gap-2 text-sm"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -45,13 +45,15 @@
         <div class="space-x-6">
             <button
               @click="applyFilters"
-              class="flex-1 px-4 py-2 bg-[#005B8F] text-white rounded hover:bg-[#004a73] transition text-sm font-medium"
+              :disabled="isLoadingAnyData"
+              class="flex-1 px-4 py-2 bg-[#005B8F] text-white rounded hover:bg-[#004a73] transition text-sm font-medium disabled:opacity-50"
             >
-              Search
+              {{ isLoadingAnyData ? 'Loading...' : 'Search' }}
             </button>
             <button
               @click="clearFilters"
-              class="px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition text-sm font-medium"
+              :disabled="isLoadingAnyData"
+              class="px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition text-sm font-medium disabled:opacity-50"
             >
               Clear Filter
             </button>
@@ -70,7 +72,16 @@
         </div>
 
         <div class="overflow-x-auto">
-          <table class="w-full min-w-max">
+          <div v-if="loadingPendingTracking" class="flex items-center justify-center py-8">
+            <svg class="animate-spin h-8 w-8 text-[#005B8F]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </div>
+          <div v-else-if="pendingMovementData.length === 0" class="px-6 py-8 text-center text-gray-500">
+            No pending movement requests
+          </div>
+          <table v-else class="w-full min-w-max">
             <thead class="bg-gray-50">
               <tr>
                 <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Sample ID</th>
@@ -107,13 +118,13 @@
                 <td class="px-4 py-4 text-sm">
                   <div class="flex gap-2">
                     <button 
-                      @click="openRejectModal(item)"
+                      @click="openRejectModal(item, 'tracking')"
                       class="px-3 py-1 text-xs border border-red-300 text-red-600 rounded hover:bg-red-50 transition"
                     >
                       Reject
                     </button>
                     <button 
-                      @click="openApproveModal(item)"
+                      @click="openApproveModal(item, 'tracking')"
                       class="px-3 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200 transition"
                     >
                       Approve
@@ -138,7 +149,16 @@
         </div>
 
         <div class="overflow-x-auto">
-          <table class="w-full min-w-max">
+          <div v-if="loadingPendingDisposal" class="flex items-center justify-center py-8">
+            <svg class="animate-spin h-8 w-8 text-[#005B8F]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </div>
+          <div v-else-if="pendingDisposalData.length === 0" class="px-6 py-8 text-center text-gray-500">
+            No pending disposal requests
+          </div>
+          <table v-else class="w-full min-w-max">
             <thead class="bg-gray-50">
               <tr>
                 <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Sample ID</th>
@@ -177,13 +197,13 @@
                 <td class="px-4 py-4 text-sm">
                   <div class="flex gap-2">
                     <button 
-                      @click="openRejectModal(item)"
+                      @click="openRejectModal(item, 'disposal')"
                       class="px-3 py-1 text-xs border border-red-300 text-red-600 rounded hover:bg-red-50 transition"
                     >
                       Reject
                     </button>
                     <button 
-                      @click="openApproveModal(item)"
+                      @click="openApproveModal(item, 'disposal')"
                       class="px-3 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200 transition"
                     >
                       Approve
@@ -208,7 +228,16 @@
         </div>
 
         <div class="overflow-x-auto">
-          <table class="w-full min-w-max">
+          <div v-if="loadingCompletedTracking" class="flex items-center justify-center py-8">
+            <svg class="animate-spin h-8 w-8 text-[#005B8F]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </div>
+          <div v-else-if="completeMovementData.length === 0" class="px-6 py-8 text-center text-gray-500">
+            No completed movement requests
+          </div>
+          <table v-else class="w-full min-w-max">
             <thead class="bg-gray-50">
               <tr>
                 <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Sample ID</th>
@@ -249,9 +278,10 @@
                   <span 
                     :class="[
                       'px-3 py-1 rounded-full text-xs font-medium',
-                      item.completionStatus === 'Confirmed' ? 'bg-green-100 text-green-700' :
-                      item.completionStatus === 'Moved' ? 'bg-blue-100 text-blue-700' :
-                      item.completionStatus === 'Approved' ? 'bg-orange-100 text-orange-700' :
+                      item.completionStatus === 'Confirmed' || item.completionStatus === 'confirmed' ? 'bg-green-100 text-green-700' :
+                      item.completionStatus === 'Moved' || item.completionStatus === 'moved' ? 'bg-blue-100 text-blue-700' :
+                      item.completionStatus === 'Approved' || item.completionStatus === 'approved' ? 'bg-orange-100 text-orange-700' :
+                      item.completionStatus === 'completed' ? 'bg-green-100 text-green-700' :
                       'bg-gray-100 text-gray-700'
                     ]"
                   >
@@ -260,7 +290,7 @@
                 </td>
                 <td class="px-4 py-4 text-sm">
                   <button 
-                    @click="openViewDetailsModal(item)"
+                    @click="openViewDetailsModal(item, 'tracking')"
                     class="p-2 hover:bg-gray-100 rounded transition"
                   >
                     <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
@@ -287,7 +317,16 @@
         </div>
 
         <div class="overflow-x-auto">
-          <table class="w-full min-w-max">
+          <div v-if="loadingCompletedDisposal" class="flex items-center justify-center py-8">
+            <svg class="animate-spin h-8 w-8 text-[#005B8F]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </div>
+          <div v-else-if="completeDisposalData.length === 0" class="px-6 py-8 text-center text-gray-500">
+            No completed disposal requests
+          </div>
+          <table v-else class="w-full min-w-max">
             <thead class="bg-gray-50">
               <tr>
                 <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Sample ID</th>
@@ -328,9 +367,10 @@
                   <span 
                     :class="[
                       'px-3 py-1 rounded-full text-xs font-medium',
-                      item.completionStatus === 'Confirmed' ? 'bg-green-100 text-green-700' :
-                      item.completionStatus === 'Moved' ? 'bg-blue-100 text-blue-700' :
-                      item.completionStatus === 'Approved' ? 'bg-orange-100 text-orange-700' :
+                      item.completionStatus === 'Confirmed' || item.completionStatus === 'confirmed' ? 'bg-green-100 text-green-700' :
+                      item.completionStatus === 'Moved' || item.completionStatus === 'moved' ? 'bg-blue-100 text-blue-700' :
+                      item.completionStatus === 'Approved' || item.completionStatus === 'approved' ? 'bg-orange-100 text-orange-700' :
+                      item.completionStatus === 'completed' ? 'bg-green-100 text-green-700' :
                       'bg-gray-100 text-gray-700'
                     ]"
                   >
@@ -339,7 +379,7 @@
                 </td>
                 <td class="px-4 py-4 text-sm">
                   <button 
-                    @click="openViewDetailsModal(item)"
+                    @click="openViewDetailsModal(item, 'disposal')"
                     class="p-2 hover:bg-gray-100 rounded transition"
                   >
                     <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
@@ -363,7 +403,7 @@
         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
         @click.self="closeRequestMovementModal"
       >
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
           <div class="p-6">
             <div class="flex items-center gap-2 mb-6">
               <svg class="w-6 h-6 text-[#005B8F]" fill="currentColor" viewBox="0 0 20 20">
@@ -372,66 +412,187 @@
               <h2 class="text-xl font-bold text-gray-900">Request Movement</h2>
             </div>
 
-            <div class="space-y-4">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <UiAnimatedInput
-                  label="Sample ID"
-                    v-model="movementForm.sampleId"
-                    type="text"
-                  />
-                </div>
+            <div class="space-y-6">
+              <!-- Sample and Request Info -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <UiSelectInput 
+    :options="samples" 
+    label="Sample UUID" 
+    v-model="movementForm.sample_uuid"
+  >
+    <!-- Custom option display in dropdown -->
+    <template #default="{ option }">
+      <div class="flex flex-col">
+        <span class="font-medium">{{ option.sample_label }}</span>
+        <span class="text-xs text-gray-500">UUID: {{ option.uuid }}</span>
+      </div>
+    </template>
+    
+    <!-- Custom selected label display -->
+    <template #selected-label="{ option }">
+      {{ option.sample_label }}
+    </template>
+  </UiSelectInput>
 
-                <div>
-                  <UiAnimatedInput
-                   label="Requested By"
-                    v-model="movementForm.requestedBy"
-                    type="text"
-                  />
-                </div>
-              </div>
-
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <UiSelectInput v-model="movementForm.destinationLocation" :options="locationOptions" label="Destination Location" />
-                </div>
-
-                <div>
-                  <UiSelectInput v-model="movementForm.sourceLocation" label="Source Location" :options="locationOptions" />
-                </div>
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Requested Date</label>
                 <UiAnimatedInput
-                  v-model="movementForm.requestedDate"
-                  type="date"
+                  label="Requested By"
+                  v-model="movementForm.request_by"
+                  type="text"
+                />
+                <UiSelectInput 
+                  v-model="movementForm.movement_type" 
+                  :options="['transfer', 'immediate', 'temporary']" 
+                  label="Movement Type" 
                 />
               </div>
 
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                <textarea
-                  v-model="movementForm.description"
-                  rows="4"
-                  placeholder="sample input but not"
-                  class="custom-input"
-                ></textarea>
+              <!-- Source Location -->
+              <div class="border-t pt-4">
+                <h3 class="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wide">Source Location</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <UiSelectInput 
+                    v-model="movementForm.source_site" 
+                    :options="siteOptions" 
+                    label="Site" 
+                  />
+                  <UiSelectInput 
+                    v-model="movementForm.source_freezer" 
+                    :options="freezerOptions" 
+                    label="Freezer" 
+                  />
+                  <UiSelectInput 
+                    v-model="movementForm.source_rack" 
+                    :options="rackOptions" 
+                    label="Rack" 
+                  />
+                  <UiSelectInput 
+                    v-model="movementForm.source_box" 
+                    :options="boxOptions" 
+                    label="Box" 
+                  />
+                  <UiAnimatedInput
+                    label="Position"
+                    v-model="movementForm.source_position"
+                    type="number"
+                  />
+                </div>
+              </div>
+
+              <!-- Destination Location -->
+              <div class="border-t pt-4">
+                <h3 class="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wide">Destination Location</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <UiSelectInput 
+                    v-model="movementForm.destination_site" 
+                    :options="siteOptions" 
+                    label="Site" 
+                  />
+                  <UiSelectInput 
+                    v-model="movementForm.destination_freezer" 
+                    :options="freezerOptions" 
+                    label="Freezer" 
+                  />
+                  <UiSelectInput 
+                    v-model="movementForm.destination_rack" 
+                    :options="rackOptions" 
+                    label="Rack" 
+                  />
+                  <UiSelectInput 
+                    v-model="movementForm.destination_box" 
+                    :options="boxOptions" 
+                    label="Box" 
+                  />
+                  <UiAnimatedInput
+                    label="Position"
+                    v-model="movementForm.destination_position"
+                    type="number"
+                  />
+                </div>
+              </div>
+
+              <!-- Dates and Time -->
+              <div class="border-t pt-4">
+                <h3 class="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wide">Schedule</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <UiAnimatedInput
+                    v-model="movementForm.reservation_time"
+                    type="datetime-local"
+                    label="Reservation Time"
+                  />
+                  <UiAnimatedInput
+                    v-model="movementForm.start_date_time"
+                    type="datetime-local"
+                    label="Start Date & Time"
+                  />
+                  <UiAnimatedInput
+                    v-model="movementForm.end_date_time"
+                    type="datetime-local"
+                    label="End Date & Time"
+                  />
+                </div>
+              </div>
+
+              <!-- Approvers -->
+              <div class="border-t pt-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Approved By (Optional)</label>
+                <div class="flex gap-2">
+                  <UiAnimatedInput
+                    v-model="approverInput"
+                    type="text"
+                    label="Add Approver"
+                    @keyup.enter="addApprover"
+                  />
+                  <button
+                    @click="addApprover"
+                    type="button"
+                    class="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition text-sm"
+                  >
+                    Add
+                  </button>
+                </div>
+                <div v-if="movementForm.approved_by.length > 0" class="mt-2 flex flex-wrap gap-2">
+                  <span
+                    v-for="(approver, index) in movementForm.approved_by"
+                    :key="index"
+                    class="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm"
+                  >
+                    {{ approver }}
+                    <button
+                      @click="removeApprover(index)"
+                      type="button"
+                      class="hover:text-blue-900"
+                    >
+                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                      </svg>
+                    </button>
+                  </span>
+                </div>
               </div>
             </div>
 
             <div class="flex justify-end gap-3 mt-6">
               <button
                 @click="closeRequestMovementModal"
-                class="px-6 py-3 border border-gray-300 text-sm text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                type="button"
+                :disabled="trackingSample"
+                class="px-6 py-3 border border-gray-300 text-sm text-gray-700 rounded-lg hover:bg-gray-50 transition disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 @click="submitMovementRequest"
-                class="px-6 py-3 bg-[#005B8F] text-sm text-white rounded-lg hover:bg-[#004a73] transition"
+                type="button"
+                :disabled="trackingSample"
+                class="px-6 py-3 bg-[#005B8F] text-sm text-white rounded-lg hover:bg-[#004a73] transition disabled:opacity-50 flex items-center gap-2"
               >
-                Request Movement
+                <span v-if="trackingSample">
+                  <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </span>
+                <span>{{ trackingSample ? 'Processing...' : 'Request Movement' }}</span>
               </button>
             </div>
           </div>
@@ -446,7 +607,7 @@
         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
         @click.self="closeRequestDisposalModal"
       >
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl">
           <div class="p-6">
             <div class="flex items-center gap-2 mb-6">
               <svg class="w-6 h-6 text-[#005B8F]" fill="currentColor" viewBox="0 0 20 20">
@@ -456,53 +617,85 @@
             </div>
 
             <div class="space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <UiSelectInput 
+    :options="samples" 
+    label="Sample UUID" 
+    v-model="disposalForm.sample_uuid"
+  >
+    <!-- Custom option display in dropdown -->
+    <template #default="{ option }">
+      <div class="flex flex-col">
+        <span class="font-medium">{{ option.sample_label }}</span>
+        <span class="text-xs text-gray-500">UUID: {{ option.uuid }}</span>
+      </div>
+    </template>
+    
+    <!-- Custom selected label display -->
+    <template #selected-label="{ option }">
+      {{ option.sample_label }}
+    </template>
+  </UiSelectInput>
+                <UiAnimatedInput
+                  label="Requested By"
+                  v-model="disposalForm.request_by"
+                  type="text"
+                />
+              </div>
+
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Disposal Reasons</label>
+                <UiAnimatedInput
+                  label="Approved By"
+                  v-model="disposalForm.approved_by"
+                  type="text"
+                />
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Reason for Disposal</label>
                 <textarea
-                  v-model="disposalForm.reasons"
-                  rows="3"
-                  placeholder="sample input but not"
+                  v-model="disposalForm.reason_for_disposal"
+                  rows="4"
+                  placeholder="Enter the reason for disposal..."
                   class="custom-input"
                 ></textarea>
               </div>
 
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <UiSelectInput label="Disposal Method" :options="disposalMethodOptions" v-model="disposalForm.method" />
-                </div>
-
-                <div>
-                  <UiAnimatedInput
-                    v-model="disposalForm.requestedBy"
-                    type="text"
-                    label="Requested By"
-
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Disposal Date</label>
-                <UiAnimatedInput
-                  v-model="disposalForm.date"
-                  type="date"
-                  label="Disposal Date"
+              <div class="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="mark-disposed"
+                  v-model="disposalForm.mark_as_disposed"
+                  class="custom-checkbox"
                 />
+                <label for="mark-disposed" class="text-sm font-medium text-gray-700">
+                  Mark as Disposed (uncheck to only record usage)
+                </label>
               </div>
             </div>
 
             <div class="flex justify-end gap-3 mt-6">
               <button
                 @click="closeRequestDisposalModal"
-                class="px-6 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition"
+                type="button"
+                :disabled="loading"
+                class="px-6 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 @click="submitDisposalRequest"
-                class="px-6 py-2 bg-[#005B8F] text-white rounded hover:bg-[#004a73] transition"
+                type="button"
+                :disabled="loading"
+                class="px-6 py-2 bg-[#005B8F] text-white rounded hover:bg-[#004a73] transition disabled:opacity-50 flex items-center gap-2"
               >
-                Dispose BioSample
+                <span v-if="loading">
+                  <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </span>
+                <span>{{ loading ? 'Processing...' : (disposalForm.mark_as_disposed ? 'Dispose BioSample' : 'Record Usage') }}</span>
               </button>
             </div>
           </div>
@@ -528,8 +721,8 @@
                   </svg>
                 </div>
                 <div>
-                  <h2 class="text-xl font-bold text-gray-900">Movement Details</h2>
-                  <p class="text-sm text-gray-500">Complete information about the specimen movement</p>
+                  <h2 class="text-xl font-bold text-gray-900">{{ selectedType === 'tracking' ? 'Movement' : 'Disposal' }} Details</h2>
+                  <p class="text-sm text-gray-500">Complete information about the specimen {{ selectedType }}</p>
                 </div>
               </div>
               <button
@@ -555,9 +748,10 @@
                     <span 
                       :class="[
                         'inline-block px-3 py-1 rounded-full text-xs font-medium',
-                        selectedItem.completionStatus === 'Confirmed' ? 'bg-green-100 text-green-700' :
-                        selectedItem.completionStatus === 'Moved' ? 'bg-blue-100 text-blue-700' :
-                        selectedItem.completionStatus === 'Approved' ? 'bg-orange-100 text-orange-700' :
+                        selectedItem.completionStatus === 'Confirmed' || selectedItem.completionStatus === 'confirmed' ? 'bg-green-100 text-green-700' :
+                        selectedItem.completionStatus === 'Moved' || selectedItem.completionStatus === 'moved' ? 'bg-blue-100 text-blue-700' :
+                        selectedItem.completionStatus === 'Approved' || selectedItem.completionStatus === 'approved' ? 'bg-orange-100 text-orange-700' :
+                        selectedItem.completionStatus === 'completed' ? 'bg-green-100 text-green-700' :
                         'bg-gray-100 text-gray-700'
                       ]"
                     >
@@ -690,15 +884,23 @@
             <div class="flex gap-3">
               <button
                 @click="closeApproveModal"
-                class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
+                :disabled="loadingApproveTracking || loadingApproveDisposal"
+                class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 @click="confirmApprove"
-                class="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium"
+                :disabled="loadingApproveTracking || loadingApproveDisposal"
+                class="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                Approve
+                <span v-if="loadingApproveTracking || loadingApproveDisposal">
+                  <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </span>
+                <span>{{ (loadingApproveTracking || loadingApproveDisposal) ? 'Processing...' : 'Approve' }}</span>
               </button>
             </div>
           </div>
@@ -756,15 +958,23 @@
             <div class="flex gap-3">
               <button
                 @click="closeRejectModal"
-                class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
+                :disabled="loadingRejectTracking || loadingRejectDisposal"
+                class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 @click="confirmReject"
-                class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium"
+                :disabled="loadingRejectTracking || loadingRejectDisposal || !rejectionReason.trim()"
+                class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                Reject
+                <span v-if="loadingRejectTracking || loadingRejectDisposal">
+                  <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </span>
+                <span>{{ (loadingRejectTracking || loadingRejectDisposal) ? 'Processing...' : 'Reject' }}</span>
               </button>
             </div>
           </div>
@@ -775,7 +985,43 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useTrackSample } from "@/composables/modules/biosample/useTrackSample"
+import { useDisposeSample } from "@/composables/modules/biosample/useDisposeSample"
+import { useGetSites } from '@/composables/modules/sites/useGetSites'
+import { useGetFreezers } from '@/composables/modules/freezer/useGetFreezers'
+import { useGetRacks } from '@/composables/modules/racks/useGetRacks'
+import { useGetBoxes } from '@/composables/modules/box/useGetBoxes'
+import { useGetAllSamples } from "@/composables/modules/biosample/useGetAllSamples"
+import { useApproveDisposalRequest } from '@/composables/modules/dispose/useApproveDisposalRequest'
+import { useRejectDisposalRequest } from '@/composables/modules/dispose/useRejectDisposalRequest'
+import { useGetPendingDisposalRequests } from '@/composables/modules/dispose/useGetPendingDisposalRequests'
+import { useGetCompletedDisposalRequests } from '@/composables/modules/dispose/useGetCompletedDisposalRequests'
+import { useApproveTrackingRequest } from '@/composables/modules/track/useApproveTrackingRequest'
+import { useRejectTrackingRequest } from '@/composables/modules/track/useRejectTrackingRequest'
+import { useGetPendingTrackingRequests } from '@/composables/modules/track/useGetPendingTrackingRequests'
+import { useGetCompletedTrackingRequests } from '@/composables/modules/track/useGetCompletedTrackingRequests'
+
+// Tracking composables
+const { loading: loadingApproveTracking, approveTrackingRequest } = useApproveTrackingRequest()
+const { loading: loadingRejectTracking, rejectTrackingRequest } = useRejectTrackingRequest()
+const { loading: loadingPendingTracking, pendingRequests: pendingTrackingRequests, getPendingTrackingRequests } = useGetPendingTrackingRequests()
+const { loading: loadingCompletedTracking, completedRequests: completedTrackingRequests, getCompletedTrackingRequests } = useGetCompletedTrackingRequests()
+
+// Disposal composables
+const { loading: loadingApproveDisposal, approveDisposalRequest } = useApproveDisposalRequest()
+const { loading: loadingRejectDisposal, rejectDisposalRequest } = useRejectDisposalRequest()
+const { loading: loadingPendingDisposal, pendingRequests: pendingDisposalRequests, getPendingDisposalRequests } = useGetPendingDisposalRequests()
+const { loading: loadingCompletedDisposal, completedRequests: completedDisposalRequests, getCompletedDisposalRequests } = useGetCompletedDisposalRequests()
+
+// Other composables
+const { loading: trackingSample, trackingData, trackSample } = useTrackSample()
+const { loading, disposeSample } = useDisposeSample()
+const { loading: loadingSites, sites, getSites } = useGetSites()
+const { loading: loadingRacks, racks, getRacks } = useGetRacks()
+const { loading: loadingFreezers, freezers, getFreezers } = useGetFreezers()
+const { loading: loadingBoxes, boxes, getBoxes } = useGetBoxes()
+const { samples, loading: fetchingSamples } = useGetAllSamples()
 
 interface DateRange {
   from: string
@@ -792,8 +1038,11 @@ interface BioSpecimen {
   requestedBy: string
   status: 'pendingMovement' | 'pendingDisposal' | 'completeMovement' | 'completeDisposal'
   description?: string
-  completionStatus?: 'Confirmed' | 'Moved' | 'Approved'
+  completionStatus?: 'Confirmed' | 'Moved' | 'Approved' | 'pending' | 'completed' | 'approved' | 'rejected' | 'confirmed' | 'moved'
+  request_id?: string
 }
+
+const selectedType = ref<'tracking' | 'disposal'>('tracking')
 
 // Filters
 const filters = ref({
@@ -809,177 +1058,117 @@ const statusOptions = ref([
   'Complete Disposal'
 ])
 
-const locationOptions = ref([
-  'Freezer 9-156, Rack 1A',
-  'Freezer 9-201, Rack 2-B',
-  'Freezer 8-105, Rack 3C',
-  'Cold Storage Unit 5'
-])
+// Helper functions
+const formatDate = (dateString: string) => {
+  if (!dateString) return 'N/A'
+  const date = new Date(dateString)
+  return date.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+}
 
-const disposalMethodOptions = ref([
-  'Incineration',
-  'Autoclaving',
-  'Chemical Treatment',
-  'Biohazard Disposal'
-])
+const formatLocation = (location: any) => {
+  if (!location) return 'N/A'
+  if (typeof location === 'string') return location
+  
+  const parts = []
+  if (location.site) parts.push(`Site: ${location.site}`)
+  if (location.freezer) parts.push(`Freezer: ${location.freezer}`)
+  if (location.rack) parts.push(`Rack: ${location.rack}`)
+  if (location.box) parts.push(`Box: ${location.box}`)
+  if (location.position) parts.push(`Pos: ${location.position}`)
+  
+  return parts.length > 0 ? parts.join(', ') : 'N/A'
+}
 
-// Sample data
-const sampleData = ref<BioSpecimen[]>([
-  {
-    id: '1',
-    sampleId: 'MH-12343023',
-    sourceLocation: 'Freezer 9-156, Rack 1A',
-    destinationLocation: 'Freezer A-201, Rack 2-B',
-    requestedDate: 'Jan 15, 2024, 09:30 AM',
-    approvedDate: 'Jan 15, 2024, 09:30 AM',
-    requestedBy: 'John Ramirez',
-    status: 'pendingMovement'
-  },
-  {
-    id: '2',
-    sampleId: 'MH-12343024',
-    sourceLocation: 'Freezer 9-156, Rack 1A',
-    destinationLocation: 'Freezer A-201, Rack 2-B',
-    requestedDate: 'Jan 15, 2024, 09:30 AM',
-    approvedDate: 'Jan 15, 2024, 09:30 AM',
-    requestedBy: 'John Ramirez',
-    status: 'pendingMovement'
-  },
-  {
-    id: '3',
-    sampleId: 'MH-12343025',
-    sourceLocation: 'Freezer 9-156, Rack 1A',
-    destinationLocation: 'Freezer A-201, Rack 2-B',
-    requestedDate: 'Jan 15, 2024, 09:30 AM',
-    approvedDate: 'Jan 15, 2024, 09:30 AM',
-    requestedBy: 'John Ramirez',
-    status: 'pendingMovement'
-  },
-  {
-    id: '8',
-    sampleId: 'MH-12343026',
-    sourceLocation: 'Freezer 9-156, Rack 1A',
-    destinationLocation: 'Biohazard Disposal Unit',
-    requestedDate: 'Jan 16, 2024, 10:15 AM',
-    approvedDate: 'Jan 16, 2024, 10:15 AM',
-    requestedBy: 'Sarah Johnson',
-    status: 'pendingDisposal'
-  },
-  {
-    id: '9',
-    sampleId: 'MH-12343027',
-    sourceLocation: 'Freezer 8-105, Rack 3C',
-    destinationLocation: 'Biohazard Disposal Unit',
-    requestedDate: 'Jan 16, 2024, 11:00 AM',
-    approvedDate: 'Jan 16, 2024, 11:00 AM',
-    requestedBy: 'Mike Davis',
-    status: 'pendingDisposal'
-  },
-  {
-    id: '10',
-    sampleId: 'MH-12343028',
-    sourceLocation: 'Cold Storage Unit 5',
-    destinationLocation: 'Biohazard Disposal Unit',
-    requestedDate: 'Jan 16, 2024, 02:30 PM',
-    approvedDate: 'Jan 16, 2024, 02:30 PM',
-    requestedBy: 'Emily Chen',
-    status: 'pendingDisposal'
-  },
-  {
-    id: '4',
-    sampleId: 'MH-2024-0023',
-    sourceLocation: 'Freezer B-105, Rack 1-A',
-    destinationLocation: 'Freezer A-301, Rack 2-B',
-    requestedDate: 'Jan 15, 2024, 09:30 AM',
-    approvedDate: 'Jan 15, 2024, 09:30 AM',
-    requestedBy: 'John Romans',
-    status: 'completeMovement',
-    description: 'Clinical trial transfer',
-    completionStatus: 'Confirmed'
-  },
-  {
-    id: '5',
-    sampleId: 'MH-2024-0024',
-    sourceLocation: 'Freezer B-105, Rack 1-A',
-    destinationLocation: 'Freezer A-301, Rack 2-B',
-    requestedDate: 'Jan 15, 2024, 09:30 AM',
-    approvedDate: 'Jan 15, 2024, 09:30 AM',
-    requestedBy: 'John Romans',
-    status: 'completeMovement',
-    description: 'Department relocation',
-    completionStatus: 'Moved'
-  },
-  {
-    id: '6',
-    sampleId: 'MH-2024-0025',
-    sourceLocation: 'Freezer B-105, Rack 1-A',
-    destinationLocation: 'Freezer A-301, Rack 2-B',
-    requestedDate: 'Jan 15, 2024, 09:30 AM',
-    approvedDate: 'Jan 15, 2024, 09:30 AM',
-    requestedBy: 'John Romans',
-    status: 'completeMovement',
-    description: 'Research project transfer',
-    completionStatus: 'Approved'
-  },
-  {
-    id: '7',
-    sampleId: 'MH-2024-0026',
-    sourceLocation: 'Freezer B-105, Rack 1-A',
-    destinationLocation: 'Freezer A-301, Rack 2-B',
-    requestedDate: 'Jan 15, 2024, 09:30 AM',
-    approvedDate: 'Jan 16, 2024, 02:15 PM',
-    requestedBy: 'John Romans',
-    status: 'completeMovement',
-    description: 'Emergency relocation due to equipment maintenance',
-    completionStatus: 'Moved'
-  },
-  {
-    id: '11',
-    sampleId: 'MH-2024-0027',
-    sourceLocation: 'Freezer B-105, Rack 1-A',
-    destinationLocation: 'Biohazard Disposal Unit',
-    requestedDate: 'Jan 10, 2024, 09:00 AM',
-    approvedDate: 'Jan 10, 2024, 10:00 AM',
-    requestedBy: 'Dr. Amanda White',
-    status: 'completeDisposal',
-    description: 'Sample expired - standard disposal protocol',
-    completionStatus: 'Confirmed'
-  },
-  {
-    id: '12',
-    sampleId: 'MH-2024-0028',
-    sourceLocation: 'Cold Storage Unit 5',
-    destinationLocation: 'Biohazard Disposal Unit',
-    requestedDate: 'Jan 12, 2024, 02:00 PM',
-    approvedDate: 'Jan 12, 2024, 03:30 PM',
-    requestedBy: 'Dr. Robert Lee',
-    status: 'completeDisposal',
-    description: 'Contaminated sample - immediate disposal required',
-    completionStatus: 'Confirmed'
+// Data transformation helpers
+const transformTrackingRequest = (request: any): BioSpecimen => {
+  return {
+    id: request.request_id || request.id,
+    sampleId: request.sample_uuid || request.sample_id || 'N/A',
+    sourceLocation: formatLocation(request.source_location || request.source_attributes),
+    destinationLocation: formatLocation(request.destination_location || request.destination_attributes),
+    requestedDate: formatDate(request.requested_date || request.created_at || request.request_date),
+    approvedDate: formatDate(request.approved_date || request.approval_date),
+    requestedBy: request.requested_by || request.request_by || 'N/A',
+    status: request.status === 'pending' ? 'pendingMovement' : 'completeMovement',
+    description: request.description || request.reason || request.notes,
+    completionStatus: request.completion_status || request.status,
+    request_id: request.request_id || request.id
   }
-])
+}
 
-// Filtered data for each section
+const transformDisposalRequest = (request: any): BioSpecimen => {
+  return {
+    id: request.request_id || request.id,
+    sampleId: request.sample_uuid || request.sample_id || 'N/A',
+    sourceLocation: formatLocation(request.source_location || request.location),
+    destinationLocation: 'Disposal Unit',
+    requestedDate: formatDate(request.requested_date || request.created_at || request.request_date),
+    approvedDate: formatDate(request.approved_date || request.approval_date),
+    requestedBy: request.requested_by || request.request_by || 'N/A',
+    status: request.status === 'pending' ? 'pendingDisposal' : 'completeDisposal',
+    description: request.reason_for_disposal || request.reason || request.description,
+    completionStatus: request.completion_status || request.status,
+    request_id: request.request_id || request.id
+  }
+}
+
+// Dynamic options from composables
+const siteOptions = computed(() => {
+  if (!sites.value || sites.value.length === 0) return []
+  return sites.value.map((site: any) => site.site_name)
+})
+
+const freezerOptions = computed(() => {
+  if (!freezers.value || freezers.value.length === 0) return []
+  return freezers.value.map((freezer: any) => freezer.freezer_name)
+})
+
+const rackOptions = computed(() => {
+  if (!racks.value || racks.value.length === 0) return []
+  return racks.value.map((rack: any) => rack.rack_name)
+})
+
+const boxOptions = computed(() => {
+  if (!boxes.value || boxes.value.length === 0) return []
+  return boxes.value.map((box: any) => box.box_name)
+})
+
+// Filtered data for each section using composables
 const pendingMovementData = computed(() => {
-  return sampleData.value.filter(item => item.status === 'pendingMovement')
+  if (!pendingTrackingRequests.value || pendingTrackingRequests.value.length === 0) return []
+  return pendingTrackingRequests.value.map(transformTrackingRequest)
 })
 
 const pendingDisposalData = computed(() => {
-  return sampleData.value.filter(item => item.status === 'pendingDisposal')
+  if (!pendingDisposalRequests.value || pendingDisposalRequests.value.length === 0) return []
+  return pendingDisposalRequests.value.map(transformDisposalRequest)
 })
 
 const completeMovementData = computed(() => {
-  return sampleData.value.filter(item => item.status === 'completeMovement')
+  if (!completedTrackingRequests.value || completedTrackingRequests.value.length === 0) return []
+  return completedTrackingRequests.value.map(transformTrackingRequest)
 })
 
 const completeDisposalData = computed(() => {
-  return sampleData.value.filter(item => item.status === 'completeDisposal')
+  if (!completedDisposalRequests.value || completedDisposalRequests.value.length === 0) return []
+  return completedDisposalRequests.value.map(transformDisposalRequest)
 })
 
-// Computed property to get request type based on selected item
+// Computed property to get request type based on selected type
 const getRequestType = computed(() => {
-  if (!selectedItem.value) return 'movement'
-  return selectedItem.value.status.includes('Movement') ? 'movement' : 'disposal'
+  return selectedType.value === 'tracking' ? 'movement' : 'disposal'
+})
+
+// Loading state
+const isLoadingAnyData = computed(() => {
+  return loadingPendingTracking.value || loadingCompletedTracking.value || 
+         loadingPendingDisposal.value || loadingCompletedDisposal.value
 })
 
 // Modals
@@ -992,20 +1181,58 @@ const selectedItem = ref<BioSpecimen | null>(null)
 const rejectionReason = ref('')
 
 const movementForm = ref({
-  sampleId: '',
-  requestedBy: '',
-  destinationLocation: '',
-  sourceLocation: '',
-  requestedDate: '',
-  description: ''
-})
+  sample_uuid: '',
+  source_site: '',
+  source_freezer: '',
+  source_rack: '',
+  source_box: '',
+  source_position: '',
+  destination_site: '',
+  destination_freezer: '',
+  destination_rack: '',
+  destination_box: '',
+  destination_position: '',
+  movement_type: 'transfer',
+  reservation_time: '',
+  start_date_time: '',
+  end_date_time: '',
+  request_by: '',
+  approved_by: [] as string[]
+}) as any
 
 const disposalForm = ref({
-  reasons: '',
-  method: '',
-  requestedBy: '',
-  date: ''
+  sample_uuid: '',
+  request_by: '',
+  approved_by: '',
+  reason_for_disposal: '',
+  mark_as_disposed: true
+}) as any
+
+// Load initial data
+onMounted(async () => {
+  await Promise.all([
+    getSites(),
+    getFreezers(),
+    getRacks(),
+    getBoxes(),
+    getPendingTrackingRequests(),
+    getCompletedTrackingRequests(),
+    getPendingDisposalRequests(),
+    getCompletedDisposalRequests()
+  ])
 })
+
+// Approver management
+const approverInput = ref('')
+const addApprover = () => {
+  if (approverInput.value.trim() && !movementForm.value.approved_by.includes(approverInput.value.trim())) {
+    movementForm.value.approved_by.push(approverInput.value.trim())
+    approverInput.value = ''
+  }
+}
+const removeApprover = (index: number) => {
+  movementForm.value.approved_by.splice(index, 1)
+}
 
 const openRequestMovementModal = () => {
   showRequestMovementModal.value = true
@@ -1014,12 +1241,23 @@ const openRequestMovementModal = () => {
 const closeRequestMovementModal = () => {
   showRequestMovementModal.value = false
   movementForm.value = {
-    sampleId: '',
-    requestedBy: '',
-    destinationLocation: '',
-    sourceLocation: '',
-    requestedDate: '',
-    description: ''
+    sample_uuid: '',
+    source_site: '',
+    source_freezer: '',
+    source_rack: '',
+    source_box: '',
+    source_position: '',
+    destination_site: '',
+    destination_freezer: '',
+    destination_rack: '',
+    destination_box: '',
+    destination_position: '',
+    movement_type: 'transfer',
+    reservation_time: '',
+    start_date_time: '',
+    end_date_time: '',
+    request_by: '',
+    approved_by: []
   }
 }
 
@@ -1030,15 +1268,17 @@ const openRequestDisposalModal = () => {
 const closeRequestDisposalModal = () => {
   showRequestDisposalModal.value = false
   disposalForm.value = {
-    reasons: '',
-    method: '',
-    requestedBy: '',
-    date: ''
+    sample_uuid: '',
+    request_by: '',
+    approved_by: '',
+    reason_for_disposal: '',
+    mark_as_disposed: true
   }
 }
 
-const openViewDetailsModal = (item: BioSpecimen) => {
+const openViewDetailsModal = (item: BioSpecimen, type: 'tracking' | 'disposal') => {
   selectedItem.value = item
+  selectedType.value = type
   showViewDetailsModal.value = true
 }
 
@@ -1047,8 +1287,9 @@ const closeViewDetailsModal = () => {
   selectedItem.value = null
 }
 
-const openApproveModal = (item: BioSpecimen) => {
+const openApproveModal = (item: BioSpecimen, type: 'tracking' | 'disposal') => {
   selectedItem.value = item
+  selectedType.value = type
   showApproveModal.value = true
 }
 
@@ -1057,8 +1298,9 @@ const closeApproveModal = () => {
   selectedItem.value = null
 }
 
-const openRejectModal = (item: BioSpecimen) => {
+const openRejectModal = (item: BioSpecimen, type: 'tracking' | 'disposal') => {
   selectedItem.value = item
+  selectedType.value = type
   showRejectModal.value = true
 }
 
@@ -1068,38 +1310,150 @@ const closeRejectModal = () => {
   rejectionReason.value = ''
 }
 
-const confirmApprove = () => {
-  console.log('Approved item:', selectedItem.value)
-  // Add your approval logic here
+const confirmApprove = async () => {
+  if (!selectedItem.value || !selectedItem.value.request_id) return
+
+  if (selectedType.value === 'tracking') {
+    const result = await approveTrackingRequest(selectedItem.value.request_id)
+    if (result) {
+      await Promise.all([
+        getPendingTrackingRequests(),
+        getCompletedTrackingRequests()
+      ])
+    }
+  } else {
+    const result = await approveDisposalRequest(selectedItem.value.request_id)
+    if (result) {
+      await Promise.all([
+        getPendingDisposalRequests(),
+        getCompletedDisposalRequests()
+      ])
+    }
+  }
+
   closeApproveModal()
 }
 
-const confirmReject = () => {
-  console.log('Rejected item:', selectedItem.value)
-  console.log('Rejection reason:', rejectionReason.value)
-  // Add your rejection logic here
+const confirmReject = async () => {
+  if (!selectedItem.value || !selectedItem.value.request_id || !rejectionReason.value.trim()) return
+
+  if (selectedType.value === 'tracking') {
+    const result = await rejectTrackingRequest(selectedItem.value.request_id, rejectionReason.value)
+    if (result) {
+      await Promise.all([
+        getPendingTrackingRequests(),
+        getCompletedTrackingRequests()
+      ])
+    }
+  } else {
+    const result = await rejectDisposalRequest(selectedItem.value.request_id, rejectionReason.value)
+    if (result) {
+      await Promise.all([
+        getPendingDisposalRequests(),
+        getCompletedDisposalRequests()
+      ])
+    }
+  }
+
   closeRejectModal()
 }
 
-const submitMovementRequest = () => {
-  console.log('Movement request:', movementForm.value)
-  closeRequestMovementModal()
+const submitMovementRequest = async () => {
+  // Helper function to convert date to ISO format
+  const toISOString = (dateValue: any) => {
+    if (!dateValue) return null
+    // If it's already a Date object, convert it
+    if (dateValue instanceof Date) {
+      return dateValue.toISOString()
+    }
+    // If it's a string, create a Date object first
+    return new Date(dateValue).toISOString()
+  }
+
+  const payload = {
+    sample_uuid: movementForm.value.sample_uuid.uuid,
+    source_attributes: {
+      site: movementForm.value.source_site,
+      freezer: movementForm.value.source_freezer,
+      rack: movementForm.value.source_rack,
+      box: movementForm.value.source_box,
+      position: parseInt(movementForm.value.source_position)
+    },
+    destination_attributes: {
+      site: movementForm.value.destination_site,
+      freezer: movementForm.value.destination_freezer,
+      rack: movementForm.value.destination_rack,
+      box: movementForm.value.destination_box,
+      position: parseInt(movementForm.value.destination_position)
+    },
+    request_type: movementForm.value.movement_type,
+    reservation_time: toISOString(movementForm.value.reservation_time),
+    start_date_time: toISOString(movementForm.value.start_date_time),
+    end_date_time: toISOString(movementForm.value.end_date_time),
+    request_by: movementForm.value.request_by,
+    approved_by: movementForm.value.approved_by
+  }
+
+  const result = await trackSample(payload)
+  if (result) {
+    await Promise.all([
+      getPendingTrackingRequests(),
+      getCompletedTrackingRequests()
+    ])
+    closeRequestMovementModal()
+  }
 }
 
-const submitDisposalRequest = () => {
-  console.log('Disposal request:', disposalForm.value)
-  closeRequestDisposalModal()
+const submitDisposalRequest = async () => {
+  const payload = {
+    sample_uuid: disposalForm.value.sample_uuid.uuid,
+    request_by: disposalForm.value.request_by,
+    approved_by: disposalForm.value.approved_by,
+    reason_for_disposal: disposalForm.value.reason_for_disposal,
+    mark_as_disposed: disposalForm.value.mark_as_disposed
+  }
+
+  const result = await disposeSample(payload)
+  if (result) {
+    await Promise.all([
+      getPendingDisposalRequests(),
+      getCompletedDisposalRequests()
+    ])
+    closeRequestDisposalModal()
+  }
 }
 
-const applyFilters = () => {
-  console.log('Applying filters:', filters.value)
+const applyFilters = async () => {
+  const params: any = {}
+
+  if (filters.value.dateRange.from) {
+    params.date_from = filters.value.dateRange.from
+  }
+
+  if (filters.value.dateRange.to) {
+    params.date_to = filters.value.dateRange.to
+  }
+
+  await Promise.all([
+    getPendingTrackingRequests(params),
+    getCompletedTrackingRequests(params),
+    getPendingDisposalRequests(params),
+    getCompletedDisposalRequests(params)
+  ])
 }
 
-const clearFilters = () => {
+const clearFilters = async () => {
   filters.value = {
     status: 'All Status',
     dateRange: { from: '', to: '' }
   }
+
+  await Promise.all([
+    getPendingTrackingRequests(),
+    getCompletedTrackingRequests(),
+    getPendingDisposalRequests(),
+    getCompletedDisposalRequests()
+  ])
 }
 
 const getInitials = (name: string) => {

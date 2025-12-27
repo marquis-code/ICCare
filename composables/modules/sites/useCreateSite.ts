@@ -10,7 +10,9 @@ export const useCreateSite = () => {
     site_id: string
     site_name: string
     location: string
-    description: string
+    contact_person: string
+    contact_email: string
+    contact_phone: string
   }) => {
     loading.value = true
     try {

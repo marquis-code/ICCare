@@ -1,5 +1,5 @@
 <template>
- <div class="w-full border-[0.5px] rounded-2xl max-w-lg">
+ <div class="bg-white rounded-2xl border-[0.5px] border-gray-50 p-6 sm:p-8 lg:p-10">
     <div class="bg-white rounded-2xl border-[0.5px] border-red-50 p-6 sm:p-8 lg:p-10">
       <!-- Logo -->
       <div class="flex justify-center mb-6">

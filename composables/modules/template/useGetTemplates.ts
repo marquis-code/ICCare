@@ -7,13 +7,13 @@ export const useGetTemplates = () => {
   const templates = ref<any[]>([])
   const { showToast } = useCustomToast()
 
-  const getTemplates = async (active_only: boolean = true) => {
+  const getTemplates = async (active_only: boolean = false) => {
     loading.value = true
     try {
       const res = (await templates_api.$_get_templates(active_only)) as any
       if (res.type !== "ERROR") {
-        templates.value = res.data
-        return res.data
+        templates.value = res.data.templates
+        return res.data.templates
       } else {
         const errorMsg = res?.data?.detail?.[0]?.msg || res?.data?.error || "Failed to fetch templates"
         showToast({

@@ -5,21 +5,21 @@ export const categories_api = {
   $_create_category: (payload: {
     cat_id: string
     cat_name: string
-    abbreviation: string
+    expiration_days: string
     description: string
   }) => {
-    return GATEWAY_ENDPOINT.post('/attributes/categories/', payload)
+    return GATEWAY_ENDPOINT.post('/biospecimen/attributes/categories/', payload)
   },
 
   // Get all sample categories
   $_get_categories: (active_only: boolean = true) => {
-    return GATEWAY_ENDPOINT.get('/attributes/categories/', {
+    return GATEWAY_ENDPOINT.get('/biospecimen/attributes/categories/', {
       params: { active_only }
     })
   },
 
   // Get a specific category by ID
   $_get_category: (cat_id: string) => {
-    return GATEWAY_ENDPOINT.get(`/attributes/categories/${cat_id}`)
+    return GATEWAY_ENDPOINT.get(`/biospecimen/attributes/categories/${cat_id}`)
   }
 }

@@ -11,8 +11,9 @@ export const useCreateFreezer = () => {
     freezer_name: string
     site_id: string
     temperature: string
-    capacity: number
-    description: string
+    manufacturer: string
+    model: string
+    serial_number: string
   }) => {
     loading.value = true
     try {

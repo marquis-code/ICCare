@@ -11,18 +11,18 @@ export const templates_api = {
     additional_props: Record<string, any>
     description: string
   }) => {
-    return GATEWAY_ENDPOINT.post('/attributes/templates/', payload)
+    return GATEWAY_ENDPOINT.post('/biospecimen/attributes/templates/', payload)
   },
 
   // Get all position templates
   $_get_templates: (active_only: boolean = true) => {
-    return GATEWAY_ENDPOINT.get('/attributes/templates/', {
+    return GATEWAY_ENDPOINT.get('/biospecimen/attributes/templates/', {
       params: { active_only }
     })
   },
 
   // Get a specific position template by ID
   $_get_template: (template_id: string) => {
-    return GATEWAY_ENDPOINT.get(`/attributes/templates/${template_id}`)
+    return GATEWAY_ENDPOINT.get(`/biospecimen/attributes/templates/${template_id}`)
   }
 }

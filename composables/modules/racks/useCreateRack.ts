@@ -11,6 +11,7 @@ export const useCreateRack = () => {
     rack_name: string
     freezer_id: string
     site_id: string
+    capacity: number
     description: string
   }) => {
     loading.value = true

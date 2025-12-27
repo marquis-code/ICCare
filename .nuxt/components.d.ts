@@ -12,7 +12,8 @@ type HydrationStrategies = {
 }
 type LazyComponent<T> = (T & DefineComponent<HydrationStrategies, {}, {}, {}, {}, {}, {}, { hydrated: () => void }>)
 interface _GlobalComponents {
-      'AppFooter': typeof import("../components/AppFooter.vue")['default']
+      'AlertsModal': typeof import("../components/AlertsModal.vue")['default']
+    'AppFooter': typeof import("../components/AppFooter.vue")['default']
     'AppHeader': typeof import("../components/AppHeader.vue")['default']
     'Appointment': typeof import("../components/Appointment.vue")['default']
     'AppointmentCard': typeof import("../components/AppointmentCard.vue")['default']
@@ -32,6 +33,7 @@ interface _GlobalComponents {
     'NotificationList': typeof import("../components/NotificationList.vue")['default']
     'OverviewStats': typeof import("../components/OverviewStats.vue")['default']
     'PersonalInfoTab': typeof import("../components/PersonalInfoTab.vue")['default']
+    'ScheduleReportModal': typeof import("../components/ScheduleReportModal.vue")['default']
     'SecurityTab': typeof import("../components/SecurityTab.vue")['default']
     'SettingsTab': typeof import("../components/SettingsTab.vue")['default']
     'TimeSlotPicker': typeof import("../components/TimeSlotPicker.vue")['default']
@@ -75,7 +77,8 @@ interface _GlobalComponents {
     'Body': typeof import("../node_modules/nuxt/dist/head/runtime/components")['Body']
     'NuxtIsland': typeof import("../node_modules/nuxt/dist/app/components/nuxt-island")['default']
     'NuxtRouteAnnouncer': IslandComponent<typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']>
-      'LazyAppFooter': LazyComponent<typeof import("../components/AppFooter.vue")['default']>
+      'LazyAlertsModal': LazyComponent<typeof import("../components/AlertsModal.vue")['default']>
+    'LazyAppFooter': LazyComponent<typeof import("../components/AppFooter.vue")['default']>
     'LazyAppHeader': LazyComponent<typeof import("../components/AppHeader.vue")['default']>
     'LazyAppointment': LazyComponent<typeof import("../components/Appointment.vue")['default']>
     'LazyAppointmentCard': LazyComponent<typeof import("../components/AppointmentCard.vue")['default']>
@@ -95,6 +98,7 @@ interface _GlobalComponents {
     'LazyNotificationList': LazyComponent<typeof import("../components/NotificationList.vue")['default']>
     'LazyOverviewStats': LazyComponent<typeof import("../components/OverviewStats.vue")['default']>
     'LazyPersonalInfoTab': LazyComponent<typeof import("../components/PersonalInfoTab.vue")['default']>
+    'LazyScheduleReportModal': LazyComponent<typeof import("../components/ScheduleReportModal.vue")['default']>
     'LazySecurityTab': LazyComponent<typeof import("../components/SecurityTab.vue")['default']>
     'LazySettingsTab': LazyComponent<typeof import("../components/SettingsTab.vue")['default']>
     'LazyTimeSlotPicker': LazyComponent<typeof import("../components/TimeSlotPicker.vue")['default']>
@@ -144,6 +148,7 @@ declare module 'vue' {
   export interface GlobalComponents extends _GlobalComponents { }
 }
 
+export const AlertsModal: typeof import("../components/AlertsModal.vue")['default']
 export const AppFooter: typeof import("../components/AppFooter.vue")['default']
 export const AppHeader: typeof import("../components/AppHeader.vue")['default']
 export const Appointment: typeof import("../components/Appointment.vue")['default']
@@ -164,6 +169,7 @@ export const NotificationDetail: typeof import("../components/NotificationDetail
 export const NotificationList: typeof import("../components/NotificationList.vue")['default']
 export const OverviewStats: typeof import("../components/OverviewStats.vue")['default']
 export const PersonalInfoTab: typeof import("../components/PersonalInfoTab.vue")['default']
+export const ScheduleReportModal: typeof import("../components/ScheduleReportModal.vue")['default']
 export const SecurityTab: typeof import("../components/SecurityTab.vue")['default']
 export const SettingsTab: typeof import("../components/SettingsTab.vue")['default']
 export const TimeSlotPicker: typeof import("../components/TimeSlotPicker.vue")['default']
@@ -207,6 +213,7 @@ export const Html: typeof import("../node_modules/nuxt/dist/head/runtime/compone
 export const Body: typeof import("../node_modules/nuxt/dist/head/runtime/components")['Body']
 export const NuxtIsland: typeof import("../node_modules/nuxt/dist/app/components/nuxt-island")['default']
 export const NuxtRouteAnnouncer: IslandComponent<typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']>
+export const LazyAlertsModal: LazyComponent<typeof import("../components/AlertsModal.vue")['default']>
 export const LazyAppFooter: LazyComponent<typeof import("../components/AppFooter.vue")['default']>
 export const LazyAppHeader: LazyComponent<typeof import("../components/AppHeader.vue")['default']>
 export const LazyAppointment: LazyComponent<typeof import("../components/Appointment.vue")['default']>
@@ -227,6 +234,7 @@ export const LazyNotificationDetail: LazyComponent<typeof import("../components/
 export const LazyNotificationList: LazyComponent<typeof import("../components/NotificationList.vue")['default']>
 export const LazyOverviewStats: LazyComponent<typeof import("../components/OverviewStats.vue")['default']>
 export const LazyPersonalInfoTab: LazyComponent<typeof import("../components/PersonalInfoTab.vue")['default']>
+export const LazyScheduleReportModal: LazyComponent<typeof import("../components/ScheduleReportModal.vue")['default']>
 export const LazySecurityTab: LazyComponent<typeof import("../components/SecurityTab.vue")['default']>
 export const LazySettingsTab: LazyComponent<typeof import("../components/SettingsTab.vue")['default']>
 export const LazyTimeSlotPicker: LazyComponent<typeof import("../components/TimeSlotPicker.vue")['default']>

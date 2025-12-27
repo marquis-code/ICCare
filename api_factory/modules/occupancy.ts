@@ -8,10 +8,10 @@ export const occupancy_api = {
     freezer_id?: string,
     rack_id?: string
   ) => {
-    const params: any = { box_id }
+    const params: any = {}
     if (site_id) params.site_id = site_id
     if (freezer_id) params.freezer_id = freezer_id
     if (rack_id) params.rack_id = rack_id
-    return GATEWAY_ENDPOINT.get('/attributes/boxes/occupancy', { params })
+    return GATEWAY_ENDPOINT.get(`/biospecimen/attributes/boxes/${box_id}/occupancy`, { params })
   }
 }

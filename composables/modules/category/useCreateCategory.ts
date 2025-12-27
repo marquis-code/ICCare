@@ -9,7 +9,7 @@ export const useCreateCategory = () => {
   const createCategory = async (payload: {
     cat_id: string
     cat_name: string
-    abbreviation: string
+    expiration_days: string
     description: string
   }) => {
     loading.value = true

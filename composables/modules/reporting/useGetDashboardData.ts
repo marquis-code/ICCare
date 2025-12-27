@@ -11,6 +11,7 @@ export const useGetDashboardData = () => {
     loading.value = true
     try {
       const res = (await reporting_api.$_get_dashboard_data(site_id)) as any
+      // console.log("Dashboard Data Response:", res)
       if (res.type !== "ERROR") {
         dashboardData.value = res.data
         return res.data

@@ -2,18 +2,26 @@ import { ref } from "vue"
 import { freezers_api } from "@/api_factory/modules/freezers"
 import { useCustomToast } from "@/composables/core/useCustomToast"
 
+interface GetFreezersParams {
+  site_id?: string
+  active_only?: boolean
+}
+
 export const useGetFreezers = () => {
   const loading = ref(false)
   const freezers = ref<any[]>([])
   const { showToast } = useCustomToast()
 
-  const getFreezers = async (site_id?: string, active_only: boolean = true) => {
+  const getFreezers = async ({
+    site_id,
+    active_only = false
+  }: GetFreezersParams = {}) => {
     loading.value = true
     try {
       const res = (await freezers_api.$_get_freezers(site_id, active_only)) as any
       if (res.type !== "ERROR") {
-        freezers.value = res.data
-        return res.data
+        freezers.value = res.data.freezers
+        return res.data.freezers
       } else {
         const errorMsg = res?.data?.detail?.[0]?.msg || res?.data?.error || "Failed to fetch freezers"
         showToast({

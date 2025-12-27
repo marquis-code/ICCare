@@ -13,7 +13,9 @@ export const useCreateBox = () => {
     freezer_id: string
     site_id: string
     position_template_id: string
-    description: string
+    box_type: string
+    manufacturer: string
+    model: string
   }) => {
     loading.value = true
     try {

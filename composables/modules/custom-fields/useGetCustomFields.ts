@@ -7,13 +7,13 @@ export const useGetCustomFields = () => {
   const customFields = ref<any[]>([])
   const { showToast } = useCustomToast()
 
-  const getCustomFields = async (active_only: boolean = true) => {
+  const getCustomFields = async (active_only: boolean = false) => {
     loading.value = true
     try {
       const res = (await custom_fields_api.$_get_custom_fields(active_only)) as any
       if (res.type !== "ERROR") {
-        customFields.value = res.data
-        return res.data
+        customFields.value = res.data.attributes
+        return res.data.attributes
       } else {
         const errorMsg = res?.data?.detail?.[0]?.msg || res?.data?.error || "Failed to fetch custom attributes"
         showToast({

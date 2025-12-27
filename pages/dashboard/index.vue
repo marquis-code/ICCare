@@ -203,7 +203,7 @@
 <script setup lang="ts">
 import Chart from 'chart.js/auto'
 import { useGetDashboardData } from "@/composables/modules/reporting/useGetDashboardData"
-const { } = useGetDashboardData()
+const { dashboardData, loading } = useGetDashboardData()
 interface Transfer {
   id: string
   sampleLocation: string

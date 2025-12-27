@@ -9,9 +9,11 @@ export const boxes_api = {
     freezer_id: string
     site_id: string
     position_template_id: string
-    description: string
+    box_type: string
+    manufacturer: string
+    model: string
   }) => {
-    return GATEWAY_ENDPOINT.post('/attributes/boxes/', payload)
+    return GATEWAY_ENDPOINT.post('/biospecimen/attributes/boxes/', payload)
   },
 
   // Get all boxes (optionally filtered by site, freezer, and/or rack)
@@ -20,11 +22,11 @@ export const boxes_api = {
     if (site_id) params.site_id = site_id
     if (freezer_id) params.freezer_id = freezer_id
     if (rack_id) params.rack_id = rack_id
-    return GATEWAY_ENDPOINT.get('/attributes/boxes/', { params })
+    return GATEWAY_ENDPOINT.get('/biospecimen/attributes/boxes/', { params })
   },
 
   // Get a specific box by ID
   $_get_box: (box_id: string) => {
-    return GATEWAY_ENDPOINT.get(`/attributes/boxes/${box_id}`)
+    return GATEWAY_ENDPOINT.get(`/biospecimen/attributes/boxes/${box_id}`)
   }
 }

@@ -51,41 +51,41 @@
                     </div>
 
                     <div v-else class="bg-white shadow overflow-hidden sm:rounded-lg">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
+                        <table class="min-w-full divide-y-[0.5px] divide-gray-100">
+                            <thead class="bg-gray-25">
                                 <tr>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         ID</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Name</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Abbreviation</th>
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Expiration Days</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Description</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Created At</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <tr v-for="category in categories" :key="category.cat_id" class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{
+                            <tbody class="bg-white divide-y-[0.5px] divide-gray-100">
+                                <tr v-for="category in categories" :key="category.cat_id" class="hover:bg-gray-25">
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm font-medium text-gray-900">{{
                                         category.cat_id }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ category.cat_name
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-900">{{ category.cat_name
                                         }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{
-                                        category.abbreviation }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">{{ category.description }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-500">{{
+                                        category.days_to_expiration ?? 'Nil' }}</td>
+                                    <td class="px-6 py-6 text-sm text-gray-500">{{ category.description }}</td>
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-500">{{
                                         formatDate(category.created_at) }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm">
                                         <button @click="viewDetails('category', category)"
                                             class="text-[#005B8F] hover:text-blue-900 font-medium">
                                             View Details
@@ -121,41 +121,41 @@
                     </div>
 
                     <div v-else class="bg-white shadow overflow-hidden sm:rounded-lg">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
+                        <table class="min-w-full divide-y-[0.5px] divide-gray-100">
+                            <thead class="bg-gray-25">
                                 <tr>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         ID</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Name</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Location</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Description</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Created At</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <tr v-for="site in sites" :key="site.site_id" class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{
+                            <tbody class="bg-white divide-y-[0.5px] divide-gray-100">
+                                <tr v-for="site in sites" :key="site.site_id" class="hover:bg-gray-25">
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm font-medium text-gray-900">{{
                                         site.site_id }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ site.site_name }}
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-900">{{ site.site_name }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ site.location }}
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-500">{{ site.location }}
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">{{ site.description }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{
+                                    <td class="px-6 py-6 text-sm text-gray-500">{{ site.description }}</td>
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-500">{{
                                         formatDate(site.created_at) }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm">
                                         <button @click="viewDetails('site', site)"
                                             class="text-[#005B8F] hover:text-blue-900 font-medium">
                                             View Details
@@ -191,42 +191,47 @@
                     </div>
 
                     <div v-else class="bg-white shadow overflow-hidden sm:rounded-lg">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
+                        <table class="min-w-full divide-y-[0.5px] divide-gray-100">
+                            <thead class="bg-gray-25">
                                 <tr>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         ID</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Name</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Site</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Temperature</th>
+                                           <th
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Description</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Capacity</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <tr v-for="freezer in freezers" :key="freezer.freezer_id" class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{
+                            <tbody class="bg-white divide-y-[0.5px] divide-gray-100">
+                                <tr v-for="freezer in freezers" :key="freezer.freezer_id" class="hover:bg-gray-25">
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm font-medium text-gray-900">{{
                                         freezer.freezer_id }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-900">{{
                                         freezer.freezer_name }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ freezer.site_id }}
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-500">{{ freezer.site_id }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ freezer.temperature
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-500">{{ freezer.temperature
                                         }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ freezer.capacity }}
+                                          <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-500">{{ freezer.description
+                                        }}</td>
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-500">{{ freezer.capacity }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm">
                                         <button @click="viewDetails('freezer', freezer)"
                                             class="text-[#005B8F] hover:text-blue-900 font-medium">
                                             View Details
@@ -262,41 +267,41 @@
                     </div>
 
                     <div v-else class="bg-white shadow overflow-hidden sm:rounded-lg">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
+                        <table class="min-w-full divide-y-[0.5px] divide-gray-100">
+                            <thead class="bg-gray-25">
                                 <tr>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         ID</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Name</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Freezer</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Site</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Description</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <tr v-for="rack in racks" :key="rack.rack_id" class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{
+                            <tbody class="bg-white divide-y-[0.5px] divide-gray-100">
+                                <tr v-for="rack in racks" :key="rack.rack_id" class="hover:bg-gray-25">
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm font-medium text-gray-900">{{
                                         rack.rack_id }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ rack.rack_name }}
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-900">{{ rack.rack_name }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ rack.freezer_id }}
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-500">{{ rack.freezer_id }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ rack.site_id }}
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-500">{{ rack.site_id }}
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">{{ rack.description }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    <td class="px-6 py-6 text-sm text-gray-500">{{ rack.description }}</td>
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm">
                                         <button @click="viewDetails('rack', rack)"
                                             class="text-[#005B8F] hover:text-blue-900 font-medium">
                                             View Details
@@ -332,41 +337,41 @@
                     </div>
 
                     <div v-else class="bg-white shadow overflow-hidden sm:rounded-lg">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
+                        <table class="min-w-full divide-y-[0.5px] divide-gray-100">
+                            <thead class="bg-gray-25">
                                 <tr>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         ID</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Name</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Rack</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Freezer</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Template</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <tr v-for="box in boxes" :key="box.box_id" class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{
+                            <tbody class="bg-white divide-y-[0.5px] divide-gray-100">
+                                <tr v-for="box in boxes" :key="box.box_id" class="hover:bg-gray-25">
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm font-medium text-gray-900">{{
                                         box.box_id }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ box.box_name }}
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-900">{{ box.box_name }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ box.rack_id }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ box.freezer_id }}
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-500">{{ box.rack_id }}</td>
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-500">{{ box.freezer_id }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-500">{{
                                         box.position_template_id }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm">
                                         <button @click="viewDetails('box', box)"
                                             class="text-[#005B8F] hover:text-blue-900 font-medium">
                                             View Details
@@ -402,42 +407,42 @@
                     </div>
 
                     <div v-else class="bg-white shadow overflow-hidden sm:rounded-lg">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
+                        <table class="min-w-full divide-y-[0.5px] divide-gray-100">
+                            <thead class="bg-gray-25">
                                 <tr>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         ID</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Name</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Rows</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Columns</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Total Positions</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <tr v-for="template in templates" :key="template.template_id" class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{
+                            <tbody class="bg-white divide-y-[0.5px] divide-gray-100">
+                                <tr v-for="template in templates" :key="template.template_id" class="hover:bg-gray-25">
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm font-medium text-gray-900">{{
                                         template.template_id }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-900">{{
                                         template.template_name }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ template.rows }}
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-500">{{ template.rows }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ template.columns }}
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-500">{{ template.columns }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-500">{{
                                         template.total_positions }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm">
                                         <button @click="viewDetails('template', template)"
                                             class="text-[#005B8F] hover:text-blue-900 font-medium">
                                             View Details
@@ -473,44 +478,44 @@
                     </div>
 
                     <div v-else class="bg-white shadow overflow-hidden sm:rounded-lg">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
+                        <table class="min-w-full divide-y-[0.5px] divide-gray-100">
+                            <thead class="bg-gray-25">
                                 <tr>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         ID</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Name</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Type</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Required</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Description</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <tr v-for="field in customFields" :key="field.attribute_id" class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{
+                            <tbody class="bg-white divide-y-[0.5px] divide-gray-100">
+                                <tr v-for="field in customFields" :key="field.attribute_id" class="hover:bg-gray-25">
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm font-medium text-gray-900">{{
                                         field.attribute_id }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-900">{{
                                         field.attribute_name }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm text-gray-500">{{
                                         field.attribute_type }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm">
                                         <span :class="field.is_required ? 'text-green-600' : 'text-gray-500'">
                                             {{ field.is_required ? 'Yes' : 'No' }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">{{ field.description }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    <td class="px-6 py-6 text-sm text-gray-500">{{ field.description }}</td>
+                                    <td class="px-6 py-6 whitespace-nowrap text-sm">
                                         <button @click="viewDetails('custom-field', field)"
                                             class="text-[#005B8F] hover:text-blue-900 font-medium">
                                             View Details
@@ -529,7 +534,7 @@
             <div v-if="showCreateModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title"
                 role="dialog" aria-modal="true">
                 <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="closeCreateModal">
+                    <div class="fixed inset-0 bg-gray-250 bg-opacity-75 transition-opacity" @click="closeCreateModal">
                     </div>
 
                     <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
@@ -539,7 +544,7 @@
                         <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                             <div class="sm:flex sm:items-start">
                                 <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">
+                                    <h3 class="text-lg leading-6 font-semibold text-gray-900 mb-4" id="modal-title">
                                         {{ getModalTitle() }}
                                     </h3>
 
@@ -555,13 +560,13 @@
                                                 label="Category Name" />
                                         </div>
                                         <div>
-                                            <UiAnimatedInput v-model="categoryForm.abbreviation" type="text"
-                                                label="Abbreviation" />
+                                            <UiAnimatedInput v-model="categoryForm.expiration_days" type="number"
+                                                label="Expiration Days" />
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700">Description *</label>
-                                            <textarea v-model="categoryForm.description" rows="3" required
-                                                class="custom-input"></textarea>
+                                            <!-- <label class="block text-sm font-medium text-gray-700">Description *</label> -->
+                                            <UiAnimatedInput v-model="categoryForm.description" :rows="3" required type="textarea" label="Description"
+                                                 />
                                         </div>
                                     </form>
 
@@ -577,11 +582,20 @@
                                         <div>
                                             <UiAnimatedInput v-model="siteForm.location" type="text" label="Location" />
                                         </div>
-                                        <div>
+                                           <div>
+                                            <UiAnimatedInput v-model="siteForm.location" type="text" label="Contact Name" />
+                                        </div>
+                                           <div>
+                                            <UiAnimatedInput v-model="siteForm.location" type="email" label="Contact Email" />
+                                        </div>
+                                           <div>
+                                            <UiAnimatedInput v-model="siteForm.location" type="number" label="Contact Phone" />
+                                        </div>
+                                        <!-- <div>
                                             <label class="block text-sm font-medium text-gray-700">Description *</label>
                                             <textarea v-model="siteForm.description" rows="3"
                                                 class="custom-input"></textarea>
-                                        </div>
+                                        </div> -->
                                     </form>
 
                                     <!-- Freezer Form -->
@@ -604,14 +618,22 @@
                                                 label="Temperature" />
                                         </div>
                                         <div>
-                                            <UiAnimatedInput v-model.number="freezerForm.capacity" type="number"
-                                                label="Capacity" />
+                                            <UiAnimatedInput v-model.number="freezerForm.manufacturer" type="text"
+                                                label="Manufacturer" />
                                         </div>
                                         <div>
+                                            <UiAnimatedInput v-model.number="freezerForm.model" type="text"
+                                                label="Model" />
+                                        </div>
+                                        <div>
+                                            <UiAnimatedInput v-model.number="freezerForm.serial_number" type="text"
+                                                label="Serial Number" />
+                                        </div>
+                                        <!-- <div>
                                             <label class="block text-sm font-medium text-gray-700">Description *</label>
                                             <textarea v-model="freezerForm.description" rows="3" required
                                                 class="custom-input"></textarea>
-                                        </div>
+                                        </div> -->
                                     </form>
 
                                     <!-- Rack Form -->
@@ -632,24 +654,17 @@
 
                                         </div>
                                         <div>
-                                            <UiSelectInput label="Freezer" :options="filteredFreezersForRack"
-                                                v-model="rackForm.freezer_id" />
-                                            <!-- <label class="block text-sm font-medium text-gray-700">Freezer *</label>
-                      <select
-                        v-model="rackForm.freezer_id"
-                        required
-                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#005B8F] focus:border-[#005B8F] sm:text-sm"
-                      >
-                        <option value="">Select a freezer</option>
-                        <option v-for="freezer in filteredFreezersForRack" :key="freezer.freezer_id" :value="freezer.freezer_id">
-                          {{ freezer.freezer_name }}
-                        </option>
-                      </select> -->
+                                            <UiAnimatedInput v-model="rackForm.capacity" type="number"
+                                                label="Capacity" />
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700">Description *</label>
-                                            <textarea v-model="rackForm.description" rows="3" required
-                                                class="custom-input"></textarea>
+                                            <UiSelectInput label="Freezer" :options="filteredFreezersForRack"
+                                                v-model="rackForm.freezer_id" />
+                                        </div>
+                                        <div>
+                                            <!-- <label class="block text-sm font-medium text-gray-700">Description *</label> -->
+                                            <UiAnimatedInput v-model="rackForm.description" :rows="3" label="Description"
+                                                 />
                                         </div>
                                     </form>
 
@@ -666,50 +681,15 @@
                                         <div>
                                             <UiSelectInput v-model="boxForm.site_id" :options="sites" label="Site"
                                                 @change="loadFreezersForBox" />
-                                            <!-- <label class="block text-sm font-medium text-gray-700">Site *</label>
-                      <select
-                        v-model="boxForm.site_id"
-                        required
-                        @change="loadFreezersForBox"
-                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#005B8F] focus:border-[#005B8F] sm:text-sm"
-                      >
-                        <option value="">Select a site</option>
-                        <option v-for="site in sites" :key="site.site_id" :value="site.site_id">
-                          {{ site.site_name }}
-                        </option>
-                      </select> -->
                                         </div>
                                         <div>
                                             <UiSelectInput v-model="boxForm.freezer_id"
                                                 :options="filteredFreezersForBox" label="Freezer"
                                                 @change="loadRacksForBox" />
-                                            <!-- <label class="block text-sm font-medium text-gray-700">Freezer *</label>
-                      <select
-                        v-model="boxForm.freezer_id"
-                        required
-                        @change="loadRacksForBox"
-                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#005B8F] focus:border-[#005B8F] sm:text-sm"
-                      >
-                        <option value="">Select a freezer</option>
-                        <option v-for="freezer in filteredFreezersForBox" :key="freezer.freezer_id" :value="freezer.freezer_id">
-                          {{ freezer.freezer_name }}
-                        </option>
-                      </select> -->
                                         </div>
                                         <div>
                                             <UiSelectInput v-model="boxForm.rack_id" :options="filteredRacksForBox"
                                                 label="Rack" />
-                                            <!-- <label class="block text-sm font-medium text-gray-700">Rack *</label>
-                      <select
-                        v-model="boxForm.rack_id"
-                        required
-                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#005B8F] focus:border-[#005B8F] sm:text-sm"
-                      >
-                        <option value="">Select a rack</option>
-                        <option v-for="rack in filteredRacksForBox" :key="rack.rack_id" :value="rack.rack_id">
-                          {{ rack.rack_name }}
-                        </option>
-                      </select> -->
                                         </div>
                                         <div>
                                             <UiSelectInput v-model="boxForm.position_template_id"
@@ -724,22 +704,18 @@
                                                     {{ option.template_name }} ({{ option.rows }}x{{ option.columns }})
                                                 </template>
                                             </UiSelectInput>
-                                            <!-- <label class="block text-sm font-medium text-gray-700">Position Template *</label>
-                      <select
-                        v-model="boxForm.position_template_id"
-                        required
-                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#005B8F] focus:border-[#005B8F] sm:text-sm"
-                      >
-                        <option value="">Select a template</option>
-                        <option v-for="template in templates" :key="template.template_id" :value="template.template_id">
-                          {{ template.template_name }} ({{ template.rows }}x{{ template.columns }})
-                        </option>
-                      </select> -->
                                         </div>
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700">Description *</label>
-                                            <textarea v-model="boxForm.description" rows="3" required
-                                                class="custom-input"></textarea>
+                                                  <div>
+                                            <UiAnimatedInput v-model="boxForm.box_type" type="text" label="Box Type"
+                                                 />
+                                        </div>
+                                             <div>
+                                            <UiAnimatedInput v-model="boxForm.manufacturer" type="text" label="Manufacturer"
+                                                 />
+                                        </div>
+                                             <div>
+                                            <UiAnimatedInput v-model="boxForm.model" type="text" label="Model"
+                                                 />
                                         </div>
                                     </form>
 
@@ -768,15 +744,14 @@
 
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700">Total
-                                                Positions</label>
+                                            <!-- <label class="block text-sm font-medium text-gray-700">Total
+                                                Positions</label> -->
                                             <UiAnimatedInput v-model.number="templateForm.total_positions" type="number"
                                                 label="Total Positions" readonly />
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700">Description *</label>
-                                            <textarea v-model="templateForm.description" rows="3" required
-                                                class="custom-input"></textarea>
+                                            <UiAnimatedInput v-model="templateForm.description" :rows="3" label="Description"
+                                                 />
                                         </div>
                                     </form>
 
@@ -796,24 +771,24 @@
                                                 label="Attribute Type" :options="customFieldsDropdown" />
                                         </div>
                                         <div>
-                                            <UiAnimatedInput v-model="customFieldForm.allowed_values_string" type="text"
+                                            <UiAnimatedInput v-model="customFieldForm.default_value" type="text"
                                                 label="Allowed Values (comma-separated)" />
                                         </div>
+
                                         <div class="flex items-center">
                                             <input v-model="customFieldForm.is_required" type="checkbox"
                                                 class="custom-checkbox" />
                                             <label class="ml-2 block text-sm text-gray-700">Required field</label>
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700">Description *</label>
-                                            <textarea v-model="customFieldForm.description" rows="3" required
-                                                class="custom-input"></textarea>
+                                            <UiAnimatedInput v-model="customFieldForm.description" :rows="3" required label="Description"
+                                               />
                                         </div>
                                     </form>
                                 </div>
                             </div>
                         </div>
-                        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <div class="bg-gray-25 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                             <button type="button" @click="handleSubmit" :disabled="isSubmitting"
                                 class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#005B8F] text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#005B8F] sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed">
                                 <span v-if="isSubmitting" class="flex items-center">
@@ -830,7 +805,7 @@
                                 <span v-else>Create</span>
                             </button>
                             <button type="button" @click="closeCreateModal" :disabled="isSubmitting"
-                                class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#005B8F] sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                                class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-25 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#005B8F] sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed">
                                 Cancel
                             </button>
                         </div>
@@ -844,7 +819,7 @@
             <div v-if="showDetailsModal" class="fixed inset-0 z-50 overflow-y-auto"
                 aria-labelledby="details-modal-title" role="dialog" aria-modal="true">
                 <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="closeDetailsModal">
+                    <div class="fixed inset-0 bg-gray-250 bg-opacity-75 transition-opacity" @click="closeDetailsModal">
                     </div>
 
                     <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
@@ -870,9 +845,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <div class="bg-gray-25 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                             <button type="button" @click="closeDetailsModal"
-                                class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#005B8F] sm:w-auto sm:text-sm">
+                                class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-25 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#005B8F] sm:w-auto sm:text-sm">
                                 Close
                             </button>
                         </div>
@@ -940,7 +915,7 @@ const selectedItem = ref<any>(null)
 const categoryForm = ref({
     cat_id: '',
     cat_name: '',
-    abbreviation: '',
+    expiration_days: '',
     description: ''
 })
 
@@ -952,7 +927,9 @@ const siteForm = ref({
     site_id: '',
     site_name: '',
     location: '',
-    description: ''
+    contact_person: '',
+    contact_email: '',
+    contact_phone: ''
 })
 
 const freezerForm = ref({
@@ -960,8 +937,9 @@ const freezerForm = ref({
     freezer_name: '',
     site_id: '',
     temperature: '',
-    capacity: 0,
-    description: ''
+    manufacturer: '',
+    model: '',
+    serial_number: '',
 })
 
 const rackForm = ref({
@@ -969,6 +947,7 @@ const rackForm = ref({
     rack_name: '',
     freezer_id: '',
     site_id: '',
+    capacity: 0,
     description: ''
 })
 
@@ -979,7 +958,9 @@ const boxForm = ref({
     freezer_id: '',
     site_id: '',
     position_template_id: '',
-    description: ''
+    box_type: '',
+    manufacturer: '',
+    model: ''
 })
 
 const templateForm = ref({
@@ -988,7 +969,6 @@ const templateForm = ref({
     rows: 0,
     columns: 0,
     total_positions: 0,
-    additional_props: {},
     description: ''
 })
 
@@ -996,8 +976,7 @@ const customFieldForm = ref({
     attribute_id: '',
     attribute_name: '',
     attribute_type: '',
-    allowed_values: [] as string[],
-    allowed_values_string: '',
+    default_value: '',
     is_required: false,
     description: ''
 })
@@ -1045,13 +1024,13 @@ const closeDetailsModal = () => {
 }
 
 const resetForms = () => {
-    categoryForm.value = { cat_id: '', cat_name: '', abbreviation: '', description: '' }
-    siteForm.value = { site_id: '', site_name: '', location: '', description: '' }
-    freezerForm.value = { freezer_id: '', freezer_name: '', site_id: '', temperature: '', capacity: 0, description: '' }
-    rackForm.value = { rack_id: '', rack_name: '', freezer_id: '', site_id: '', description: '' }
-    boxForm.value = { box_id: '', box_name: '', rack_id: '', freezer_id: '', site_id: '', position_template_id: '', description: '' }
-    templateForm.value = { template_id: '', template_name: '', rows: 0, columns: 0, total_positions: 0, additional_props: {}, description: '' }
-    customFieldForm.value = { attribute_id: '', attribute_name: '', attribute_type: '', allowed_values: [], allowed_values_string: '', is_required: false, description: '' }
+    categoryForm.value = { cat_id: '', cat_name: '', expiration_days: '', description: '' }
+    siteForm.value = { site_id: '', site_name: '', location: '', contact_person: '', contact_email: '', contact_phone: '' }
+    freezerForm.value = { freezer_id: '', freezer_name: '', site_id: '', temperature: '', manufacturer: '', model: '', serial_number: '' }
+    rackForm.value = { rack_id: '', rack_name: '', freezer_id: '', site_id: '', description: '', capacity: 0 }
+    boxForm.value = { box_id: '', box_name: '', rack_id: '', freezer_id: '', site_id: '', position_template_id: '', box_type: '', manufacturer: '', model: '' }
+    templateForm.value = { template_id: '', template_name: '', rows: 0, columns: 0, total_positions: 0, description: '' }
+    customFieldForm.value = { attribute_id: '', attribute_name: '', attribute_type: '',  default_value: '', is_required: false, description: '' }
 }
 
 // Submit handlers
@@ -1143,14 +1122,14 @@ const submitTemplate = async () => {
 
 const submitCustomField = async () => {
     isSubmitting.value = true
-    const allowed = customFieldForm.value.allowed_values_string
+    const allowed = customFieldForm.value.default_value
         .split(',')
         .map(v => v.trim())
         .filter(v => v)
 
     const payload = {
         ...customFieldForm.value,
-        allowed_values: allowed
+        default_value: allowed
     }
 
     const result = await createCustomField(payload)

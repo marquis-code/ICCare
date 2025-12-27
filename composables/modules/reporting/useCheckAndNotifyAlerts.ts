@@ -4,27 +4,43 @@ import { useCustomToast } from "@/composables/core/useCustomToast"
 
 export const useCheckAndNotifyAlerts = () => {
   const loading = ref(false)
+  const alertResponse = ref<any>(null)
   const { showToast } = useCustomToast()
 
-  const checkAndNotifyAlerts = async (
-    current_value: number,
-    payload: {
+  const checkAndNotifyAlerts = async (payload: {
+    threshold_data: {
       item: string
       units: string
-      threshold: number
-      admin_notes: string
+      number: number  // Changed from threshold to number
+      admin_notes?: string
     }
-  ) => {
+    current_value: number
+  }) => {
     loading.value = true
+    alertResponse.value = null
+    
     try {
-      const res = (await reporting_api.$_check_and_notify_alerts(current_value, payload)) as any
+      const res = (await reporting_api.$_check_and_notify_alerts(payload)) as any
       if (res.type !== "ERROR") {
-        showToast({
-          title: "Success",
-          message: "Alert check completed successfully",
-          toastType: "success",
-          duration: 3000,
-        })
+        alertResponse.value = res.data  // Store the response data
+        
+        // Show different messages based on whether alert was triggered
+        if (res.data?.alert_triggered) {
+          showToast({
+            title: "Alert Triggered",
+            message: res.data.message || "Alert has been triggered and notifications sent",
+            toastType: "warning",
+            duration: 5000,
+          })
+        } else {
+          showToast({
+            title: "All Clear",
+            message: res.data.message || "Inventory levels are normal",
+            toastType: "success",
+            duration: 3000,
+          })
+        }
+        
         return res.data
       } else {
         const errorMsg = res?.data?.detail?.[0]?.msg || res?.data?.error || "Failed to check alerts"
@@ -51,6 +67,7 @@ export const useCheckAndNotifyAlerts = () => {
 
   return {
     loading,
+    alertResponse,  // Export the response data
     checkAndNotifyAlerts
   }
 }

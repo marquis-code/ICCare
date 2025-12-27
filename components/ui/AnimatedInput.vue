@@ -7,25 +7,49 @@
           'absolute transition-all duration-300 ease-in-out pointer-events-none z-10',
           isFocused || modelValue ? 
             'text-xs text-gray-500 left-3 top-2' : 
-            'text-base text-gray-500 left-3 top-1/2 transform -translate-y-1/2'
+            `text-base text-gray-500 left-3 ${type === 'textarea' ? 'top-4' : 'top-1/2 transform -translate-y-1/2'}`
         ]"
       >
         {{ label }}
       </label>
       
-      <input 
+      <!-- Textarea -->
+      <textarea
+        v-if="type === 'textarea'"
+        :id="inputId"
+        :value="modelValue"
+        :placeholder="placeholder"
+        :disabled="disabled"
+        :readonly="readonly"
+        :rows="rows"
+        :class="[
+          'w-full py-4 pt-6 px-3 bg-[#1A1A1B09] border-[0.5px] border-transparent focus:outline-none focus:ring-1 focus:ring-[#033958] focus:border-[#033958] transition-all duration-300 resize-none',
+          roundedClasses,
+          disabled ? 'opacity-50 cursor-not-allowed' : '',
+          (hasError || (errorMessage && showError)) ? 'border-[0.5px] ring-red-500 border-red-500' : ''
+        ]"
+        @input="handleInput"
+        @focus="handleFocus"
+        @blur="handleBlur"
+        @keydown="$emit('keydown', $event)"
+        @keyup="$emit('keyup', $event)"
+      />
+      
+      <!-- Regular Input -->
+      <input
+        v-else
         :id="inputId"
         :type="computedType" 
         :value="displayValue"
         :placeholder="placeholder"
         :disabled="disabled"
-        :readonly="readonly || type === 'date'"
+        :readonly="readonly || type === 'date' || type === 'time' || type === 'datetime-local'"
         :autocomplete="autocomplete"
         :class="[
-          'w-full py-4 pt-6 px-3 bg-[#1A1A1B09] border-[0.5px] border-transparent focus:outline-none focus:ring-1 focus:ring-[#3BAB22] focus:border-[#3BAB22] transition-all duration-300',
+          'w-full py-4 pt-6 px-3 bg-[#1A1A1B09] border-[0.5px] border-transparent focus:outline-none focus:ring-1 focus:ring-[#033958] focus:border-[#033958] transition-all duration-300',
           roundedClasses,
           disabled ? 'opacity-50 cursor-not-allowed' : '',
-          type === 'date' ? 'cursor-pointer' : '',
+          (type === 'date' || type === 'time' || type === 'datetime-local') ? 'cursor-pointer' : '',
           (hasError || (errorMessage && showError)) ? 'border-[0.5px] ring-red-500 border-red-500' : ''
         ]"
         @input="handleInput"
@@ -70,7 +94,7 @@
         v-if="type === 'date'"
         type="button" 
         @click="toggleDatePicker" 
-        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#3BAB22] transition-colors z-20"
+        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#033958] transition-colors z-20"
         :tabindex="-1"
       >
         <svg 
@@ -91,9 +115,60 @@
         </svg>
       </button>
       
+      <!-- Clock icon for time input -->
+      <button 
+        v-if="type === 'time'"
+        type="button" 
+        @click="toggleTimePicker" 
+        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#033958] transition-colors z-20"
+        :tabindex="-1"
+      >
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          width="18" 
+          height="18" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          stroke-width="2" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+      </button>
+      
+      <!-- DateTime icon for datetime-local input -->
+      <button 
+        v-if="type === 'datetime-local'"
+        type="button" 
+        @click="toggleDateTimePicker" 
+        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#033958] transition-colors z-20"
+        :tabindex="-1"
+      >
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          width="18" 
+          height="18" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          stroke-width="2" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"
+        >
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+          <circle cx="12" cy="15" r="2"></circle>
+        </svg>
+      </button>
+      
       <!-- Custom right slot for other icons/buttons -->
       <div 
-        v-if="$slots.right && type !== 'password' && type !== 'date'" 
+        v-if="$slots.right && type !== 'password' && type !== 'date' && type !== 'time' && type !== 'datetime-local'" 
         class="absolute right-3 top-1/2 transform -translate-y-1/2 z-20"
       >
         <slot name="right" />
@@ -120,19 +195,55 @@
           </button>
           
           <div class="flex items-center gap-2">
-            <select 
-              v-model="currentMonth" 
-              class="px-2 py-1 border-[0.5px] border-gray-100 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#3BAB22]"
-            >
-              <option v-for="(month, idx) in months" :key="idx" :value="idx">{{ month }}</option>
-            </select>
+            <div class="relative">
+              <button
+                type="button"
+                @click="toggleMonthDropdown"
+                class="px-3 py-1 border-[0.5px] border-gray-100 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#033958] hover:bg-gray-50 transition-colors flex items-center gap-1"
+              >
+                {{ months[currentMonth] }}
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              <div v-if="showMonthDropdown" class="absolute top-full mt-1 left-0 bg-white border border-gray-100 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto w-32">
+                <button
+                  v-for="(month, idx) in months"
+                  :key="idx"
+                  type="button"
+                  @click="selectMonth(idx)"
+                  class="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 transition-colors"
+                  :class="{ 'bg-gray-100 font-medium': idx === currentMonth }"
+                >
+                  {{ month }}
+                </button>
+              </div>
+            </div>
             
-            <select 
-              v-model="currentYear" 
-              class="px-2 py-1 border-[0.5px] border-gray-100 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#3BAB22]"
-            >
-              <option v-for="year in yearRange" :key="year" :value="year">{{ year }}</option>
-            </select>
+            <div class="relative">
+              <button
+                type="button"
+                @click="toggleYearDropdown"
+                class="px-3 py-1 border-[0.5px] border-gray-100 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#033958] hover:bg-gray-50 transition-colors flex items-center gap-1"
+              >
+                {{ currentYear }}
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              <div v-if="showYearDropdown" class="absolute top-full mt-1 left-0 bg-white border border-gray-100 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto w-24">
+                <button
+                  v-for="year in yearRange"
+                  :key="year"
+                  type="button"
+                  @click="selectYear(year)"
+                  class="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 transition-colors"
+                  :class="{ 'bg-gray-100 font-medium': year === currentYear }"
+                >
+                  {{ year }}
+                </button>
+              </div>
+            </div>
           </div>
           
           <button 
@@ -167,8 +278,8 @@
             :class="[
               'p-2 text-sm rounded-lg transition-all duration-200',
               day.isCurrentMonth ? 'hover:bg-gray-100' : 'text-gray-300 cursor-not-allowed',
-              day.isToday ? 'border border-[#3BAB22]' : '',
-              day.isSelected ? 'bg-[#3BAB22] text-white hover:bg-[#2d8a1a]' : '',
+              day.isToday ? 'border border-[#033958]' : '',
+              day.isSelected ? 'bg-[#033958] text-white hover:bg-[#2d8a1a]' : '',
               !day.isCurrentMonth ? 'opacity-40' : ''
             ]"
             @click="selectDate(day)"
@@ -182,7 +293,7 @@
           <button 
             type="button"
             @click="selectToday" 
-            class="text-sm text-[#3BAB22] hover:text-[#2d8a1a] font-medium transition-colors"
+            class="text-sm text-[#033958] hover:text-[#2d8a1a] font-medium transition-colors"
           >
             Today
           </button>
@@ -196,16 +307,389 @@
         </div>
       </div>
     </Transition>
+    
+    <!-- Custom Time Picker -->
+    <Transition name="slide-fade">
+      <div 
+        v-if="showTimePicker && type === 'time'"
+        ref="timePickerRef"
+        class="absolute z-50 mt-2 bg-white rounded-xl shadow-lg border-[0.5px] border-gray-50 p-4 w-64"
+      >
+        <div class="text-center mb-4">
+          <h3 class="text-sm font-medium text-gray-700">Select Time</h3>
+        </div>
+        
+        <!-- Time Display -->
+        <div class="flex items-center justify-center gap-2 mb-4">
+          <div class="flex items-center gap-1">
+            <button
+              type="button"
+              @click="incrementHour"
+              class="p-1 hover:bg-gray-100 rounded transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="18 15 12 9 6 15"></polyline>
+              </svg>
+            </button>
+          </div>
+          
+          <div class="flex items-baseline gap-1">
+            <input
+              type="text"
+              v-model="selectedHour"
+              @blur="validateHour"
+              @keydown.up.prevent="incrementHour"
+              @keydown.down.prevent="decrementHour"
+              maxlength="2"
+              class="w-12 text-center text-2xl font-semibold border-[0.5px] border-gray-200 rounded-lg py-2 focus:outline-none focus:ring-1 focus:ring-[#033958] focus:border-[#033958]"
+            />
+            <span class="text-2xl font-semibold text-gray-400">:</span>
+            <input
+              type="text"
+              v-model="selectedMinute"
+              @blur="validateMinute"
+              @keydown.up.prevent="incrementMinute"
+              @keydown.down.prevent="decrementMinute"
+              maxlength="2"
+              class="w-12 text-center text-2xl font-semibold border-[0.5px] border-gray-200 rounded-lg py-2 focus:outline-none focus:ring-1 focus:ring-[#033958] focus:border-[#033958]"
+            />
+          </div>
+          
+          <div class="flex flex-col gap-1">
+            <button
+              type="button"
+              @click="togglePeriod"
+              class="px-3 py-1 text-sm font-medium bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+            >
+              {{ selectedPeriod }}
+            </button>
+          </div>
+        </div>
+        
+        <!-- Decrement Buttons -->
+        <div class="flex items-center justify-center gap-2 mb-4">
+          <button
+            type="button"
+            @click="decrementHour"
+            class="p-1 hover:bg-gray-100 rounded transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="w-12"></div>
+          <span class="text-2xl font-semibold text-transparent">:</span>
+          <button
+            type="button"
+            @click="decrementMinute"
+            class="p-1 hover:bg-gray-100 rounded transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="w-[52px]"></div>
+        </div>
+        
+        <!-- Quick Time Selections -->
+        <div class="grid grid-cols-3 gap-2 mb-4">
+          <button
+            v-for="quickTime in quickTimes"
+            :key="quickTime.label"
+            type="button"
+            @click="selectQuickTime(quickTime)"
+            class="px-3 py-2 text-xs font-medium text-gray-600 hover:text-[#033958] hover:bg-gray-50 rounded-lg transition-all"
+          >
+            {{ quickTime.label }}
+          </button>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="pt-4 border-t-[0.5px] border-gray-50 flex justify-between items-center">
+          <button 
+            type="button"
+            @click="setCurrentTime" 
+            class="text-sm text-[#033958] hover:text-[#2d8a1a] font-medium transition-colors"
+          >
+            Now
+          </button>
+          <div class="flex gap-2">
+            <button 
+              type="button"
+              @click="clearTime" 
+              class="text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors"
+            >
+              Clear
+            </button>
+            <button 
+              type="button"
+              @click="confirmTime" 
+              class="px-4 py-1.5 text-sm text-white bg-[#033958] hover:bg-[#2d8a1a] rounded-lg font-medium transition-colors"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+    
+    <!-- Custom DateTime Picker -->
+    <Transition name="slide-fade">
+      <div 
+        v-if="showDateTimePicker && type === 'datetime-local'"
+        ref="dateTimePickerRef"
+        class="absolute z-50 mt-2 bg-white rounded-xl shadow-lg border-[0.5px] border-gray-50 p-4 w-80"
+      >
+        <!-- DateTime Picker Header -->
+        <div class="text-center mb-4 pb-3 border-b border-gray-100">
+          <h3 class="text-sm font-semibold text-gray-800">Select Date & Time</h3>
+        </div>
+        
+        <!-- Month/Year Navigation -->
+        <div class="flex items-center justify-between mb-4">
+          <button 
+            type="button"
+            @click="previousMonth" 
+            class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+          
+          <div class="flex items-center gap-2">
+            <div class="relative">
+              <button
+                type="button"
+                @click="toggleMonthDropdown"
+                class="px-3 py-1 border-[0.5px] border-gray-100 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#033958] hover:bg-gray-50 transition-colors flex items-center gap-1"
+              >
+                {{ months[currentMonth] }}
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              <div v-if="showMonthDropdown" class="absolute top-full mt-1 left-0 bg-white border border-gray-100 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto w-32">
+                <button
+                  v-for="(month, idx) in months"
+                  :key="idx"
+                  type="button"
+                  @click="selectMonth(idx)"
+                  class="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 transition-colors"
+                  :class="{ 'bg-gray-100 font-medium': idx === currentMonth }"
+                >
+                  {{ month }}
+                </button>
+              </div>
+            </div>
+            
+            <div class="relative">
+              <button
+                type="button"
+                @click="toggleYearDropdown"
+                class="px-3 py-1 border-[0.5px] border-gray-100 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#033958] hover:bg-gray-50 transition-colors flex items-center gap-1"
+              >
+                {{ currentYear }}
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              <div v-if="showYearDropdown" class="absolute top-full mt-1 left-0 bg-white border border-gray-100 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto w-24">
+                <button
+                  v-for="year in yearRange"
+                  :key="year"
+                  type="button"
+                  @click="selectYear(year)"
+                  class="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 transition-colors"
+                  :class="{ 'bg-gray-100 font-medium': year === currentYear }"
+                >
+                  {{ year }}
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <button 
+            type="button"
+            @click="nextMonth" 
+            class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Week Days -->
+        <div class="grid grid-cols-7 gap-1 mb-2">
+          <div 
+            v-for="day in weekDays" 
+            :key="day" 
+            class="text-center text-xs font-medium text-gray-500 py-2"
+          >
+            {{ day }}
+          </div>
+        </div>
+        
+        <!-- Calendar Days -->
+        <div class="grid grid-cols-7 gap-1 mb-4">
+          <button
+            v-for="(day, idx) in calendarDays"
+            :key="idx"
+            type="button"
+            :disabled="!day.isCurrentMonth"
+            :class="[
+              'p-2 text-sm rounded-lg transition-all duration-200',
+              day.isCurrentMonth ? 'hover:bg-gray-100' : 'text-gray-300 cursor-not-allowed',
+              day.isToday ? 'border border-[#033958]' : '',
+              day.isSelected ? 'bg-[#033958] text-white hover:bg-[#2d8a1a]' : '',
+              !day.isCurrentMonth ? 'opacity-40' : ''
+            ]"
+            @click="selectDateTimeDate(day)"
+          >
+            {{ day.date }}
+          </button>
+        </div>
+        
+        <!-- Time Selection Section -->
+        <div class="pt-4 border-t border-gray-100">
+          <div class="text-center mb-3">
+            <p class="text-xs font-medium text-gray-600">Time</p>
+          </div>
+          
+          <!-- Time Controls -->
+          <div class="flex items-center justify-center gap-2 mb-3">
+            <div class="flex items-baseline gap-1">
+              <input
+                type="text"
+                v-model="selectedHour"
+                @blur="validateHour"
+                @keydown.up.prevent="incrementHour"
+                @keydown.down.prevent="decrementHour"
+                maxlength="2"
+                class="w-10 text-center text-xl font-semibold border-[0.5px] border-gray-200 rounded-lg py-1.5 focus:outline-none focus:ring-1 focus:ring-[#033958] focus:border-[#033958]"
+              />
+              <span class="text-xl font-semibold text-gray-400">:</span>
+              <input
+                type="text"
+                v-model="selectedMinute"
+                @blur="validateMinute"
+                @keydown.up.prevent="incrementMinute"
+                @keydown.down.prevent="decrementMinute"
+                maxlength="2"
+                class="w-10 text-center text-xl font-semibold border-[0.5px] border-gray-200 rounded-lg py-1.5 focus:outline-none focus:ring-1 focus:ring-[#033958] focus:border-[#033958]"
+              />
+            </div>
+            
+            <button
+              type="button"
+              @click="togglePeriod"
+              class="px-3 py-1.5 text-sm font-medium bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+            >
+              {{ selectedPeriod }}
+            </button>
+          </div>
+          
+          <!-- Time Increment/Decrement Buttons -->
+          <div class="flex items-center justify-center gap-2 mb-3">
+            <button
+              type="button"
+              @click="incrementHour"
+              class="p-1 hover:bg-gray-100 rounded transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="18 15 12 9 6 15"></polyline>
+              </svg>
+            </button>
+            <button
+              type="button"
+              @click="decrementHour"
+              class="p-1 hover:bg-gray-100 rounded transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="w-2"></div>
+            <button
+              type="button"
+              @click="incrementMinute"
+              class="p-1 hover:bg-gray-100 rounded transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="18 15 12 9 6 15"></polyline>
+              </svg>
+            </button>
+            <button
+              type="button"
+              @click="decrementMinute"
+              class="p-1 hover:bg-gray-100 rounded transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+          </div>
+          
+          <!-- Quick Time Selections -->
+          <div class="grid grid-cols-3 gap-2 mb-3">
+            <button
+              v-for="quickTime in quickTimes"
+              :key="quickTime.label"
+              type="button"
+              @click="selectQuickTime(quickTime)"
+              class="px-2 py-1.5 text-xs font-medium text-gray-600 hover:text-[#033958] hover:bg-gray-50 rounded-lg transition-all"
+            >
+              {{ quickTime.label }}
+            </button>
+          </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="pt-4 border-t-[0.5px] border-gray-50 flex justify-between items-center">
+          <button 
+            type="button"
+            @click="selectNow" 
+            class="text-sm text-[#033958] hover:text-[#2d8a1a] font-medium transition-colors"
+          >
+            Now
+          </button>
+          <div class="flex gap-2">
+            <button 
+              type="button"
+              @click="clearDateTime" 
+              class="text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors"
+            >
+              Clear
+            </button>
+            <button 
+              type="button"
+              @click="confirmDateTime" 
+              class="px-4 py-1.5 text-sm text-white bg-[#033958] hover:bg-[#2d8a1a] rounded-lg font-medium transition-colors"
+            >
+              Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+    
+    <!-- Error Message -->
+    <Transition name="slide-fade">
+      <p v-if="errorMessage && showError" class="text-xs text-red-500 mt-1 ml-3">
+        {{ errorMessage }}
+      </p>
+    </Transition>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, useId, watch, onMounted, onUnmounted } from 'vue'
+import { ref, computed, useId, onMounted, onUnmounted } from 'vue'
 
 interface Props {
   modelValue?: string | number
   label: string
-  type?: 'text' | 'email' | 'password' | 'tel' | 'url' | 'search' | 'number' | 'date'
+  type?: 'text' | 'email' | 'password' | 'tel' | 'url' | 'search' | 'number' | 'date' | 'time' | 'datetime-local' | 'textarea'
   placeholder?: string
   disabled?: boolean
   readonly?: boolean
@@ -214,6 +698,7 @@ interface Props {
   showError?: boolean
   position?: 'top' | 'middle' | 'bottom' | 'standalone'
   hasError?: boolean
+  rows?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -226,7 +711,8 @@ const props = withDefaults(defineProps<Props>(), {
   errorMessage: '',
   showError: true,
   position: 'standalone',
-  hasError: false
+  hasError: false,
+  rows: 4
 })
 
 interface Emits {
@@ -243,12 +729,24 @@ const emit = defineEmits<Emits>()
 const isFocused = ref(false)
 const showPassword = ref(false)
 const showDatePicker = ref(false)
+const showTimePicker = ref(false)
+const showDateTimePicker = ref(false)
+const showMonthDropdown = ref(false)
+const showYearDropdown = ref(false)
 const inputId = useId()
 const datePickerRef = ref<HTMLElement | null>(null)
+const timePickerRef = ref<HTMLElement | null>(null)
+const dateTimePickerRef = ref<HTMLElement | null>(null)
 
 // Date picker state
 const currentMonth = ref(new Date().getMonth())
 const currentYear = ref(new Date().getFullYear())
+const selectedDateForDateTime = ref<Date | null>(null)
+
+// Time picker state
+const selectedHour = ref('12')
+const selectedMinute = ref('00')
+const selectedPeriod = ref<'AM' | 'PM'>('PM')
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -257,12 +755,21 @@ const months = [
 
 const weekDays = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
 
+const quickTimes = [
+  { label: '9:00 AM', hour: 9, minute: 0, period: 'AM' as const },
+  { label: '12:00 PM', hour: 12, minute: 0, period: 'PM' as const },
+  { label: '1:00 PM', hour: 1, minute: 0, period: 'PM' as const },
+  { label: '3:00 PM', hour: 3, minute: 0, period: 'PM' as const },
+  { label: '5:00 PM', hour: 5, minute: 0, period: 'PM' as const },
+  { label: '6:00 PM', hour: 6, minute: 0, period: 'PM' as const }
+]
+
 // Computed
 const computedType = computed(() => {
   if (props.type === 'password') {
     return showPassword.value ? 'text' : 'password'
   }
-  if (props.type === 'date') {
+  if (props.type === 'date' || props.type === 'time' || props.type === 'datetime-local') {
     return 'text'
   }
   return props.type
@@ -271,6 +778,12 @@ const computedType = computed(() => {
 const displayValue = computed(() => {
   if (props.type === 'date' && props.modelValue) {
     return formatDateForDisplay(props.modelValue as string)
+  }
+  if (props.type === 'time' && props.modelValue) {
+    return formatTimeForDisplay(props.modelValue as string)
+  }
+  if (props.type === 'datetime-local' && props.modelValue) {
+    return formatDateTimeForDisplay(props.modelValue as string)
   }
   return props.modelValue
 })
@@ -334,7 +847,15 @@ const calendarDays = computed<CalendarDay[]>(() => {
   
   // Current month days
   const today = new Date()
-  const selectedDate = props.modelValue ? new Date(props.modelValue as string) : null
+  let selectedDate: Date | null = null
+  
+  if (props.type === 'datetime-local' && props.modelValue) {
+    selectedDate = parseDateTimeString(props.modelValue as string)?.date || null
+  } else if (props.type === 'date' && props.modelValue) {
+    selectedDate = new Date(props.modelValue as string)
+  } else if (props.type === 'datetime-local' && selectedDateForDateTime.value) {
+    selectedDate = selectedDateForDateTime.value
+  }
   
   for (let i = 1; i <= lastDate; i++) {
     const fullDate = new Date(year, month, i)
@@ -375,7 +896,7 @@ const calendarDays = computed<CalendarDay[]>(() => {
 
 // Methods
 const handleInput = (event: Event) => {
-  const target = event.target as HTMLInputElement
+  const target = event.target as HTMLInputElement | HTMLTextAreaElement
   emit('update:modelValue', target.value)
 }
 
@@ -392,6 +913,10 @@ const handleBlur = (event: FocusEvent) => {
 const handleInputClick = () => {
   if (props.type === 'date') {
     toggleDatePicker()
+  } else if (props.type === 'time') {
+    toggleTimePicker()
+  } else if (props.type === 'datetime-local') {
+    toggleDateTimePicker()
   }
 }
 
@@ -399,6 +924,28 @@ const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value
 }
 
+// Custom Dropdown Methods
+const toggleMonthDropdown = () => {
+  showMonthDropdown.value = !showMonthDropdown.value
+  showYearDropdown.value = false
+}
+
+const toggleYearDropdown = () => {
+  showYearDropdown.value = !showYearDropdown.value
+  showMonthDropdown.value = false
+}
+
+const selectMonth = (monthIndex: number) => {
+  currentMonth.value = monthIndex
+  showMonthDropdown.value = false
+}
+
+const selectYear = (year: number) => {
+  currentYear.value = year
+  showYearDropdown.value = false
+}
+
+// Date Picker Methods
 const toggleDatePicker = () => {
   showDatePicker.value = !showDatePicker.value
   
@@ -467,12 +1014,271 @@ const formatDateForModel = (date: Date): string => {
   return `${year}-${month}-${day}`
 }
 
-// Click outside to close date picker
+// Time Picker Methods
+const toggleTimePicker = () => {
+  showTimePicker.value = !showTimePicker.value
+  
+  if (showTimePicker.value && props.modelValue) {
+    const time = parseTimeString(props.modelValue as string)
+    if (time) {
+      selectedHour.value = time.hour
+      selectedMinute.value = time.minute
+      selectedPeriod.value = time.period
+    }
+  } else if (showTimePicker.value) {
+    const now = new Date()
+    let hour = now.getHours()
+    const period = hour >= 12 ? 'PM' : 'AM'
+    hour = hour % 12 || 12
+    
+    selectedHour.value = String(hour).padStart(2, '0')
+    selectedMinute.value = String(now.getMinutes()).padStart(2, '0')
+    selectedPeriod.value = period
+  }
+}
+
+const parseTimeString = (timeStr: string) => {
+  const match = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i)
+  if (match) {
+    return {
+      hour: match[1].padStart(2, '0'),
+      minute: match[2],
+      period: match[3].toUpperCase() as 'AM' | 'PM'
+    }
+  }
+  return null
+}
+
+const formatTimeForDisplay = (timeStr: string): string => {
+  if (!timeStr) return ''
+  return timeStr
+}
+
+const incrementHour = () => {
+  let hour = parseInt(selectedHour.value)
+  hour = hour === 12 ? 1 : hour + 1
+  selectedHour.value = String(hour).padStart(2, '0')
+}
+
+const decrementHour = () => {
+  let hour = parseInt(selectedHour.value)
+  hour = hour === 1 ? 12 : hour - 1
+  selectedHour.value = String(hour).padStart(2, '0')
+}
+
+const incrementMinute = () => {
+  let minute = parseInt(selectedMinute.value)
+  minute = (minute + 1) % 60
+  selectedMinute.value = String(minute).padStart(2, '0')
+}
+
+const decrementMinute = () => {
+  let minute = parseInt(selectedMinute.value)
+  minute = minute === 0 ? 59 : minute - 1
+  selectedMinute.value = String(minute).padStart(2, '0')
+}
+
+const togglePeriod = () => {
+  selectedPeriod.value = selectedPeriod.value === 'AM' ? 'PM' : 'AM'
+}
+
+const validateHour = () => {
+  let hour = parseInt(selectedHour.value)
+  if (isNaN(hour) || hour < 1 || hour > 12) {
+    hour = 12
+  }
+  selectedHour.value = String(hour).padStart(2, '0')
+}
+
+const validateMinute = () => {
+  let minute = parseInt(selectedMinute.value)
+  if (isNaN(minute) || minute < 0 || minute > 59) {
+    minute = 0
+  }
+  selectedMinute.value = String(minute).padStart(2, '0')
+}
+
+const selectQuickTime = (quickTime: typeof quickTimes[0]) => {
+  selectedHour.value = String(quickTime.hour).padStart(2, '0')
+  selectedMinute.value = String(quickTime.minute).padStart(2, '0')
+  selectedPeriod.value = quickTime.period
+}
+
+const setCurrentTime = () => {
+  const now = new Date()
+  let hour = now.getHours()
+  const period = hour >= 12 ? 'PM' : 'AM'
+  hour = hour % 12 || 12
+  
+  selectedHour.value = String(hour).padStart(2, '0')
+  selectedMinute.value = String(now.getMinutes()).padStart(2, '0')
+  selectedPeriod.value = period
+}
+
+const clearTime = () => {
+  emit('update:modelValue', '')
+  showTimePicker.value = false
+}
+
+const confirmTime = () => {
+  const timeStr = `${selectedHour.value}:${selectedMinute.value} ${selectedPeriod.value}`
+  emit('update:modelValue', timeStr)
+  showTimePicker.value = false
+}
+
+// DateTime Picker Methods
+const toggleDateTimePicker = () => {
+  showDateTimePicker.value = !showDateTimePicker.value
+  
+  if (showDateTimePicker.value) {
+    if (props.modelValue) {
+      const parsed = parseDateTimeString(props.modelValue as string)
+      if (parsed) {
+        selectedDateForDateTime.value = parsed.date
+        currentMonth.value = parsed.date.getMonth()
+        currentYear.value = parsed.date.getFullYear()
+        selectedHour.value = parsed.hour
+        selectedMinute.value = parsed.minute
+        selectedPeriod.value = parsed.period
+      }
+    } else {
+      const now = new Date()
+      selectedDateForDateTime.value = now
+      currentMonth.value = now.getMonth()
+      currentYear.value = now.getFullYear()
+      
+      let hour = now.getHours()
+      const period = hour >= 12 ? 'PM' : 'AM'
+      hour = hour % 12 || 12
+      
+      selectedHour.value = String(hour).padStart(2, '0')
+      selectedMinute.value = String(now.getMinutes()).padStart(2, '0')
+      selectedPeriod.value = period
+    }
+  }
+}
+
+const selectDateTimeDate = (day: CalendarDay) => {
+  if (!day.isCurrentMonth) return
+  selectedDateForDateTime.value = day.fullDate
+}
+
+const selectNow = () => {
+  const now = new Date()
+  selectedDateForDateTime.value = now
+  currentMonth.value = now.getMonth()
+  currentYear.value = now.getFullYear()
+  
+  let hour = now.getHours()
+  const period = hour >= 12 ? 'PM' : 'AM'
+  hour = hour % 12 || 12
+  
+  selectedHour.value = String(hour).padStart(2, '0')
+  selectedMinute.value = String(now.getMinutes()).padStart(2, '0')
+  selectedPeriod.value = period
+}
+
+const clearDateTime = () => {
+  emit('update:modelValue', '')
+  selectedDateForDateTime.value = null
+  showDateTimePicker.value = false
+}
+
+const confirmDateTime = () => {
+  if (!selectedDateForDateTime.value) {
+    selectedDateForDateTime.value = new Date()
+  }
+  
+  const dateTimeStr = formatDateTimeForModel(
+    selectedDateForDateTime.value,
+    selectedHour.value,
+    selectedMinute.value,
+    selectedPeriod.value
+  )
+  emit('update:modelValue', dateTimeStr)
+  showDateTimePicker.value = false
+}
+
+const parseDateTimeString = (dateTimeStr: string) => {
+  const parts = dateTimeStr.split(',').map(p => p.trim())
+  
+  if (parts.length >= 3) {
+    const datePart = `${parts[0]}, ${parts[1]}, ${parts[2]}`
+    const date = new Date(datePart)
+    
+    const timePart = parts[3] || '12:00 PM'
+    const timeMatch = timePart.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i)
+    
+    if (timeMatch && !isNaN(date.getTime())) {
+      return {
+        date,
+        hour: timeMatch[1].padStart(2, '0'),
+        minute: timeMatch[2],
+        period: timeMatch[3].toUpperCase() as 'AM' | 'PM'
+      }
+    }
+  }
+  
+  return null
+}
+
+const formatDateTimeForDisplay = (dateTimeStr: string): string => {
+  if (!dateTimeStr) return ''
+  
+  const parsed = parseDateTimeString(dateTimeStr)
+  if (parsed) {
+    const dateOptions: Intl.DateTimeFormatOptions = { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric'
+    }
+    const dateStr = parsed.date.toLocaleDateString('en-US', dateOptions)
+    return `${dateStr}, ${parsed.hour}:${parsed.minute} ${parsed.period}`
+  }
+  
+  return dateTimeStr
+}
+
+const formatDateTimeForModel = (
+  date: Date,
+  hour: string,
+  minute: string,
+  period: 'AM' | 'PM'
+): string => {
+  const dateOptions: Intl.DateTimeFormatOptions = { 
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric',
+    weekday: 'short'
+  }
+  const dateStr = date.toLocaleDateString('en-US', dateOptions)
+  return `${dateStr}, ${hour}:${minute} ${period}`
+}
+
+// Click outside handlers
 const handleClickOutside = (event: MouseEvent) => {
   if (datePickerRef.value && !datePickerRef.value.contains(event.target as Node)) {
     const inputElement = document.getElementById(inputId) as HTMLInputElement
     if (inputElement && !inputElement.contains(event.target as Node)) {
       showDatePicker.value = false
+      showMonthDropdown.value = false
+      showYearDropdown.value = false
+    }
+  }
+  
+  if (timePickerRef.value && !timePickerRef.value.contains(event.target as Node)) {
+    const inputElement = document.getElementById(inputId) as HTMLInputElement
+    if (inputElement && !inputElement.contains(event.target as Node)) {
+      showTimePicker.value = false
+    }
+  }
+  
+  if (dateTimePickerRef.value && !dateTimePickerRef.value.contains(event.target as Node)) {
+    const inputElement = document.getElementById(inputId) as HTMLInputElement
+    if (inputElement && !inputElement.contains(event.target as Node)) {
+      showDateTimePicker.value = false
+      showMonthDropdown.value = false
+      showYearDropdown.value = false
     }
   }
 }
@@ -488,18 +1294,19 @@ onUnmounted(() => {
 // Expose methods
 defineExpose({
   focus: () => {
-    const input = document.getElementById(inputId) as HTMLInputElement
+    const input = document.getElementById(inputId) as HTMLInputElement | HTMLTextAreaElement
     input?.focus()
   },
   blur: () => {
-    const input = document.getElementById(inputId) as HTMLInputElement
+    const input = document.getElementById(inputId) as HTMLInputElement | HTMLTextAreaElement
     input?.blur()
   }
 })
 </script>
 
 <style scoped>
-input:focus {
+input:focus,
+textarea:focus {
   border-color: #3BAB22;
 }
 
@@ -513,12 +1320,13 @@ input:focus {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.input-container input {
+.input-container input,
+.input-container textarea {
   position: relative;
   z-index: 0;
 }
 
-/* Date picker transitions */
+/* Date/Time picker transitions */
 .slide-fade-enter-active {
   transition: all 0.2s ease-out;
 }
@@ -529,11 +1337,6 @@ input:focus {
 
 .slide-fade-enter-from {
   transform: translateY(-10px);
-  opacity: 0;
-}
-
-.slide-fade-leave-to {
-  transform: translateY(-5px);
   opacity: 0;
 }
 </style>
