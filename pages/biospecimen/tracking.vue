@@ -2,20 +2,20 @@
   <div class="min-h-screen">
     <div class="flex">
       <main class="mx-auto container">
-        <div class="mb-6">
+        <div class="mb-6  rounded-xl bg-[#005B8F] px-6 md:px-8 py-4">
           <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <h1 class="text-xl font-bold text-gray-900">BioSpecimen Tracking</h1>
+            <h1 class="text-xl font-bold text-white">BioSpecimen Tracking</h1>
 
             <div class="flex flex-wrap gap-2">
               <button @click="openRequestMovementModal"
-                      class="px-4 py-3 bg-[#005B8F] text-white rounded hover:bg-[#004a73] transition flex items-center gap-2 text-sm">
+                      class="px-4 py-3 font-semibold bg-[#D8F1FE] text-[#005B8F] rounded-lg transition flex items-center gap-2 text-sm">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
                 Request Movement
               </button>
               <button @click="openRequestDisposalModal"
-                      class="px-4 py-3 bg-[#005B8F] text-white rounded hover:bg-[#004a73] transition flex items-center gap-2 text-sm">
+                      class="px-4 py-3 font-semibold bg-[#D8F1FE] text-[#005B8F] rounded-lg transition flex items-center gap-2 text-sm">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -737,140 +737,163 @@
     </Teleport>
 
     <!-- View Details Modal -->
+ <!-- View Details Modal -->
     <Teleport to="body">
       <div
           v-if="showViewDetailsModal"
           class="fixed inset-0 backdrop-blur-lg bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]"
           @click.self="closeViewDetailsModal"
       >
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
           <div class="p-6">
-            <div class="flex items-center justify-between mb-6">
-              <div class="flex items-center gap-3">
-                <div class="p-2 bg-blue-100 rounded-lg">
-                  <svg class="w-6 h-6 text-[#005B8F]" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
-                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" />
-                  </svg>
-                </div>
-                <div>
-                  <h2 class="text-xl font-bold text-gray-900">{{ selectedType === 'tracking' ? 'Movement' : 'Disposal' }} Details</h2>
-                  <p class="text-sm text-gray-500">Complete information about the specimen {{ selectedType }}</p>
-                </div>
-              </div>
+            <!-- Header -->
+            <div class="flex items-center gap-3 mb-6">
               <button
                   @click="closeViewDetailsModal"
                   class="p-2 hover:bg-gray-100 rounded-lg transition"
               >
-                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
+              <h2 class="text-xl font-bold text-gray-900">{{ selectedType === 'tracking' ? 'Movement' : 'Disposal' }} Details</h2>
             </div>
 
             <div v-if="selectedItem" class="space-y-6">
+              <!-- Movement Information -->
               <div>
-                <h3 class="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wide">Sample Information</h3>
-                <div class="bg-gray-50 rounded-lg p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-xs font-medium text-gray-500 mb-1">Sample ID</label>
-                    <p class="text-sm font-semibold text-gray-900">{{ selectedItem.sampleId }}</p>
+                <h3 class="text-base font-semibold text-[#005B8F] mb-4">Movement Information</h3>
+                <div class="space-y-4">
+                  <!-- Sample ID -->
+                  <div class="flex justify-between items-start py-2">
+                    <span class="text-sm text-gray-700">Sample ID</span>
+                    <span class="text-sm font-medium text-gray-900 text-right">{{ selectedItem.sampleId || 'Not available' }}</span>
                   </div>
-                  <div>
-                    <label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
-                    <span
-                        :class="[
-                        'inline-block px-3 py-1 rounded-full text-xs font-medium',
-                        selectedItem.completionStatus === 'Confirmed' || selectedItem.completionStatus === 'confirmed' ? 'bg-green-100 text-green-700' :
-                        selectedItem.completionStatus === 'Moved' || selectedItem.completionStatus === 'moved' ? 'bg-blue-100 text-blue-700' :
-                        selectedItem.completionStatus === 'Approved' || selectedItem.completionStatus === 'approved' ? 'bg-orange-100 text-orange-700' :
-                        selectedItem.completionStatus === 'completed' ? 'bg-green-100 text-green-700' :
-                        'bg-gray-100 text-gray-700'
-                      ]"
-                    >
-                      {{ selectedItem.completionStatus }}
-                    </span>
+                  
+                  <!-- Source Location -->
+                  <div class="flex justify-between items-start py-2">
+                    <span class="text-sm text-gray-700">Source Location</span>
+                    <span class="text-sm font-medium text-gray-900 text-right">{{ selectedItem.sourceLocation || 'Not available' }}</span>
                   </div>
-                </div>
-              </div>
-
-              <div>
-                <h3 class="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wide">Location Details</h3>
-                <div class="bg-gray-50 rounded-lg p-4 space-y-4">
-                  <div class="flex items-start gap-3">
-                    <div class="p-2 bg-white rounded-lg">
-                      <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
-                      </svg>
-                    </div>
-                    <div class="flex-1">
-                      <label class="block text-xs font-medium text-gray-500 mb-1">Source Location</label>
-                      <p class="text-sm text-gray-900">{{ selectedItem.sourceLocation }}</p>
-                    </div>
+                  
+                  <!-- Destination Location -->
+                  <div class="flex justify-between items-start py-2">
+                    <span class="text-sm text-gray-700">Destination Location</span>
+                    <span class="text-sm font-medium text-gray-900 text-right">{{ selectedItem.destinationLocation || 'Not available' }}</span>
                   </div>
-
-                  <div class="flex items-center justify-center">
-                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                    </svg>
+                  
+                  <!-- Requested Date -->
+                  <div class="flex justify-between items-start py-2">
+                    <span class="text-sm text-gray-700">Requested Date</span>
+                    <span class="text-sm font-medium text-gray-900 text-right">{{ selectedItem.requestedDate || 'Not available' }}</span>
                   </div>
-
-                  <div class="flex items-start gap-3">
-                    <div class="p-2 bg-white rounded-lg">
-                      <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
-                      </svg>
-                    </div>
-                    <div class="flex-1">
-                      <label class="block text-xs font-medium text-gray-500 mb-1">Destination Location</label>
-                      <p class="text-sm text-gray-900">{{ selectedItem.destinationLocation }}</p>
-                    </div>
+                  
+                  <!-- Approved Date -->
+                  <div class="flex justify-between items-start py-2">
+                    <span class="text-sm text-gray-700">Approved Date</span>
+                    <span class="text-sm font-medium text-gray-900 text-right">{{ selectedItem.approvedDate || 'Pending approval' }}</span>
+                  </div>
+                  
+                  <!-- Requested by -->
+                  <div class="flex justify-between items-start py-2">
+                    <span class="text-sm text-gray-700">Requested by</span>
+                    <span class="text-sm font-medium text-gray-900 text-right">{{ selectedItem.requestedBy || 'Not available' }}</span>
+                  </div>
+                  
+                  <!-- Received by (if available from details) -->
+                  <div v-if="selectedItem.receivedBy" class="flex justify-between items-start py-2">
+                    <span class="text-sm text-gray-700">Received by</span>
+                    <span class="text-sm font-medium text-gray-900 text-right">{{ selectedItem.receivedBy }}</span>
+                  </div>
+                  
+                  <!-- Request Reason -->
+                  <div v-if="selectedItem.description" class="flex justify-between items-start py-2">
+                    <span class="text-sm text-gray-700">Request Reason</span>
+                    <span class="text-sm font-medium text-gray-900 text-right max-w-xs">{{ selectedItem.description }}</span>
                   </div>
                 </div>
               </div>
 
-              <div>
-                <h3 class="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wide">Timeline</h3>
-                <div class="bg-gray-50 rounded-lg p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-xs font-medium text-gray-500 mb-1">Requested Date</label>
-                    <p class="text-sm text-gray-900">{{ selectedItem.requestedDate }}</p>
+              <!-- Timeline Progress -->
+              <div class="relative pl-8 space-y-6 mt-8">
+                <!-- Vertical line -->
+                <div class="absolute left-4 top-3 bottom-3 w-0.5 bg-gray-200"></div>
+
+                <!-- Movement Requested -->
+                <div class="relative">
+                  <div class="absolute -left-[1.9rem] top-1 w-6 h-6 rounded-full bg-gray-300 border-4 border-white flex items-center justify-center">
+                    <div class="w-2 h-2 rounded-full bg-white"></div>
                   </div>
-                  <div>
-                    <label class="block text-xs font-medium text-gray-500 mb-1">Approved Date</label>
-                    <p class="text-sm text-gray-900">{{ selectedItem.approvedDate }}</p>
+                  <div class="bg-gray-50 rounded-lg p-4">
+                    <h4 class="font-semibold text-gray-900 mb-1">Movement Requested</h4>
+                    <p class="text-sm text-gray-600">
+                      {{ selectedItem.requestedDate || 'Date not available' }}
+                      <span v-if="selectedItem.requestedBy"> by {{ selectedItem.requestedBy }}</span>
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Request Approved -->
+                <div class="relative" v-if="selectedItem.approvedDate && selectedItem.approvedDate !== 'N/A' && selectedItem.approvedDate !== 'Pending approval'">
+                  <div class="absolute -left-[1.9rem] top-1 w-6 h-6 rounded-full bg-blue-500 border-4 border-white flex items-center justify-center">
+                    <div class="w-2 h-2 rounded-full bg-white"></div>
+                  </div>
+                  <div class="bg-gray-50 rounded-lg p-4">
+                    <h4 class="font-semibold text-gray-900 mb-1">Request Approved</h4>
+                    <p class="text-sm text-gray-600">
+                      {{ selectedItem.approvedDate }}
+                      <span v-if="selectedItem.approvedBy"> by {{ selectedItem.approvedBy }}</span>
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Sample Moved -->
+                <div class="relative" v-if="selectedItem.completionStatus && (selectedItem.completionStatus.toLowerCase() === 'completed' || selectedItem.completionStatus.toLowerCase() === 'moved' || selectedItem.completionStatus.toLowerCase() === 'confirmed')">
+                  <div class="absolute -left-[1.9rem] top-1 w-6 h-6 rounded-full bg-green-500 border-4 border-white flex items-center justify-center">
+                    <div class="w-2 h-2 rounded-full bg-white"></div>
+                  </div>
+                  <div class="bg-gray-50 rounded-lg p-4">
+                    <h4 class="font-semibold text-gray-900 mb-1">Sample Moved</h4>
+                    <p class="text-sm text-gray-600">
+                      {{ selectedItem.movedDate || selectedItem.approvedDate || 'Date not available' }}
+                      <span v-if="selectedItem.movedBy"> by {{ selectedItem.movedBy }}</span>
+                      <span v-else-if="selectedItem.requestedBy"> by {{ selectedItem.requestedBy }}</span>
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Transfer Confirmed -->
+                <div class="relative" v-if="selectedItem.completionStatus && selectedItem.completionStatus.toLowerCase() === 'confirmed'">
+                  <div class="absolute -left-[1.9rem] top-1 w-6 h-6 rounded-full bg-purple-500 border-4 border-white flex items-center justify-center">
+                    <div class="w-2 h-2 rounded-full bg-white"></div>
+                  </div>
+                  <div class="bg-gray-50 rounded-lg p-4">
+                    <h4 class="font-semibold text-gray-900 mb-1">Transfer Confirmed</h4>
+                    <p class="text-sm text-gray-600">
+                      {{ selectedItem.confirmedDate || selectedItem.approvedDate || 'Date not available' }}
+                      <span v-if="selectedItem.confirmedBy"> by {{ selectedItem.confirmedBy }}</span>
+                      <span v-else> by Receiving Lab</span>
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Rejected State (if applicable) -->
+                <div class="relative" v-if="selectedItem.completionStatus && selectedItem.completionStatus.toLowerCase() === 'rejected'">
+                  <div class="absolute -left-[1.9rem] top-1 w-6 h-6 rounded-full bg-red-500 border-4 border-white flex items-center justify-center">
+                    <div class="w-2 h-2 rounded-full bg-white"></div>
+                  </div>
+                  <div class="bg-red-50 rounded-lg p-4">
+                    <h4 class="font-semibold text-red-900 mb-1">Request Rejected</h4>
+                    <p class="text-sm text-red-700">
+                      {{ selectedItem.approvedDate || 'Date not available' }}
+                      <span v-if="selectedItem.approvedBy"> by {{ selectedItem.approvedBy }}</span>
+                    </p>
+                    <p v-if="selectedItem.rejectionReason" class="text-sm text-red-600 mt-2">
+                      Reason: {{ selectedItem.rejectionReason }}
+                    </p>
                   </div>
                 </div>
               </div>
-
-              <div>
-                <h3 class="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wide">Personnel</h3>
-                <div class="bg-gray-50 rounded-lg p-4">
-                  <label class="block text-xs font-medium text-gray-500 mb-1">Requested By</label>
-                  <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 bg-[#005B8F] rounded-full flex items-center justify-center text-white text-xs font-semibold">
-                      {{ getInitials(selectedItem.requestedBy) }}
-                    </div>
-                    <p class="text-sm text-gray-900">{{ selectedItem.requestedBy }}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div v-if="selectedItem.description">
-                <h3 class="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wide">Description</h3>
-                <div class="bg-gray-50 rounded-lg p-4">
-                  <p class="text-sm text-gray-700 leading-relaxed">{{ selectedItem.description }}</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="flex justify-end gap-3 mt-6 pt-6 border-t border-gray-200">
-              <button
-                  @click="closeViewDetailsModal"
-                  class="px-6 py-2 bg-[#005B8F] text-white rounded-lg hover:bg-[#004a73] transition"
-              >
-                Close
-              </button>
             </div>
           </div>
         </div>

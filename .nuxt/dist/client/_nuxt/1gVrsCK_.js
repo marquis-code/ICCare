@@ -1,0 +1,1 @@
+import{_ as c,c as o,o as s,a as t,b as a,af as n}from"./BVza9Rm9.js";const _={},r={class:"min-h-screen bg-background flex flex-col"},f={class:"flex-1"};function l(d,i){const e=n;return s(),o("div",r,[t("main",f,[a(e)])])}const x=c(_,[["render",l]]);export{x as default};

@@ -2,8 +2,8 @@
     <div class="min-h-screen">
         <div class="">
             <!-- Header -->
-            <div class="mb-8">
-                <h1 class="text-2xl font-bold text-gray-900">Biospecimen Bulk Upload</h1>
+            <div class="mb-8 rounded-xl bg-[#005B8F] px-6 md:px-8 py-4">
+                <h1 class="text-2xl font-bold text-white">Biospecimen Bulk Upload</h1>
             </div>
 
             <!-- Stepper -->

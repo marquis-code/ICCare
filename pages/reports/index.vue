@@ -4,9 +4,9 @@
       <!-- Main Content -->
       <div class="px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <!-- Page Header -->
-        <div class="mb-6 sm:mb-8">
-          <h1 class="text-2xl font-semibold text-gray-900">Reports & Analytics</h1>
-          <p class="mt-2 text-sm text-gray-600">
+        <div class="sm:mb-8 rounded-xl bg-[#005B8F] px-6 md:px-8 py-4 mb-6">
+          <h1 class="text-2xl font-semibold text-white">Reports & Analytics</h1>
+          <p class="mt-2 text-base text-white">
             Generate, export, and schedule biosample reports. Monitor dashboard metrics and set up automated alerts.
           </p>
         </div>

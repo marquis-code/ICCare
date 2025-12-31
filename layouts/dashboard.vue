@@ -1012,7 +1012,7 @@ onUnmounted(() => {
       >
         <div
             v-if="showLogoutModal"
-            class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            class="fixed backdrop-blur-lg inset-0 bg-black/50  z-[9999] flex items-center justify-center p-4"
             @click.self="showLogoutModal = false"
         >
           <div class="bg-white rounded-lg shadow-2xl max-w-md w-full overflow-hidden">

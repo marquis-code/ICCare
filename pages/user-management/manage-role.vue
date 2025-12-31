@@ -4,10 +4,10 @@
       <!-- Main Content -->
       <div class="px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <!-- Page Header -->
-        <div class="flex justify-between items-center">
+        <div class="flex justify-between items-center rounded-xl bg-[#005B8F] px-6 md:px-8 py-4 mb-6">
           <div class="mb-6 sm:mb-8">
-            <h1 class="text-2xl font-bold text-gray-900">Role Management</h1>
-            <p class="mt-2 text-sm sm:text-base text-gray-600">
+            <h1 class="text-2xl font-bold text-white">Role Management</h1>
+            <p class="mt-2 text-sm sm:text-base text-white">
               Define and manage access roles across iCCaREPO sites and modules.
             </p>
           </div>
@@ -16,11 +16,19 @@
           <div class="mb-6">
             <button
                 @click="openAddRoleModal"
-                class="flex items-center gap-2 px-4 py-2 bg-[#005B8F] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+                class="flex items-center gap-2 px-4 py-3 text-[#005B8F] bg-[#D8F1FE] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-              </svg>
+             <svg width="18" height="16" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_2023_384)">
+<path d="M3.01562 0C1.9125 0 1.01562 0.896875 1.01562 2V14C1.01562 15.1031 1.9125 16 3.01562 16H11.0156C12.1187 16 13.0156 15.1031 13.0156 14V11H15.4563L14.4875 11.9688C14.1938 12.2625 14.1938 12.7375 14.4875 13.0281C14.7812 13.3187 15.2563 13.3219 15.5469 13.0281L17.7969 10.7781C18.0906 10.4844 18.0906 10.0094 17.7969 9.71875L15.5469 7.46875C15.2531 7.175 14.7781 7.175 14.4875 7.46875C14.1969 7.7625 14.1938 8.2375 14.4875 8.52812L15.4563 9.49687H13.0156V5.325C13.0156 4.79375 12.8062 4.28438 12.4312 3.90937L9.1 0.584375C8.725 0.209375 8.21875 0 7.6875 0H3.01562ZM11.1875 5.5H8.26562C7.85 5.5 7.51562 5.16563 7.51562 4.75V1.82812L11.1875 5.5ZM7.01562 10.25C7.01562 9.83438 7.35 9.5 7.76562 9.5H11.0156V11H7.76562C7.35 11 7.01562 10.6656 7.01562 10.25Z" fill="#005B8F"/>
+</g>
+<defs>
+<clipPath id="clip0_2023_384">
+<rect width="18" height="16" fill="white"/>
+</clipPath>
+</defs>
+</svg>
+
               Add New Role
             </button>
           </div>
