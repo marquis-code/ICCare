@@ -5,7 +5,7 @@
       <main class="flex-1 p-4 md:p-6">
         <div class="mb-6 space-y-6">
           <!-- Page Header -->
-          <div class="flex flex-col px-6 md:flex-row md:items-center py-6 rounded-xl bg-[#005B8F] justify-between gap-4 mb-6">
+          <div class="flex flex-col px-6 md:flex-row md:items-center py-6 rounded-xl bg-[#9A0FB5] justify-between gap-4 mb-6">
             <h1 class="text-2xl font-bold text-white">BioSpecimen Registration</h1>
             <div class="flex gap-2">
               <!-- Download Dropdown -->

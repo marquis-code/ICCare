@@ -2,7 +2,7 @@
   <div class="min-h-screen">
     <div class="flex">
       <main class="mx-auto container">
-        <div class="mb-6  rounded-xl bg-[#005B8F] px-6 md:px-8 py-4">
+        <div class="mb-6  rounded-xl bg-[#9A0FB5] px-6 md:px-8 py-4">
           <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <h1 class="text-xl font-bold text-white">BioSpecimen Tracking</h1>
 

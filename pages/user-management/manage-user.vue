@@ -2,7 +2,7 @@
   <NuxtLayout name="dashboard">
     <div class="space-y-6">
       <!-- Header -->
-      <div class="flex items-center justify-between rounded-xl bg-[#005B8F] px-6 md:px-8 py-4">
+      <div class="flex items-center justify-between rounded-xl bg-[#0FA36B] px-6 md:px-8 py-4">
         <h1 class="text-xl font-semibold text-white">User Management</h1>
         <button @click="openAddUserModal"
                 class="flex items-center gap-2 px-4 py-3 text-[#005B8F] bg-[#D8F1FE] rounded-lg transition-colors">

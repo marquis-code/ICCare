@@ -2,7 +2,7 @@
     <div class="min-h-screen">
         <div class="">
             <!-- Header -->
-            <div class="mb-8 rounded-xl bg-[#005B8F] px-6 md:px-8 py-4">
+            <div class="mb-8 rounded-xl bg-[#9A0FB5] px-6 md:px-8 py-4">
                 <h1 class="text-2xl font-bold text-white">Biospecimen Bulk Upload</h1>
             </div>
 

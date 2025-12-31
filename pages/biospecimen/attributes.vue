@@ -2,7 +2,7 @@
 <template>
   <div class="min-h-screen">
     <!-- Header -->
-    <div class="rounded-xl bg-[#005B8F] px-6 md:px-8 py-4">
+    <div class="rounded-xl bg-[#9A0FB5] px-6 md:px-8 py-4">
       <div class="container mx-auto px-4 sm:px-6 lg:px-8 pb-4">
         <h1 class="text-2xl font-bold text-white">Attributes Management</h1>
         <p class="mt-2 text-base text-white">Manage categories, sites, freezers, racks, boxes, templates, and

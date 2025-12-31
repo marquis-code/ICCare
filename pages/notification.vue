@@ -6,7 +6,7 @@
         <main class="flex-1 p-4 md:p-6 lg:p-8">
           <div class="">
             <!-- Page Title -->
-            <div class="mb-6 flex justify-between items-center rounded-xl bg-[#005B8F] px-6 md:px-8 py-4 mb-6">
+            <div class="mb-6 flex justify-between items-center rounded-xl bg-[#9A0FB5] px-6 md:px-8 py-4 mb-6">
               <div>
                 <h1 class="text-xl font-bold text-white">Notifications</h1>
                 <p class="text-base text-white mt-1">Stay informed about your iCCaREPO activities and critical alerts.</p>

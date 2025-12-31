@@ -4,7 +4,7 @@
       <!-- Main Content -->
       <div class="px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <!-- Page Header -->
-        <div class="flex justify-between items-center rounded-xl bg-[#005B8F] px-6 md:px-8 py-4 mb-6">
+        <div class="flex justify-between items-center rounded-xl bg-[#0FA36B] px-6 md:px-8 py-4 mb-6">
           <div class="mb-6 sm:mb-8">
             <h1 class="text-2xl font-bold text-white">Role Management</h1>
             <p class="mt-2 text-sm sm:text-base text-white">
