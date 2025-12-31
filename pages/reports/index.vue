@@ -234,7 +234,7 @@
 
       <!-- Export Modal -->
       <Teleport to="body">
-        <div v-if="isExportModalOpen" class="fixed inset-0 z-50 overflow-y-auto">
+        <div v-if="isExportModalOpen" class="fixed backdrop-blur-lg inset-0 z-[9999] overflow-y-auto">
           <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" @click="closeExportModal"></div>
 
@@ -282,7 +282,7 @@
 
       <!-- Schedule Report Modal -->
       <Teleport to="body">
-        <div v-if="isScheduleModalOpen" class="fixed inset-0 z-50 overflow-y-auto">
+        <div v-if="isScheduleModalOpen" class="fixed backdrop-blur-lg inset-0 z-[9999] overflow-y-auto">
           <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" @click="closeScheduleModal"></div>
 
@@ -356,7 +356,7 @@
 
       <!-- Check & Notify Alerts Modal -->
       <Teleport to="body">
-        <div v-if="isAlertsModalOpen" class="fixed inset-0 z-50 overflow-y-auto">
+        <div v-if="isAlertsModalOpen" class="fixed backdrop-blur-lg inset-0 z-[9999] overflow-y-auto">
           <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" @click="closeAlertsModal"></div>
 

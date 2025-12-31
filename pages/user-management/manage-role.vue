@@ -162,7 +162,7 @@
         <Transition name="modal">
           <div
               v-if="showAddRoleModal"
-              class="fixed inset-0 z-50 overflow-y-auto"
+              class="fixed inset-0 z-[9999] overflow-y-auto"
               @click.self="closeAddRoleModal"
           >
             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
@@ -308,7 +308,7 @@
         <Transition name="modal">
           <div
               v-if="showDeleteModal"
-              class="fixed inset-0 z-50 overflow-y-auto"
+              class="fixed inset-0 z-[9999] overflow-y-auto"
               @click.self="closeDeleteModal"
           >
             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">

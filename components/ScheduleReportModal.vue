@@ -5,7 +5,7 @@
       class="fixed inset-0 z-50 overflow-y-auto"
       @click.self="handleClose">
       <!-- Backdrop -->
-      <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
+      <div class="fixed inset-0 z-[9999] backdrop-blur-lg bg-black bg-opacity-50 transition-opacity"></div>
       
       <!-- Modal -->
       <div class="flex min-h-full items-center justify-center p-4">

@@ -300,7 +300,7 @@
       <Transition name="modal">
         <div
             v-if="showExportModal"
-            class="fixed inset-0 z-50 overflow-y-auto"
+            class="fixed backdrop-blur-lg inset-0 z-[9999] overflow-y-auto"
             @click.self="closeExportModal"
         >
           <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center">
@@ -348,7 +348,7 @@
       <Transition name="modal">
         <div
             v-if="showCustodyModal"
-            class="fixed inset-0 z-50 overflow-y-auto"
+            class="fixed backdrop-blur-lg inset-0 z-[9999] overflow-y-auto"
             @click.self="closeCustodyModal"
         >
           <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center">
@@ -422,7 +422,7 @@
       <Transition name="modal">
         <div
             v-if="showReportModal"
-            class="fixed inset-0 z-50 overflow-y-auto"
+            class="fixed backdrop-blur-lg inset-0 z-[9999] overflow-y-auto"
             @click.self="closeReportModal"
         >
           <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center">
@@ -472,7 +472,7 @@
       <Transition name="modal">
         <div
             v-if="showDetailsModal"
-            class="fixed inset-0 z-50 overflow-y-auto"
+            class="fixed backdrop-blur-lg inset-0 z-[9999] overflow-y-auto"
             @click.self="closeDetailsModal"
         >
           <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center">

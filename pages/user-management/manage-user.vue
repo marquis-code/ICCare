@@ -108,7 +108,7 @@
     <!-- Add User Modal -->
     <Teleport to="body">
       <div v-if="showAddUserModal"
-           class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+           class="fixed inset-0  bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4"
            @click.self="closeAddUserModal">
         <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full p-8 max-h-[90vh] overflow-y-auto">
           <h2 class="text-xl font-semibold text-gray-900 mb-6">Add New User</h2>
@@ -165,7 +165,7 @@
     <!-- Edit User Modal -->
     <Teleport to="body">
       <div v-if="showEditUserModal"
-           class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+           class="fixed inset-0 z-[9999] bg-black bg-opacity-50 flex items-center justify-center p-4"
            @click.self="closeEditUserModal">
         <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full p-8 max-h-[90vh] overflow-y-auto">
           <h2 class="text-2xl font-bold text-gray-900 mb-6">Edit User</h2>
@@ -213,7 +213,7 @@
     <!-- Activate Confirmation Modal -->
     <Teleport to="body">
       <div v-if="showActivateConfirmModal"
-           class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+           class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4"
            @click.self="closeActivateModal">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-8">
           <div class="flex flex-col items-center text-center">
@@ -246,7 +246,7 @@
     <!-- Deactivate Confirmation Modal -->
     <Teleport to="body">
       <div v-if="showDeactivateConfirmModal"
-           class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+           class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4"
            @click.self="closeDeactivateModal">
         <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-8">
           <div class="flex flex-col items-center text-center">
@@ -280,7 +280,7 @@
     <!-- Filter Modal -->
     <Teleport to="body">
       <div v-if="showFilterModal"
-           class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+           class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4"
            @click.self="showFilterModal = false">
         <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
           <div class="flex items-center justify-between mb-6">

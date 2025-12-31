@@ -293,7 +293,7 @@
         <!-- Confirmation Modal -->
         <Teleport to="body">
             <div v-if="showConfirmModal"
-                class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+                class="fixed inset-0 bg-black backdrop-blur-lg bg-opacity-50 flex items-center justify-center p-4 z-[9999]"
                 @click.self="showConfirmModal = false">
                 <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
                     <div class="p-6">
@@ -405,7 +405,7 @@
         <!-- Success Modal -->
         <Teleport to="body">
             <div v-if="showSuccessModal"
-                class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                class="fixed inset-0 backdrop-blur-lg bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]">
                 <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 text-center">
                     <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
