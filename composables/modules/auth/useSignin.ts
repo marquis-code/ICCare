@@ -17,8 +17,7 @@ export const useSignin = () => {
   }) => {
     loading.value = true
     try {
-      const res = (await auth_api.$_signin(payload)) as any
-      console
+      const res = (await auth_api.$_sign_in(payload)) as any
       if (res.type !== "ERROR") {
         createUser(res.data)
         

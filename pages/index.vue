@@ -73,10 +73,10 @@
         </div>
       </form>
       
-      <p class="text-center text-sm text-[#191A1A] mt-6">
+      <!-- <p class="text-center text-sm text-[#191A1A] mt-6">
         Don't have an account? 
         <NuxtLink to="/auth/signup" class="text-[#0E7D0E] font-medium">Sign up</NuxtLink>
-      </p>
+      </p> -->
 
       <p class="text-center text-sm text-[#191A1A] mt-6">
         By Creating an account you automatically accept to our
