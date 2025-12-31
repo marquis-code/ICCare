@@ -785,13 +785,13 @@
                   <!-- Requested Date -->
                   <div class="flex justify-between items-start py-2">
                     <span class="text-sm text-gray-700">Requested Date</span>
-                    <span class="text-sm font-medium text-gray-900 text-right">{{ selectedItem.requestedDate || 'Not available' }}</span>
+                    <span class="text-sm font-medium text-gray-900 text-right">{{ selectedItem.requested_at || 'Not available' }}</span>
                   </div>
                   
                   <!-- Approved Date -->
                   <div class="flex justify-between items-start py-2">
                     <span class="text-sm text-gray-700">Approved Date</span>
-                    <span class="text-sm font-medium text-gray-900 text-right">{{ selectedItem.approvedDate || 'Pending approval' }}</span>
+                    <span class="text-sm font-medium text-gray-900 text-right">{{ selectedItem.approved_at || 'Pending approval' }}</span>
                   </div>
                   
                   <!-- Requested by -->
@@ -827,22 +827,22 @@
                   <div class="bg-gray-50 rounded-lg p-4">
                     <h4 class="font-semibold text-gray-900 mb-1">Movement Requested</h4>
                     <p class="text-sm text-gray-600">
-                      {{ selectedItem.requestedDate || 'Date not available' }}
-                      <span v-if="selectedItem.requestedBy"> by {{ selectedItem.requestedBy }}</span>
+                      {{ selectedItem.requested_at || 'Date not available' }}
+                      <span v-if="selectedItem.requested_by"> by {{ selectedItem.requested_by }}</span>
                     </p>
                   </div>
                 </div>
 
                 <!-- Request Approved -->
-                <div class="relative" v-if="selectedItem.approvedDate && selectedItem.approvedDate !== 'N/A' && selectedItem.approvedDate !== 'Pending approval'">
+                <div class="relative" v-if="selectedItem.approved_at && selectedItem.approved_at !== 'N/A' && selectedItem.approved_at !== 'Pending approval'">
                   <div class="absolute -left-[1.9rem] top-1 w-6 h-6 rounded-full bg-blue-500 border-4 border-white flex items-center justify-center">
                     <div class="w-2 h-2 rounded-full bg-white"></div>
                   </div>
                   <div class="bg-gray-50 rounded-lg p-4">
                     <h4 class="font-semibold text-gray-900 mb-1">Request Approved</h4>
                     <p class="text-sm text-gray-600">
-                      {{ selectedItem.approvedDate }}
-                      <span v-if="selectedItem.approvedBy"> by {{ selectedItem.approvedBy }}</span>
+                      {{ selectedItem.approved_at }}
+                      <span v-if="selectedItem.approved_by"> by {{ selectedItem.approved_by }}</span>
                     </p>
                   </div>
                 </div>
@@ -870,7 +870,7 @@
                   <div class="bg-gray-50 rounded-lg p-4">
                     <h4 class="font-semibold text-gray-900 mb-1">Transfer Confirmed</h4>
                     <p class="text-sm text-gray-600">
-                      {{ selectedItem.confirmedDate || selectedItem.approvedDate || 'Date not available' }}
+                      {{ selectedItem.confirmedDate || selectedItem.approved_at || 'Date not available' }}
                       <span v-if="selectedItem.confirmedBy"> by {{ selectedItem.confirmedBy }}</span>
                       <span v-else> by Receiving Lab</span>
                     </p>
@@ -885,8 +885,8 @@
                   <div class="bg-red-50 rounded-lg p-4">
                     <h4 class="font-semibold text-red-900 mb-1">Request Rejected</h4>
                     <p class="text-sm text-red-700">
-                      {{ selectedItem.approvedDate || 'Date not available' }}
-                      <span v-if="selectedItem.approvedBy"> by {{ selectedItem.approvedBy }}</span>
+                      {{ selectedItem.approved_at || 'Date not available' }}
+                      <span v-if="selectedItem.approved_by"> by {{ selectedItem.approved_by }}</span>
                     </p>
                     <p v-if="selectedItem.rejectionReason" class="text-sm text-red-600 mt-2">
                       Reason: {{ selectedItem.rejectionReason }}
@@ -1213,7 +1213,8 @@ const transformTrackingRequest = (request: any): BioSpecimen => {
     status: request.status === 'pending' ? 'pendingMovement' : 'completeMovement',
     description: request.description || request.reason || request.notes,
     completionStatus: request.completion_status || request.status,
-    request_id: request.request_id || request.id
+    request_id: request.request_id || request.id,
+    ...request
   }
 }
 
@@ -1229,7 +1230,8 @@ const transformDisposalRequest = (request: any): BioSpecimen => {
     status: request.status === 'pending' ? 'pendingDisposal' : 'completeDisposal',
     description: request.reason_for_disposal || request.reason || request.description,
     completionStatus: request.completion_status || request.status,
-    request_id: request.request_id || request.id
+    request_id: request.request_id || request.id,
+    ...request
   }
 }
 
@@ -1392,6 +1394,7 @@ const closeRequestDisposalModal = () => {
 }
 
 const openViewDetailsModal = (item: BioSpecimen, type: 'tracking' | 'disposal') => {
+  console.log('Opening details for item:', item)
   selectedItem.value = item
   selectedType.value = type
   showViewDetailsModal.value = true
