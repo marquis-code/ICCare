@@ -55,7 +55,20 @@ export const useCustodyEvents = () => {
     const getCustodyEvents = async (filters?: CustodyEventsFilters): Promise<CustodyEvent[] | null> => {
         loading.value = true
         try {
-            const res = (await audit_api.$_get_custody_events(filters)) as any
+            // Clean up the filters - remove empty strings and undefined values
+            const cleanFilters: Record<string, any> = {}
+
+            if (filters) {
+                Object.keys(filters).forEach((key) => {
+                    const value = filters[key as keyof CustodyEventsFilters]
+                    // Only include the parameter if it has a valid value (not empty string, not undefined, not null)
+                    if (value !== undefined && value !== null && value !== '') {
+                        cleanFilters[key] = value
+                    }
+                })
+            }
+
+            const res = (await audit_api.$_get_custody_events(cleanFilters)) as any
             if (res.type !== "ERROR") {
                 custodyEvents.value = res.data
                 return res.data
