@@ -57,7 +57,7 @@
     <!-- Content -->
     <div class="px-6 py-6 max-h-[calc(100vh-300px)] overflow-y-auto">
       <!-- Title -->
-      <h2 class="text-2xl font-bold text-gray-900 mb-2">
+      <h2 class="text-base font-bold text-gray-900 mb-2">
         {{ notification.title }}
       </h2>
 

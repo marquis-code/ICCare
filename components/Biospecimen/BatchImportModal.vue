@@ -3,7 +3,7 @@
     <Transition name="modal">
       <div 
         v-if="modelValue" 
-        class="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] backdrop-blur-lg p-4 overflow-y-auto"
+        class="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] bg-black/50 backdrop-blur-lg p-4 overflow-y-auto"
         @click.self="close"
       >
         <div class="bg-white rounded-xl max-w-4xl w-full my-8 shadow-2xl transform transition-all">

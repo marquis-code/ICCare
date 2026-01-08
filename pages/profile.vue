@@ -2,14 +2,14 @@
 <template>
   <NuxtLayout name="dashboard">
     <div class="min-h-screen">
-      <div class="flex">
+      <div class="">
         <!-- Main Content -->
-        <main class="flex-1">
-          <div class="mx-auto px-4 md:px-6 py-6">
+        <main class="">
+          <div class="">
             <!-- Page Title -->
-            <div class="mb-6 rounded-xl bg-[#FD9216] px-6 md:px-8 py-4 mb-6">
-              <h1 class="text-2xl font-bold text-white">My Profile</h1>
-              <p class="text-base text-white mt-1">Manage your personal information, credentials, and system preferences.</p>
+            <div class="mb-6 rounded-xl bg-[#DCF1FF] text-[#005B8F] px-6 py-4 mb-6">
+              <h1 class="text-xl font-bold bg-[#DCF1FF] text-[#005B8F]">My Profile</h1>
+              <p class="text-base bg-[#DCF1FF] text-[#005B8F] mt-1">Manage your personal information, credentials, and system preferences.</p>
             </div>
 
             <!-- Profile Card -->

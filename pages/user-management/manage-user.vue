@@ -2,10 +2,10 @@
   <NuxtLayout name="dashboard">
     <div class="space-y-6">
       <!-- Header -->
-      <div class="flex items-center justify-between rounded-xl bg-[#0FA36B] px-6 md:px-8 py-4">
-        <h1 class="text-xl font-semibold text-white">User Management</h1>
+      <div class="flex items-center justify-between rounded-xl bg-[#DCF1FF] text-[#005B8F] py-4 px-6 md:px-8">
+        <h1 class="text-xl font-semibold bg-[#DCF1FF] text-[#005B8F]">User Management</h1>
         <button @click="openAddUserModal"
-                class="flex items-center gap-2 px-4 py-3 text-[#005B8F] bg-[#D8F1FE] rounded-lg transition-colors">
+                class="flex items-center gap-2 px-4 py-3 text-[#DCF1FF] bg-[#005B8F] rounded-lg transition-colors">
        <svg width="18" height="16" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_2023_384)">
 <path d="M3.01562 0C1.9125 0 1.01562 0.896875 1.01562 2V14C1.01562 15.1031 1.9125 16 3.01562 16H11.0156C12.1187 16 13.0156 15.1031 13.0156 14V11H15.4563L14.4875 11.9688C14.1938 12.2625 14.1938 12.7375 14.4875 13.0281C14.7812 13.3187 15.2563 13.3219 15.5469 13.0281L17.7969 10.7781C18.0906 10.4844 18.0906 10.0094 17.7969 9.71875L15.5469 7.46875C15.2531 7.175 14.7781 7.175 14.4875 7.46875C14.1969 7.7625 14.1938 8.2375 14.4875 8.52812L15.4563 9.49687H13.0156V5.325C13.0156 4.79375 12.8062 4.28438 12.4312 3.90937L9.1 0.584375C8.725 0.209375 8.21875 0 7.6875 0H3.01562ZM11.1875 5.5H8.26562C7.85 5.5 7.51562 5.16563 7.51562 4.75V1.82812L11.1875 5.5ZM7.01562 10.25C7.01562 9.83438 7.35 9.5 7.76562 9.5H11.0156V11H7.76562C7.35 11 7.01562 10.6656 7.01562 10.25Z" fill="#005B8F"/>
@@ -67,9 +67,11 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="(user, index) in filteredUsers" :key="user.user_id"
+            <tr v-for="(user, index) in paginatedUsers" :key="user.user_id"
                 class="border-b border-gray-50 hover:bg-gray-25 transition-colors">
-              <td class="py-6 px-4 text-sm text-gray-900">{{ index + 1 }}</td>
+              <td class="py-6 px-4 text-sm text-gray-900">
+  {{ (currentPage - 1) * pageSize + index + 1 }}
+</td>
               <td class="py-6 px-4 text-sm text-gray-900">{{ user.first_name }} {{ user.last_name }}</td>
               <td class="py-6 px-4 text-sm text-gray-700">{{ user.email }}</td>
               <td class="py-6 px-4">
@@ -107,6 +109,13 @@
             </tr>
             </tbody>
           </table>
+           <Pagination 
+    v-if="filteredUsers.length > 0"
+    v-model:currentPage="currentPage" 
+    v-model:pageSize="pageSize"
+    :totalItems="totalItems" 
+    :pageSizeOptions="[10, 25, 50, 100]" 
+  />
         </div>
       </div>
     </div>
@@ -137,7 +146,7 @@
                    required />
             </div>
 
-            <div>
+            <!-- <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
               <UiAnimatedInput v-model="addUserForm.password" type="password" label="Password"
                       required minlength="8" />
@@ -147,7 +156,7 @@
               <label class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
               <UiAnimatedInput v-model="addUserForm.password_confirm" type="password" label="Confirm Password"
                       required minlength="8" />
-            </div>
+            </div> -->
 
             <div class="flex gap-3 pt-4">
               <button type="button" @click="closeAddUserModal"
@@ -330,6 +339,7 @@
 <script setup lang="ts">
 import { useUserManagement } from "@/composables/modules/user/useUserManagement"
 import { useAuth } from "@/composables/modules/user/useAuth"
+import { usePagination } from '@/composables/core/usePagination'
 
 interface User {
   user_id: string
@@ -345,8 +355,8 @@ interface AddUserForm {
   first_name: string
   last_name: string
   email: string
-  password: string
-  password_confirm: string
+  // password: string
+  // password_confirm: string
 }
 
 interface EditUserForm {
@@ -379,8 +389,8 @@ const addUserForm = ref<AddUserForm>({
   first_name: '',
   last_name: '',
   email: '',
-  password: '',
-  password_confirm: ''
+  // password: '',
+  // password_confirm: ''
 })
 
 const editUserForm = ref<EditUserForm>({
@@ -419,6 +429,19 @@ const filteredUsers = computed(() => {
 
   return result
 })
+
+const {
+  currentPage,
+  pageSize,
+  totalItems,
+  paginatedItems: paginatedUsers,
+  resetPagination
+} = usePagination(filteredUsers, {
+  initialPage: 1,
+  initialPageSize: 10,
+  pageSizeOptions: [10, 25, 50, 100]
+})
+
 
 const userStats = computed(() => {
   if (!users.value) return { total: 0, active: 0, inactive: 0, pending: 0 }
@@ -461,17 +484,30 @@ const resetAddUserForm = () => {
     first_name: '',
     last_name: '',
     email: '',
-    password: '',
-    password_confirm: ''
+    // password: '',
+    // password_confirm: ''
   }
 }
 
-const handleAddUser = async () => {
-  if (addUserForm.value.password !== addUserForm.value.password_confirm) {
-    alert('Passwords do not match!')
-    return
-  }
+// const handleAddUser = async () => {
+//   if (addUserForm.value.password !== addUserForm.value.password_confirm) {
+//     alert('Passwords do not match!')
+//     return
+//   }
 
+//   isSubmitting.value = true
+//   const result = await signUp(addUserForm.value)
+//   isSubmitting.value = false
+
+//   if (result) {
+//     closeAddUserModal()
+//     await getAllUsers() // Refresh the list
+//   }
+// }
+
+const handleAddUser = async () => {
+  // Remove password validation since we don't have passwords anymore
+  
   isSubmitting.value = true
   const result = await signUp(addUserForm.value)
   isSubmitting.value = false
@@ -572,6 +608,7 @@ const confirmDeactivateUser = async () => {
 // Filter functions
 const applyFilters = () => {
   showFilterModal.value = false
+  resetPagination() // Add this line
 }
 
 const resetFilters = () => {
@@ -580,8 +617,8 @@ const resetFilters = () => {
     verified: ''
   }
   showFilterModal.value = false
+  resetPagination() // Add this line
 }
-
 // Export function
 const exportUsers = () => {
   const csv = [

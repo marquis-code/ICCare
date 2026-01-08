@@ -33,6 +33,7 @@ interface _GlobalComponents {
     'NotificationDetail': typeof import("../components/NotificationDetail.vue")['default']
     'NotificationList': typeof import("../components/NotificationList.vue")['default']
     'OverviewStats': typeof import("../components/OverviewStats.vue")['default']
+    'Pagination': typeof import("../components/Pagination.vue")['default']
     'PersonalInfoTab': typeof import("../components/PersonalInfoTab.vue")['default']
     'ScheduleReportModal': typeof import("../components/ScheduleReportModal.vue")['default']
     'SecurityTab': typeof import("../components/SecurityTab.vue")['default']
@@ -99,6 +100,7 @@ interface _GlobalComponents {
     'LazyNotificationDetail': LazyComponent<typeof import("../components/NotificationDetail.vue")['default']>
     'LazyNotificationList': LazyComponent<typeof import("../components/NotificationList.vue")['default']>
     'LazyOverviewStats': LazyComponent<typeof import("../components/OverviewStats.vue")['default']>
+    'LazyPagination': LazyComponent<typeof import("../components/Pagination.vue")['default']>
     'LazyPersonalInfoTab': LazyComponent<typeof import("../components/PersonalInfoTab.vue")['default']>
     'LazyScheduleReportModal': LazyComponent<typeof import("../components/ScheduleReportModal.vue")['default']>
     'LazySecurityTab': LazyComponent<typeof import("../components/SecurityTab.vue")['default']>
@@ -171,6 +173,7 @@ export const MultiSelect: typeof import("../components/MultiSelect.vue")['defaul
 export const NotificationDetail: typeof import("../components/NotificationDetail.vue")['default']
 export const NotificationList: typeof import("../components/NotificationList.vue")['default']
 export const OverviewStats: typeof import("../components/OverviewStats.vue")['default']
+export const Pagination: typeof import("../components/Pagination.vue")['default']
 export const PersonalInfoTab: typeof import("../components/PersonalInfoTab.vue")['default']
 export const ScheduleReportModal: typeof import("../components/ScheduleReportModal.vue")['default']
 export const SecurityTab: typeof import("../components/SecurityTab.vue")['default']
@@ -237,6 +240,7 @@ export const LazyMultiSelect: LazyComponent<typeof import("../components/MultiSe
 export const LazyNotificationDetail: LazyComponent<typeof import("../components/NotificationDetail.vue")['default']>
 export const LazyNotificationList: LazyComponent<typeof import("../components/NotificationList.vue")['default']>
 export const LazyOverviewStats: LazyComponent<typeof import("../components/OverviewStats.vue")['default']>
+export const LazyPagination: LazyComponent<typeof import("../components/Pagination.vue")['default']>
 export const LazyPersonalInfoTab: LazyComponent<typeof import("../components/PersonalInfoTab.vue")['default']>
 export const LazyScheduleReportModal: LazyComponent<typeof import("../components/ScheduleReportModal.vue")['default']>
 export const LazySecurityTab: LazyComponent<typeof import("../components/SecurityTab.vue")['default']>

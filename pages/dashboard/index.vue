@@ -146,7 +146,7 @@
 
     <!-- Filter Modal -->
     <Teleport to="body">
-      <div v-if="showFilterModal" class="fixed backdrop-blur-lg inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4"
+      <div v-if="showFilterModal" class="fixed bg-black/50 backdrop-blur-lg inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4"
         @click.self="showFilterModal = false">
         <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
           <div class="flex items-center justify-between mb-6">

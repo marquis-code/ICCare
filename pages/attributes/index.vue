@@ -526,7 +526,7 @@
 
         <!-- Create Modal (Teleport) -->
         <Teleport to="body">
-            <div v-if="showCreateModal" class="fixed backdrop-blur-lg inset-0 z-[9999] overflow-y-auto" aria-labelledby="modal-title"
+            <div v-if="showCreateModal" class="fixed bg-black/50 backdrop-blur-lg inset-0 z-[9999] overflow-y-auto" aria-labelledby="modal-title"
                 role="dialog" aria-modal="true">
                 <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                     <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="closeCreateModal">
@@ -841,7 +841,7 @@
 
         <!-- Details Modal (Teleport) -->
         <Teleport to="body">
-            <div v-if="showDetailsModal" class="fixed backdrop-blur-lg z-[9999] inset-0 overflow-y-auto"
+            <div v-if="showDetailsModal" class="fixed bg-black/50 backdrop-blur-lg z-[9999] inset-0 overflow-y-auto"
                 aria-labelledby="details-modal-title" role="dialog" aria-modal="true">
                 <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                     <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="closeDetailsModal">

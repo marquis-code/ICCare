@@ -1,15 +1,15 @@
 <template>
   <NuxtLayout name="dashboard">
     <div class="min-h-screen">
-      <div class="flex">
+      <div class="">
         <!-- Main Content -->
-        <main class="flex-1 p-4 md:p-6 lg:p-8">
-          <div class="">
+        <!-- <main class="">
+          <div class=""> -->
             <!-- Page Title -->
-            <div class="mb-6 flex justify-between items-center rounded-xl bg-[#9A0FB5] px-6 md:px-8 py-4 mb-6">
+            <div class="mb-6 flex justify-between items-center rounded-xl bg-[#DCF1FF] text-[#005B8F] px-6 py-4 mb-6">
               <div>
-                <h1 class="text-xl font-bold text-white">Notifications</h1>
-                <p class="text-base text-white mt-1">Stay informed about your iCCaREPO activities and critical alerts.</p>
+                <h1 class="text-xl font-bold bg-[#DCF1FF] text-[#005B8F]">Notifications</h1>
+                <p class="text-base bg-[#DCF1FF] text-[#005B8F] mt-1">Stay informed about your iCCaREPO activities and critical alerts.</p>
               </div>
               <div class="flex items-center gap-3">
                 <!-- Unread Count Badge -->
@@ -81,8 +81,8 @@
                 <EmptyState v-else />
               </div>
             </div>
-          </div>
-        </main>
+          <!-- </div>
+        </main> -->
       </div>
     </div>
   </NuxtLayout>

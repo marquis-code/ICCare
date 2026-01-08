@@ -3,22 +3,27 @@ import { GATEWAY_ENDPOINT } from '../axios.config'
 export const biosample_api = {
   // Register new sample
   $_register_sample: (payload: {
-    site_id: string
-    sample_category_id: string
-    sample_serial_no: string
-    sample_label: string
-    free_fields?: Record<string, any>
-    storage_location: {
+    sample_uuid: string
+    source_attributes: {
       site: string
       freezer: string
       rack: string
       box: string
-      position: string
+      position: number
     }
-    collection_date: string
-    collection_time: string
-    researcher_info: string
-    field_collector_info: string
+    destination_attributes: {
+      site: string
+      freezer: string
+      rack: string
+      box: string
+      position: number
+    }
+    movement_type: string
+    reservation_time: string
+    start_date_time: string
+    end_date_time: string
+    request_by: string
+    approved_by: string[]
   }) => {
     return GATEWAY_ENDPOINT.post('/biospecimen/samples/', payload)
   },

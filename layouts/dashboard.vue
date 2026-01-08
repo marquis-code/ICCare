@@ -1,15 +1,26 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
-import { useRoute, useRouter, navigateTo } from '#app'
+import { useRoute, navigateTo } from '#app'
 import { useUser } from "@/composables/modules/auth/user"
 import { useNotifications } from "@/composables/modules/notifications/useNotifications"
-import type { Notification } from "@/api_factory/modules/notification"
+import activity from '@/assets/icons/activity.svg'
+import attributes from '@/assets/icons/attribute.svg'
+import biospecimen from '@/assets/icons/bio-mgt.svg'
+import bulk from '@/assets/icons/bulk.svg'
+import dashboard from '@/assets/icons/dashboard.svg'
+import managerole from '@/assets/icons/manage-role.svg'
+import manageuser from '@/assets/icons/manage-user.svg'
+import notification from '@/assets/icons/notification.svg'
+import profile from '@/assets/icons/profile.svg'
+import registration from '@/assets/icons/registration.svg'
+import reports from '@/assets/icons/reporting.svg'
+import tracking from '@/assets/icons/tracking.svg'
+import users from '@/assets/icons/user-mgt.svg'
+
 
 const route = useRoute()
-const router = useRouter()
 const { user } = useUser()
 
-// Notifications composable
 const {
   loading: notificationsLoading,
   notifications: notificationsList,
@@ -24,109 +35,117 @@ const showLogoutModal = ref(false)
 const showSearchModal = ref(false)
 const showNotifications = ref(false)
 const showUserMenu = ref(false)
-const biospecimenOpen = ref(false)
-const userManagementOpen = ref(false)
 const mobileMenuOpen = ref(false)
 const searchQuery = ref('')
 const searchInput = ref<HTMLInputElement | null>(null)
 const pollingInterval = ref<NodeJS.Timeout | null>(null)
 
-// User role
-const userRole = computed(() => {
-  return user.value?.role?.name || 'User'
+// Define sidebar navigation structure
+interface NavItem {
+  path: string
+  title: string
+  icon: string
+  category?: string
+  children?: NavItem[]
+}
+
+const sidebarNavigation = ref<NavItem[]>([
+  { path: '/dashboard', title: 'Dashboard', icon: dashboard },
+  {
+    path: '/biospecimen',
+    title: 'Biospecimen Management',
+    icon: biospecimen,
+    children: [
+      { path: '/biospecimen/attributes', title: 'Create Attributes', icon: attributes },
+      { path: '/biospecimen/registration', title: 'Registration', icon: registration },
+      { path: '/biospecimen/tracking', title: 'Tracking', icon: tracking },
+      { path: '/biospecimen/bulk-upload', title: 'Bulk Upload', icon: bulk }
+    ]
+  },
+  {
+    path: '/user-management',
+    title: 'User Management',
+    icon: users,
+    children: [
+      { path: '/user-management/manage-user', title: 'Manage User', icon: manageuser },
+      { path: '/user-management/manage-role', title: 'Manage Role', icon: managerole }
+    ]
+  },
+  { path: '/reports', title: 'Reporting', icon: reports },
+  { path: '/activity-log', title: 'Activity Log', icon: activity },
+  { path: '/notification', title: 'Notifications', icon: notification },
+  { path: '/profile', title: 'Profile', icon: profile }
+])
+
+const openDropdowns = ref<Record<string, boolean>>({})
+
+const userRole = computed(() => user.value?.role?.name || 'User')
+
+const searchResults = computed(() => {
+  const results: any[] = []
+  sidebarNavigation.value.forEach(item => {
+    if (item.children) {
+      item.children.forEach(child => {
+        results.push({ path: child.path, category: item.title, title: child.title, icon: child.icon })
+      })
+    } else {
+      results.push({ path: item.path, category: 'Core Operations', title: item.title, icon: item.icon })
+    }
+  })
+  return results
 })
 
-// Complete list of all navigable pages
-const searchResults = [
-  { path: '/dashboard', category: 'Core Operations', title: 'Dashboard', icon: 'dashboard' },
-  { path: '/biospecimen/attributes', category: 'Biospecimen Management', title: 'Attributes', icon: 'biospecimen' },
-  { path: '/biospecimen/registration', category: 'Biospecimen Management', title: 'Registration', icon: 'biospecimen' },
-  { path: '/biospecimen/tracking', category: 'Biospecimen Management', title: 'Tracking', icon: 'biospecimen' },
-  { path: '/biospecimen/bulk-upload', category: 'Biospecimen Management', title: 'Bulk Upload', icon: 'biospecimen' },
-  { path: '/user-management/manage-user', category: 'User Management', title: 'Manage User', icon: 'users' },
-  { path: '/user-management/manage-role', category: 'User Management', title: 'Manage Role', icon: 'users' },
-  { path: '/reports', category: 'Core Operations', title: 'Reporting', icon: 'reports' },
-  { path: '/activity-log', category: 'Core Operations', title: 'Activity Log', icon: 'activity' },
-  { path: '/notification', category: 'Core Operations', title: 'Notifications', icon: 'notification' },
-  { path: '/profile', category: 'User', title: 'Profile', icon: 'profile' }
-]
-
-// Computed properties for user data
 const userInitials = computed(() => {
-  if (!user.value || !user.value.first_name) return 'U'
-  const firstName = user.value.first_name?.trim() || ''
-  const lastName = user.value.last_name?.trim() || ''
-  if (firstName && lastName) {
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
-  } else if (firstName) {
-    return firstName.substring(0, 2).toUpperCase()
-  }
-  return 'U'
+  if (!user.value?.first_name) return 'U'
+  const first = user.value.first_name.trim()
+  const last = user.value.last_name?.trim() || ''
+  return last ? `${first[0]}${last[0]}`.toUpperCase() : first.substring(0, 2).toUpperCase()
 })
 
 const userFullName = computed(() => {
   if (!user.value) return 'User'
-  const firstName = user.value.first_name?.trim() || ''
-  const lastName = user.value.last_name?.trim() || ''
-  return `${firstName} ${lastName}`.trim() || user.value.email || 'User'
+  const first = user.value.first_name?.trim() || ''
+  const last = user.value.last_name?.trim() || ''
+  return `${first} ${last}`.trim() || user.value.email || 'User'
 })
 
-const isUserManagementActive = computed(() => {
-  return route.path.startsWith('/user-management')
-})
-
-// Filter results based on search query
 const filteredSearchResults = computed(() => {
-  if (!searchQuery.value) return searchResults
-  const query = searchQuery.value.toLowerCase()
-  return searchResults.filter(item =>
-      item.title.toLowerCase().includes(query) ||
-      item.category.toLowerCase().includes(query) ||
-      item.path.toLowerCase().includes(query)
+  if (!searchQuery.value) return searchResults.value
+  const q = searchQuery.value.toLowerCase()
+  return searchResults.value.filter(i => 
+    i.title.toLowerCase().includes(q) || 
+    i.category.toLowerCase().includes(q) || 
+    i.path.toLowerCase().includes(q)
   )
 })
 
-// Group results by category
 const groupedResults = computed(() => {
-  const grouped: Record<string, typeof searchResults> = {}
+  const grouped: Record<string, typeof searchResults.value> = {}
   filteredSearchResults.value.forEach(item => {
-    if (!grouped[item.category]) {
-      grouped[item.category] = []
-    }
+    if (!grouped[item.category]) grouped[item.category] = []
     grouped[item.category].push(item)
   })
   return grouped
 })
 
-// Display only latest 5 notifications in dropdown
-const displayedNotifications = computed(() => {
-  return notificationsList.value.slice(0, 5)
-})
+const displayedNotifications = computed(() => notificationsList.value.slice(0, 5))
 
-// Methods
 const navigateToPage = async (path: string) => {
   await navigateTo(path)
   showSearchModal.value = false
   searchQuery.value = ''
+  mobileMenuOpen.value = false
 }
 
-const isActiveRoute = (path: string) => {
-  return route.path.startsWith(path)
-}
+const isActiveRoute = (path: string) => route.path.startsWith(path)
 
-const toggleBiospecimen = () => {
-  biospecimenOpen.value = !biospecimenOpen.value
-}
-
-const toggleUserManagement = () => {
-  userManagementOpen.value = !userManagementOpen.value
+const toggleDropdown = (path: string) => {
+  openDropdowns.value[path] = !openDropdowns.value[path]
 }
 
 const toggleNotifications = async () => {
   showNotifications.value = !showNotifications.value
   showUserMenu.value = false
-
-  // Load notifications when dropdown opens
   if (showNotifications.value && notificationsList.value.length === 0) {
     await loadNotifications()
   }
@@ -142,10 +161,6 @@ const closeAllDropdowns = () => {
   showUserMenu.value = false
 }
 
-const closeMobileMenu = () => {
-  mobileMenuOpen.value = false
-}
-
 const handleLogoutClick = () => {
   showUserMenu.value = false
   showLogoutModal.value = true
@@ -157,28 +172,22 @@ const confirmLogout = async () => {
 }
 
 const loadNotifications = async () => {
-  await getNotificationFeed({
-    limit: 10,
-    offset: 0,
-    unread_only: false
-  })
+  await getNotificationFeed({ limit: 10, offset: 0, unread_only: false })
 }
 
-const handleMarkAsRead = async (notificationId: string) => {
-  const success = await markNotificationRead(notificationId)
+const handleMarkAsRead = async (id: string) => {
+  const success = await markNotificationRead(id)
   if (success) {
-    const notification = notificationsList.value.find(n => n.notification_id === notificationId)
-    if (notification) {
-      notification.read = true
-    }
+    const n = notificationsList.value.find(x => x.notification_id === id)
+    if (n) n.read = true
     await getUnreadCount()
   }
 }
 
-const handleMarkAsUnread = async (notificationId: string) => {
-  const notification = notificationsList.value.find(n => n.notification_id === notificationId)
-  if (notification) {
-    notification.read = false
+const handleMarkAsUnread = async (id: string) => {
+  const n = notificationsList.value.find(x => x.notification_id === id)
+  if (n) {
+    n.read = false
     unreadCount.value++
   }
 }
@@ -188,47 +197,29 @@ const viewAllNotifications = async () => {
   await navigateTo('/notification')
 }
 
-const getRelativeTime = (timestamp: string): string => {
-  const date = new Date(timestamp)
-  const now = new Date()
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
-
-  if (diffInSeconds < 60) return 'Just now'
-  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`
-  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`
-  if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`
-
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric'
-  })
+const getRelativeTime = (ts: string): string => {
+  const d = Math.floor((Date.now() - new Date(ts).getTime()) / 1000)
+  if (d < 60) return 'Just now'
+  if (d < 3600) return `${Math.floor(d / 60)}m ago`
+  if (d < 86400) return `${Math.floor(d / 3600)}h ago`
+  if (d < 604800) return `${Math.floor(d / 86400)}d ago`
+  return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
 const getNotificationIcon = (type: string) => {
-  switch (type) {
-    case 'sample_transfer':
-    case 'specimen_update':
-      return 'M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01'
-    case 'storage_alert':
-    case 'system_alert':
-      return 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z'
-    case 'maintenance':
-    case 'system_update':
-      return 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z'
-    default:
-      return 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9'
+  const icons: Record<string, string> = {
+    sample_transfer: 'M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01',
+    specimen_update: 'M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01',
+    storage_alert: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z',
+    system_alert: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z'
   }
+  return icons[type] || 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9'
 }
 
-// Polling for real-time updates
 const startPolling = () => {
   pollingInterval.value = setInterval(async () => {
     await getUnreadCount()
-    const currentCount = notificationsList.value.filter(n => !n.read).length
-    if (currentCount !== unreadCount.value) {
-      await loadNotifications()
-    }
-  }, 30000) // Poll every 30 seconds
+  }, 30000)
 }
 
 const stopPolling = () => {
@@ -238,20 +229,17 @@ const stopPolling = () => {
   }
 }
 
-// Watch for route changes
-watch(() => route.path, (newPath) => {
-  if (newPath.startsWith('/biospecimen')) {
-    biospecimenOpen.value = true
-  }
-  if (newPath.startsWith('/user-management')) {
-    userManagementOpen.value = true
-  }
+watch(() => route.path, (path) => {
+  sidebarNavigation.value.forEach(item => {
+    if (item.children && path.startsWith(item.path)) {
+      openDropdowns.value[item.path] = true
+    }
+  })
   mobileMenuOpen.value = false
 }, { immediate: true })
 
-// Focus search input when modal opens
-watch(showSearchModal, async (newVal) => {
-  if (newVal) {
+watch(showSearchModal, async (val) => {
+  if (val) {
     await nextTick()
     searchInput.value?.focus()
   } else {
@@ -259,13 +247,11 @@ watch(showSearchModal, async (newVal) => {
   }
 })
 
-// Lifecycle
 onMounted(async () => {
   await getUnreadCount()
   await loadNotifications()
   startPolling()
-
-  // Keyboard shortcuts
+  
   const handleKeydown = (e: KeyboardEvent) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
       e.preventDefault()
@@ -275,538 +261,189 @@ onMounted(async () => {
   window.addEventListener('keydown', handleKeydown)
 })
 
-onUnmounted(() => {
-  stopPolling()
-})
+onUnmounted(() => stopPolling())
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-25 flex">
+  <div class="min-h-screen bg-gray-50 flex">
     <!-- Mobile Overlay -->
-    <transition
-        enter-active-class="transition-opacity duration-300"
-        enter-from-class="opacity-0"
-        enter-to-class="opacity-100"
-        leave-active-class="transition-opacity duration-200"
-        leave-from-class="opacity-100"
-        leave-to-class="opacity-0"
-    >
-      <div
-          v-if="mobileMenuOpen"
-          class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
-          @click="mobileMenuOpen = false"
-      ></div>
+    <transition enter-active-class="transition-opacity duration-300" enter-from-class="opacity-0" 
+      enter-to-class="opacity-100" leave-active-class="transition-opacity duration-200" 
+      leave-from-class="opacity-100" leave-to-class="opacity-0">
+      <div v-if="mobileMenuOpen" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden" 
+        @click="mobileMenuOpen = false"></div>
     </transition>
 
-    <!-- Sidebar (previous code remains the same) -->
-    <aside
-        class="w-80 bg-[#005B8F] fixed h-full overflow-y-auto flex flex-col z-50 transition-transform duration-300 ease-in-out"
-        :class="mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
-    >
+    <!-- Sidebar -->
+    <aside class="w-64 bg-[#005B8F] fixed h-full overflow-y-auto flex flex-col z-50 transition-transform duration-300 ease-in-out"
+      :class="mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
       <!-- Logo -->
-      <div class="p-6 border-b bg-white">
+      <div class="p-6 border-b border-[#004a73] bg-white flex-shrink-0">
         <NuxtLink to="/dashboard" class="flex items-center gap-2">
           <img src="@/assets/img/logo.png" class="h-10 w-auto" alt="iCCaRE Logo" />
         </NuxtLink>
       </div>
 
-      <!-- Navigation (keeping sidebar content the same) -->
-      <nav class="p-4 flex-1">
-        <!-- Core Operations -->
-        <div class="mb-6">
-          <h3 class="text-xs font-medium text-white/60 uppercase tracking-wider mb-3 px-3">
-            Core Operations
-          </h3>
-          <div class="space-y-6">
-            <NuxtLink
-                to="/dashboard"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-lg  transition-colors"
-                :class="{ 'bg-[#DCF1FF] text-[#005B8F]': isActiveRoute('/dashboard'), 'text-white': !isActiveRoute('/dashboard') }"
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                   xmlns="http://www.w3.org/2000/svg">
-                <path
-                    d="M10.9949 4.68V8.56C10.9949 8.88127 10.9315 9.19938 10.8082 9.49606C10.685 9.79275 10.5044 10.0622 10.2767 10.2889C10.0491 10.5156 9.77894 10.6951 9.48175 10.8171C9.18456 10.9392 8.8662 11.0013 8.54494 11H4.68494C4.36454 11.0019 4.04704 10.9392 3.75149 10.8155C3.45594 10.6917 3.1884 10.5096 2.96494 10.28C2.73805 10.055 2.55838 9.78697 2.43646 9.49161C2.31454 9.19625 2.25282 8.87952 2.25494 8.56V4.69C2.25493 4.0446 2.51063 3.42549 2.96606 2.96819C3.42148 2.51088 4.03954 2.25265 4.68494 2.25H8.55494C8.875 2.25031 9.19182 2.3141 9.48706 2.43769C9.7823 2.56128 10.0501 2.74221 10.2749 2.97C10.5024 3.19298 10.6832 3.45902 10.8069 3.75261C10.9305 4.04619 10.9944 4.36145 10.9949 4.68ZM21.7449 4.69V8.56C21.7397 9.2038 21.4824 9.81991 21.0281 10.2761C20.5738 10.7323 19.9587 10.9922 19.3149 11H15.4349C14.7881 10.996 14.168 10.7416 13.7049 10.29C13.4786 10.0625 13.2995 9.79258 13.1776 9.49572C13.0558 9.19886 12.9937 8.88088 12.9949 8.56V4.69C12.9941 4.36977 13.0574 4.05261 13.1811 3.75722C13.3047 3.46182 13.4862 3.19416 13.7149 2.97C13.9398 2.74221 14.2076 2.56128 14.5028 2.43769C14.798 2.3141 15.1149 2.25031 15.4349 2.25H19.3049C19.9504 2.25523 20.568 2.51398 21.0245 2.97044C21.481 3.4269 21.7397 4.04449 21.7449 4.69ZM21.7449 15.44V19.31C21.7397 19.9538 21.4824 20.5699 21.0281 21.0261C20.5738 21.4823 19.9587 21.7422 19.3149 21.75H15.4349C14.784 21.7566 14.1562 21.5091 13.6849 21.06C13.4578 20.8331 13.278 20.5634 13.1561 20.2664C13.0342 19.9693 12.9726 19.651 12.9749 19.33V15.46C12.9741 15.1398 13.0374 14.8226 13.1611 14.5272C13.2847 14.2318 13.4662 13.9642 13.6949 13.74C13.9198 13.5122 14.1876 13.3313 14.4828 13.2077C14.778 13.0841 15.0949 13.0203 15.4149 13.02H19.2849C19.9304 13.0252 20.548 13.284 21.0045 13.7404C21.461 14.1969 21.7197 14.8145 21.7249 15.46L21.7449 15.44ZM10.9949 15.45V19.32C10.9871 19.9655 10.7258 20.582 10.2675 21.0366C9.80912 21.4912 9.19047 21.7474 8.54494 21.75H4.68494C4.36545 21.7513 4.04887 21.6894 3.75345 21.5677C3.45803 21.4461 3.18963 21.2671 2.96372 21.0412C2.73781 20.8153 2.55886 20.5469 2.43721 20.2515C2.31556 19.9561 2.25361 19.6395 2.25494 19.32V15.45C2.25751 14.8045 2.51373 14.1858 2.96832 13.7275C3.42291 13.2691 4.03944 13.0079 4.68494 13H8.55494C9.20314 13.0066 9.82342 13.2648 10.2849 13.72C10.741 14.1801 10.9963 14.8021 10.9949 15.45Z"
-                    fill="white" />
-              </svg>
-              <span class="font-medium">Dashboard</span>
-            </NuxtLink>
-
-            <!-- Biospecimen Management Dropdown -->
-            <div>
-              <button
-                  @click="toggleBiospecimen"
-                  class="flex items-center gap-3 px-3 py-2.5 rounded-lg  transition-colors"
-                  :class="{ 'bg-[#DCF1FF] text-[#005B8F]': isActiveRoute('/biospecimen'), 'text-white': !isActiveRoute('/biospecimen') }"
-              >
-                <div class="flex items-center gap-3">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                       xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" clip-rule="evenodd"
-                          d="M13.5583 1.99423C13.6148 1.9135 13.6867 1.8447 13.7698 1.79175C13.8529 1.73881 13.9456 1.70277 14.0427 1.68568C14.1397 1.66859 14.2392 1.6708 14.3354 1.69217C14.4316 1.71354 14.5226 1.75365 14.6033 1.81023L21.1563 6.39823C21.2611 6.47154 21.3453 6.57042 21.4011 6.68547C21.4569 6.80053 21.4823 6.92793 21.475 7.05558C21.4677 7.18323 21.4279 7.30689 21.3593 7.41482C21.2908 7.52275 21.1957 7.61135 21.0833 7.67223L19.2733 8.65223L12.0733 18.9332C11.5303 19.7092 10.7203 20.6462 9.6433 21.1332C8.4963 21.6512 7.1463 21.6132 5.7123 20.6102C4.2783 19.6072 3.7813 18.3502 3.8753 17.0952C3.9653 15.9152 4.5683 14.8342 5.1113 14.0582L13.5583 1.99423ZM14.3573 3.46823L6.3403 14.9182C5.8473 15.6222 5.4303 16.4342 5.3713 17.2082C5.3193 17.9072 5.5483 18.6642 6.5713 19.3812C7.5953 20.0982 8.3863 20.0552 9.0253 19.7662C9.7323 19.4462 10.3523 18.7772 10.8453 18.0732L18.1453 7.64723C18.2122 7.55152 18.3006 7.47276 18.4033 7.41723L19.3023 6.93123L14.3573 3.46823Z"
-                          fill="#475569" />
-                    <path fill-rule="evenodd" clip-rule="evenodd"
-                          d="M13.5583 1.99423C13.6148 1.9135 13.6867 1.8447 13.7698 1.79175C13.8529 1.73881 13.9456 1.70277 14.0427 1.68568C14.1397 1.66859 14.2392 1.6708 14.3354 1.69217C14.4316 1.71354 14.5226 1.75365 14.6033 1.81023L21.1563 6.39823C21.2611 6.47154 21.3453 6.57042 21.4011 6.68547C21.4569 6.80053 21.4823 6.92793 21.475 7.05558C21.4677 7.18323 21.4279 7.30689 21.3593 7.41482C21.2908 7.52275 21.1957 7.61135 21.0833 7.67223L19.2733 8.65223L12.0733 18.9332C11.5303 19.7092 10.7203 20.6462 9.6433 21.1332C8.4963 21.6512 7.1463 21.6132 5.7123 20.6102C4.2783 19.6072 3.7813 18.3502 3.8753 17.0952C3.9653 15.9152 4.5683 14.8342 5.1113 14.0582L13.5583 1.99423ZM14.3573 3.46823L9.5333 10.3582C12.0003 10.8502 12.9003 9.50023 16.2933 10.2922L18.1453 7.64723C18.2122 7.55152 18.3006 7.47276 18.4033 7.41723L19.3023 6.93123L14.3573 3.46823Z"
-                          fill="white" />
-                  </svg>
-                  <span class="font-medium">Biospecimen Management</span>
+      <!-- Navigation -->
+      <nav class="p-4 flex-1 overflow-y-auto">
+        <div class="space-y-1">
+          <template v-for="item in sidebarNavigation"  :key="item.path">
+           <section class="flex items-center space-x-2">
+             <!-- <img :src="item.icon" /> -->
+           <div class="w-full">
+             <!-- Parent with children -->
+            <div v-if="item.children">
+              <button @click="toggleDropdown(item.path)" 
+                class="flex items-center justify-between w-full gap-3 px-3 py-2.5 rounded-lg transition-colors"
+                :class="{ 'bg-[#DCF1FF] text-[#005B8F]': isActiveRoute(item.path), 'text-white hover:bg-[#004a73]': !isActiveRoute(item.path) }">
+                <div class="flex items-center gap-3 min-w-0">
+                  <img :src="item.icon" />
+                  <span class="text-sm font-medium truncate">{{ item.title }}</span>
                 </div>
-                <svg
-                    class="w-4 h-4 transition-transform"
-                    :class="{ 'rotate-180': biospecimenOpen }"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
+                <svg class="w-4 h-4 flex-shrink-0 transition-transform" :class="{ 'rotate-180': openDropdowns[item.path] }"
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
-
-              <!-- Biospecimen Submenu -->
-              <transition
-                  enter-active-class="transition-all duration-200 ease-out"
-                  enter-from-class="max-h-0 opacity-0"
-                  enter-to-class="max-h-96 opacity-100"
-                  leave-active-class="transition-all duration-150 ease-in"
-                  leave-from-class="max-h-96 opacity-100"
-                  leave-to-class="max-h-0 opacity-0"
-              >
-                <div v-if="biospecimenOpen" class="mt-1 ml-3 space-y-1 overflow-hidden">
-                  <NuxtLink
-                      to="/biospecimen/attributes"
-                      class="flex items-center gap-3 px-3 py-2.5 rounded-lg  transition-colors"
-                      :class="{ 'bg-[#DCF1FF] text-[#005B8F]': isActiveRoute('/biospecimen/attributes'), 'text-white': !isActiveRoute('/biospecimen/attributes') }"
-                  >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M15 7C14.7167 7 14.4793 6.904 14.288 6.712C14.0967 6.52 14.0007 6.28267 14 6C13.9993 5.71733 14.0953 5.48 14.288 5.288C14.4807 5.096 14.718 5 15 5H21C21.2833 5 21.521 5.096 21.713 5.288C21.905 5.48 22.0007 5.71733 22 6C21.9993 6.28267 21.9033 6.52033 21.712 6.713C21.5207 6.90567 21.2833 7.00133 21 7H15ZM15 11C14.7167 11 14.4793 10.904 14.288 10.712C14.0967 10.52 14.0007 10.2827 14 10C13.9993 9.71733 14.0953 9.48 14.288 9.288C14.4807 9.096 14.718 9 15 9H21C21.2833 9 21.521 9.096 21.713 9.288C21.905 9.48 22.0007 9.71733 22 10C21.9993 10.2827 21.9033 10.5203 21.712 10.713C21.5207 10.9057 21.2833 11.0013 21 11H15ZM15 15C14.7167 15 14.4793 14.904 14.288 14.712C14.0967 14.52 14.0007 14.2827 14 14C13.9993 13.7173 14.0953 13.48 14.288 13.288C14.4807 13.096 14.718 13 15 13H21C21.2833 13 21.521 13.096 21.713 13.288C21.905 13.48 22.0007 13.7173 22 14C21.9993 14.2827 21.9033 14.5203 21.712 14.713C21.5207 14.9057 21.2833 15.0013 21 15H15ZM8 14C7.16667 14 6.45833 13.7083 5.875 13.125C5.29167 12.5417 5 11.8333 5 11C5 10.1667 5.29167 9.45833 5.875 8.875C6.45833 8.29167 7.16667 8 8 8C8.83333 8 9.54167 8.29167 10.125 8.875C10.7083 9.45833 11 10.1667 11 11C11 11.8333 10.7083 12.5417 10.125 13.125C9.54167 13.7083 8.83333 14 8 14ZM2 19V18.1C2 17.75 2.08333 17.4167 2.25 17.1C2.41667 16.7833 2.65 16.5333 2.95 16.35C3.7 15.9 4.496 15.5627 5.338 15.338C6.18 15.1133 7.06733 15.0007 8 15C8.93267 14.9993 9.82033 15.112 10.663 15.338C11.5057 15.564 12.3013 15.9013 13.05 16.35C13.35 16.5333 13.5833 16.7833 13.75 17.1C13.9167 17.4167 14 17.75 14 18.1V19C14 19.2833 13.904 19.521 13.712 19.713C13.52 19.905 13.2827 20.0007 13 20H3C2.71667 20 2.47933 19.904 2.288 19.712C2.09667 19.52 2.00067 19.2827 2 19ZM4.15 18H11.85C11.2667 17.6667 10.65 17.4167 10 17.25C9.35 17.0833 8.68333 17 8 17C7.31667 17 6.65 17.0833 6 17.25C5.35 17.4167 4.73333 17.6667 4.15 18ZM8 12C8.28333 12 8.521 11.904 8.713 11.712C8.905 11.52 9.00067 11.2827 9 11C8.99933 10.7173 8.90333 10.48 8.712 10.288C8.52067 10.096 8.28333 10 8 10C7.71667 10 7.47933 10.096 7.288 10.288C7.09667 10.48 7.00067 10.7173 7 11C6.99933 11.2827 7.09533 11.5203 7.288 11.713C7.48067 11.9057 7.718 12.0013 8 12Z" fill="white"/>
-                    </svg>
-
-                    <span class="font-medium">Attributes</span>
-                  </NuxtLink>
-
-                  <NuxtLink
-                      to="/biospecimen/registration"
-                      class="flex items-center gap-3 px-3 py-2.5 rounded-lg  transition-colors"
-                      :class="{ 'bg-[#DCF1FF] text-[#005B8F]': isActiveRoute('/biospecimen/registration'), 'text-white': !isActiveRoute('/biospecimen/registration') }"
-                  >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M6 20C5.45 20 4.97933 19.8043 4.588 19.413C4.19667 19.0217 4.00067 18.5507 4 18C3.99934 17.4493 4.19533 16.9787 4.588 16.588C4.98067 16.1973 5.45133 16.0013 6 16C6.54867 15.9987 7.01967 16.1947 7.413 16.588C7.80634 16.9813 8.002 17.452 8 18C7.998 18.548 7.80234 19.019 7.413 19.413C7.02367 19.807 6.55267 20.0027 6 20ZM6 14C5.45 14 4.97933 13.8043 4.588 13.413C4.19667 13.0217 4.00067 12.5507 4 12C3.99934 11.4493 4.19533 10.9787 4.588 10.588C4.98067 10.1973 5.45133 10.0013 6 10C6.54867 9.99867 7.01967 10.1947 7.413 10.588C7.80634 10.9813 8.002 11.452 8 12C7.998 12.548 7.80234 13.019 7.413 13.413C7.02367 13.807 6.55267 14.0027 6 14ZM6 8.00001C5.45 8.00001 4.97933 7.80434 4.588 7.41301C4.19667 7.02167 4.00067 6.55067 4 6.00001C3.99934 5.44934 4.19533 4.97867 4.588 4.58801C4.98067 4.19734 5.45133 4.00134 6 4.00001C6.54867 3.99867 7.01967 4.19467 7.413 4.58801C7.80634 4.98134 8.002 5.45201 8 6.00001C7.998 6.54801 7.80234 7.01901 7.413 7.41301C7.02367 7.80701 6.55267 8.00267 6 8.00001ZM12 8.00001C11.45 8.00001 10.9793 7.80434 10.588 7.41301C10.1967 7.02167 10.0007 6.55067 10 6.00001C9.99934 5.44934 10.1953 4.97867 10.588 4.58801C10.9807 4.19734 11.4513 4.00134 12 4.00001C12.5487 3.99867 13.0197 4.19467 13.413 4.58801C13.8063 4.98134 14.002 5.45201 14 6.00001C13.998 6.54801 13.8023 7.01901 13.413 7.41301C13.0237 7.80701 12.5527 8.00267 12 8.00001ZM18 8.00001C17.45 8.00001 16.9793 7.80434 16.588 7.41301C16.1967 7.02167 16.0007 6.55067 16 6.00001C15.9993 5.44934 16.1953 4.97867 16.588 4.58801C16.9807 4.19734 17.4513 4.00134 18 4.00001C18.5487 3.99867 19.0197 4.19467 19.413 4.58801C19.8063 4.98134 20.002 5.45201 20 6.00001C19.998 6.54801 19.8023 7.01901 19.413 7.41301C19.0237 7.80701 18.5527 8.00267 18 8.00001ZM12 14C11.45 14 10.9793 13.8043 10.588 13.413C10.1967 13.0217 10.0007 12.5507 10 12C9.99934 11.4493 10.1953 10.9787 10.588 10.588C10.9807 10.1973 11.4513 10.0013 12 10C12.5487 9.99867 13.0197 10.1947 13.413 10.588C13.8063 10.9813 14.002 11.452 14 12C13.998 12.548 13.8023 13.019 13.413 13.413C13.0237 13.807 12.5527 14.0027 12 14ZM13 20V16.925L18.525 11.425C18.675 11.275 18.8417 11.1667 19.025 11.1C19.2083 11.0333 19.3917 11 19.575 11C19.775 11 19.9667 11.0377 20.15 11.113C20.3333 11.1883 20.5 11.3007 20.65 11.45L21.575 12.375C21.7083 12.525 21.8127 12.6917 21.888 12.875C21.9633 13.0583 22.0007 13.2417 22 13.425C21.9993 13.6083 21.966 13.796 21.9 13.988C21.834 14.18 21.7257 14.3507 21.575 14.5L16.075 20H13ZM19.575 14.4L20.5 13.425L19.575 12.5L18.625 13.45L19.575 14.4Z" fill="white"/>
-                    </svg>
-
-                    <span class="font-medium">Registration</span>
-                  </NuxtLink>
-
-                  <NuxtLink
-                      to="/biospecimen/tracking"
-                      class="flex items-center gap-3 px-3 py-2.5 rounded-lg  transition-colors"
-                      :class="{ 'bg-[#DCF1FF] text-[#005B8F]': isActiveRoute('/biospecimen/tracking'), 'text-white': !isActiveRoute('/biospecimen/tracking') }"
-                  >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path fill-rule="evenodd" clip-rule="evenodd" d="M6.06022 4.85984C7.6356 3.28446 9.77228 2.39941 12.0002 2.39941C14.2281 2.39941 16.3648 3.28446 17.9402 4.85984C19.5156 6.43523 20.4006 8.57191 20.4006 10.7998C20.4006 13.0278 19.5156 15.1645 17.9402 16.7398L12.0002 22.6798L6.06022 16.7398C5.28011 15.9598 4.6613 15.0338 4.2391 14.0146C3.81691 12.9954 3.59961 11.903 3.59961 10.7998C3.59961 9.69667 3.81691 8.6043 4.2391 7.5851C4.6613 6.56591 5.28011 5.63987 6.06022 4.85984ZM12.0002 13.1998C12.6367 13.1998 13.2472 12.947 13.6973 12.4969C14.1474 12.0468 14.4002 11.4364 14.4002 10.7998C14.4002 10.1633 14.1474 9.55287 13.6973 9.10279C13.2472 8.6527 12.6367 8.39984 12.0002 8.39984C11.3637 8.39984 10.7532 8.6527 10.3032 9.10279C9.85307 9.55287 9.60022 10.1633 9.60022 10.7998C9.60022 11.4364 9.85307 12.0468 10.3032 12.4969C10.7532 12.947 11.3637 13.1998 12.0002 13.1998Z" fill="white"/>
-                    </svg>
-
-                    <span class="font-medium">Tracking</span>
-                  </NuxtLink>
-
-                  <NuxtLink
-                      to="/biospecimen/bulk-upload"
-                      class="flex items-center gap-3 px-3 py-2.5 rounded-lg  transition-colors"
-                      :class="{ 'bg-[#DCF1FF] text-[#005B8F]': isActiveRoute('/biospecimen/bulk-upload'), 'text-white': !isActiveRoute('/biospecimen/bulk-upload') }"
-                  >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M2 18V17.2C2 16.6333 2.14167 16.1127 2.425 15.638C2.70833 15.1633 3.1 14.8007 3.6 14.55C4.55 14.0667 5.53767 13.6833 6.563 13.4C7.58833 13.1167 8.634 12.975 9.7 12.975C9.93333 12.975 10.1167 13.0793 10.25 13.288C10.3833 13.4967 10.4083 13.7173 10.325 13.95C10.225 14.3 10.15 14.65 10.1 15C10.05 15.35 10.025 15.7083 10.025 16.075C10.025 16.5583 10.075 17.025 10.175 17.475C10.275 17.925 10.4167 18.3667 10.6 18.8C10.7333 19.0833 10.721 19.3543 10.563 19.613C10.405 19.8717 10.184 20.0007 9.9 20H4C3.45 20 2.97933 19.8043 2.588 19.413C2.19667 19.0217 2.00067 18.5507 2 18ZM17 18C17.55 18 18.021 17.8043 18.413 17.413C18.805 17.0217 19.0007 16.5507 19 16C18.9993 15.4493 18.8037 14.9787 18.413 14.588C18.0223 14.1973 17.5513 14.0013 17 14C16.4487 13.9987 15.978 14.1947 15.588 14.588C15.198 14.9813 15.002 15.452 15 16C14.998 16.548 15.194 17.019 15.588 17.413C15.982 17.807 16.4527 18.0027 17 18ZM10 12C8.9 12 7.95833 11.6083 7.175 10.825C6.39167 10.0417 6 9.1 6 8C6 6.9 6.39167 5.95833 7.175 5.175C7.95833 4.39167 8.9 4 10 4C11.1 4 12.0417 4.39167 12.825 5.175C13.6083 5.95833 14 6.9 14 8C14 9.1 13.6083 10.0417 12.825 10.825C12.0417 11.6083 11.1 12 10 12ZM15.85 20.2L15.7 19.5C15.5 19.4167 15.3127 19.3293 15.138 19.238C14.9633 19.1467 14.784 19.034 14.6 18.9L13.875 19.125C13.6583 19.1917 13.446 19.1833 13.238 19.1C13.03 19.0167 12.8673 18.8833 12.75 18.7L12.55 18.35C12.4333 18.15 12.3917 17.9333 12.425 17.7C12.4583 17.4667 12.5667 17.275 12.75 17.125L13.3 16.65C13.2667 16.4167 13.25 16.2 13.25 16C13.25 15.8 13.2667 15.5833 13.3 15.35L12.75 14.875C12.5667 14.725 12.4583 14.5373 12.425 14.312C12.3917 14.0867 12.4333 13.8743 12.55 13.675L12.775 13.3C12.8917 13.1167 13.05 12.9833 13.25 12.9C13.45 12.8167 13.6583 12.8083 13.875 12.875L14.6 13.1C14.7833 12.9667 14.9627 12.854 15.138 12.762C15.3133 12.67 15.5007 12.5827 15.7 12.5L15.85 11.775C15.9 11.5417 16.0127 11.3543 16.188 11.213C16.3633 11.0717 16.5673 11.0007 16.8 11H17.2C17.4333 11 17.6377 11.075 17.813 11.225C17.9883 11.375 18.1007 11.5667 18.15 11.8L18.3 12.5C18.5 12.5833 18.6873 12.675 18.862 12.775C19.0367 12.875 19.216 13 19.4 13.15L20.075 12.925C20.3083 12.8417 20.5333 12.8417 20.75 12.925C20.9667 13.0083 21.1333 13.15 21.25 13.35L21.45 13.7C21.5667 13.9 21.6083 14.1167 21.575 14.35C21.5417 14.5833 21.4333 14.775 21.25 14.925L20.7 15.4C20.7333 15.6 20.75 15.8083 20.75 16.025C20.75 16.2417 20.7333 16.45 20.7 16.65L21.25 17.125C21.4333 17.275 21.5417 17.4627 21.575 17.688C21.6083 17.9133 21.5667 18.1257 21.45 18.325L21.225 18.7C21.1083 18.8833 20.95 19.0167 20.75 19.1C20.55 19.1833 20.3417 19.1917 20.125 19.125L19.4 18.9C19.2167 19.0333 19.0373 19.1457 18.862 19.237C18.6867 19.3283 18.4993 19.416 18.3 19.5L18.15 20.225C18.1 20.4583 17.9877 20.646 17.813 20.788C17.6383 20.93 17.434 21.0007 17.2 21H16.8C16.5667 21 16.3627 20.925 16.188 20.775C16.0133 20.625 15.9007 20.4333 15.85 20.2Z" fill="white"/>
-                    </svg>
-
-                    <span class="font-medium">Bulk Upload</span>
+              
+              <!-- Submenu -->
+              <transition enter-active-class="transition-all duration-200 ease-out" enter-from-class="max-h-0 opacity-0"
+                enter-to-class="max-h-96 opacity-100" leave-active-class="transition-all duration-150 ease-in"
+                leave-from-class="max-h-96 opacity-100" leave-to-class="max-h-0 opacity-0">
+                <div v-if="openDropdowns[item.path]" class="mt-1 ml-3 space-y-1 overflow-hidden">
+                  <NuxtLink v-for="child in item.children" :key="child.path" :to="child.path"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors"
+                    :class="{ 'bg-[#DCF1FF] text-[#005B8F]': isActiveRoute(child.path), 'text-white hover:bg-[#004a73]': !isActiveRoute(child.path) }">
+                    <img :src="child.icon" />
+                    <span class="text-sm font-medium truncate">{{ child.title }}</span>
                   </NuxtLink>
                 </div>
               </transition>
             </div>
 
-            <!-- User Management Dropdown -->
-            <div>
-              <!-- <button
-                @click="toggleUserManagement"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors w-full"
-                :class="{ 'bg-[#DCF1FF] text-[#005B8F]': isActiveRoute('/user-management'), 'text-white': !isActiveRoute('/user-management') }"
-              >
-                <div class="flex items-center gap-3 flex-1">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <mask id="mask0_2540_412" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
-                      <rect width="24" height="24" fill="#D9D9D9"/>
-                    </mask>
-                    <g mask="url(#mask0_2540_412)">
-                      <path d="M0 18V16.425C0 15.7083 0.366667 15.125 1.1 14.675C1.83333 14.225 2.8 14 4 14C4.21667 14 4.425 14.0042 4.625 14.0125C4.825 14.0208 5.01667 14.0417 5.2 14.075C4.96667 14.425 4.79167 14.7917 4.675 15.175C4.55833 15.5583 4.5 15.9583 4.5 16.375V18H0ZM6 18V16.375C6 15.8417 6.14583 15.3542 6.4375 14.9125C6.72917 14.4708 7.14167 14.0833 7.675 13.75C8.20833 13.4167 8.84583 13.1667 9.5875 13C10.3292 12.8333 11.1333 12.75 12 12.75C12.8833 12.75 13.6958 12.8333 14.4375 13C15.1792 13.1667 15.8167 13.4167 16.35 13.75C16.8833 14.0833 17.2917 14.4708 17.575 14.9125C17.8583 15.3542 18 15.8417 18 16.375V18H6ZM19.5 18V16.375C19.5 15.9417 19.4458 15.5333 19.3375 15.15C19.2292 14.7667 19.0667 14.4083 18.85 14.075C19.0333 14.0417 19.2208 14.0208 19.4125 14.0125C19.6042 14.0042 19.8 14 20 14C21.2 14 22.1667 14.2208 22.9 14.6625C23.6333 15.1042 24 15.6917 24 16.425V18H19.5ZM8.125 16H15.9C15.7333 15.6667 15.2708 15.375 14.5125 15.125C13.7542 14.875 12.9167 14.75 12 14.75C11.0833 14.75 10.2458 14.875 9.4875 15.125C8.72917 15.375 8.275 15.6667 8.125 16ZM4 13C3.45 13 2.97917 12.8042 2.5875 12.4125C2.19583 12.0208 2 11.55 2 11C2 10.4333 2.19583 9.95833 2.5875 9.575C2.97917 9.19167 3.45 9 4 9C4.56667 9 5.04167 9.19167 5.425 9.575C5.80833 9.95833 6 10.4333 6 11C6 11.55 5.80833 12.0208 5.425 12.4125C5.04167 12.8042 4.56667 13 4 13ZM20 13C19.45 13 18.9792 12.8042 18.5875 12.4125C18.1958 12.0208 18 11.55 18 11C18 10.4333 18.1958 9.95833 18.5875 9.575C18.9792 9.19167 19.45 9 20 9C20.5667 9 21.0417 9.19167 21.425 9.575C21.8083 9.95833 22 10.4333 22 11C22 11.55 21.8083 12.0208 21.425 12.4125C21.0417 12.8042 20.5667 13 20 13ZM12 12C11.1667 12 10.4583 11.7083 9.875 11.125C9.29167 10.5417 9 9.83333 9 9C9 8.15 9.29167 7.4375 9.875 6.8625C10.4583 6.2875 11.1667 6 12 6C12.85 6 13.5625 6.2875 14.1375 6.8625C14.7125 7.4375 15 8.15 15 9C15 9.83333 14.7125 10.5417 14.1375 11.125C13.5625 11.7083 12.85 12 12 12ZM12 10C12.2833 10 12.5208 9.90417 12.7125 9.7125C12.9042 9.52083 13 9.28333 13 9C13 8.71667 12.9042 8.47917 12.7125 8.2875C12.5208 8.09583 12.2833 8 12 8C11.7167 8 11.4792 8.09583 11.2875 8.2875C11.0958 8.47917 11 8.71667 11 9C11 9.28333 11.0958 9.52083 11.2875 9.7125C11.4792 9.90417 11.7167 10 12 10Z" fill="white"/>
-                    </g>
-                  </svg>
-                  <span class="font-medium">User Management</span>
-                </div>
-                <svg
-                  class="w-4 h-4 transition-transform"
-                  :class="{ 'rotate-180': userManagementOpen }"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button> -->
-
-              <button
-                  @click="toggleUserManagement"
-                  class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors w-full"
-                  :class="{
-      'bg-[#DCF1FF] text-[#005B8F]': isUserManagementActive,
-      'text-white': !isUserManagementActive
-    }"
-              >
-                <div class="flex items-center gap-3 flex-1">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <mask id="mask0_2540_412" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
-                      <rect width="24" height="24" fill="#D9D9D9"/>
-                    </mask>
-                    <g mask="url(#mask0_2540_412)">
-                      <path d="M0 18V16.425C0 15.7083 0.366667 15.125 1.1 14.675C1.83333 14.225 2.8 14 4 14C4.21667 14 4.425 14.0042 4.625 14.0125C4.825 14.0208 5.01667 14.0417 5.2 14.075C4.96667 14.425 4.79167 14.7917 4.675 15.175C4.55833 15.5583 4.5 15.9583 4.5 16.375V18H0ZM6 18V16.375C6 15.8417 6.14583 15.3542 6.4375 14.9125C6.72917 14.4708 7.14167 14.0833 7.675 13.75C8.20833 13.4167 8.84583 13.1667 9.5875 13C10.3292 12.8333 11.1333 12.75 12 12.75C12.8833 12.75 13.6958 12.8333 14.4375 13C15.1792 13.1667 15.8167 13.4167 16.35 13.75C16.8833 14.0833 17.2917 14.4708 17.575 14.9125C17.8583 15.3542 18 15.8417 18 16.375V18H6ZM19.5 18V16.375C19.5 15.9417 19.4458 15.5333 19.3375 15.15C19.2292 14.7667 19.0667 14.4083 18.85 14.075C19.0333 14.0417 19.2208 14.0208 19.4125 14.0125C19.6042 14.0042 19.8 14 20 14C21.2 14 22.1667 14.2208 22.9 14.6625C23.6333 15.1042 24 15.6917 24 16.425V18H19.5ZM8.125 16H15.9C15.7333 15.6667 15.2708 15.375 14.5125 15.125C13.7542 14.875 12.9167 14.75 12 14.75C11.0833 14.75 10.2458 14.875 9.4875 15.125C8.72917 15.375 8.275 15.6667 8.125 16ZM4 13C3.45 13 2.97917 12.8042 2.5875 12.4125C2.19583 12.0208 2 11.55 2 11C2 10.4333 2.19583 9.95833 2.5875 9.575C2.97917 9.19167 3.45 9 4 9C4.56667 9 5.04167 9.19167 5.425 9.575C5.80833 9.95833 6 10.4333 6 11C6 11.55 5.80833 12.0208 5.425 12.4125C5.04167 12.8042 4.56667 13 4 13ZM20 13C19.45 13 18.9792 12.8042 18.5875 12.4125C18.1958 12.0208 18 11.55 18 11C18 10.4333 18.1958 9.95833 18.5875 9.575C18.9792 9.19167 19.45 9 20 9C20.5667 9 21.0417 9.19167 21.425 9.575C21.8083 9.95833 22 10.4333 22 11C22 11.55 21.8083 12.0208 21.425 12.4125C21.0417 12.8042 20.5667 13 20 13ZM12 12C11.1667 12 10.4583 11.7083 9.875 11.125C9.29167 10.5417 9 9.83333 9 9C9 8.15 9.29167 7.4375 9.875 6.8625C10.4583 6.2875 11.1667 6 12 6C12.85 6 13.5625 6.2875 14.1375 6.8625C14.7125 7.4375 15 8.15 15 9C15 9.83333 14.7125 10.5417 14.1375 11.125C13.5625 11.7083 12.85 12 12 12ZM12 10C12.2833 10 12.5208 9.90417 12.7125 9.7125C12.9042 9.52083 13 9.28333 13 9C13 8.71667 12.9042 8.47917 12.7125 8.2875C12.5208 8.09583 12.2833 8 12 8C11.7167 8 11.4792 8.09583 11.2875 8.2875C11.0958 8.47917 11 8.71667 11 9C11 9.28333 11.0958 9.52083 11.2875 9.7125C11.4792 9.90417 11.7167 10 12 10Z" fill="white"/>
-                    </g>
-                  </svg>
-                  <span class="font-medium">User Management</span>
-                </div>
-                <svg
-                    class="w-4 h-4 transition-transform"
-                    :class="{ 'rotate-180': userManagementOpen }"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-
-              <!-- User Management Submenu -->
-              <transition
-                  enter-active-class="transition-all duration-200 ease-out"
-                  enter-from-class="max-h-0 opacity-0"
-                  enter-to-class="max-h-96 opacity-100"
-                  leave-active-class="transition-all duration-150 ease-in"
-                  leave-from-class="max-h-96 opacity-100"
-                  leave-to-class="max-h-0 opacity-0"
-              >
-                <div v-if="userManagementOpen" class="mt-1 ml-3 space-y-1 overflow-hidden">
-                  <NuxtLink
-                      to="/user-management/manage-user"
-                      class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors"
-                      :class="{ 'bg-[#DCF1FF] text-[#005B8F]': isActiveRoute('/user-management/manage-user'), 'text-white': !isActiveRoute('/user-management/manage-user') }"
-                  >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M2 18V17.2C2 16.6333 2.14167 16.1127 2.425 15.638C2.70833 15.1633 3.1 14.8007 3.6 14.55C4.55 14.0667 5.53767 13.6833 6.563 13.4C7.58833 13.1167 8.634 12.975 9.7 12.975C9.93333 12.975 10.1167 13.0793 10.25 13.288C10.3833 13.4967 10.4083 13.7173 10.325 13.95C10.225 14.3 10.15 14.65 10.1 15C10.05 15.35 10.025 15.7083 10.025 16.075C10.025 16.5583 10.075 17.025 10.175 17.475C10.275 17.925 10.4167 18.3667 10.6 18.8C10.7333 19.0833 10.721 19.3543 10.563 19.613C10.405 19.8717 10.184 20.0007 9.9 20H4C3.45 20 2.97933 19.8043 2.588 19.413C2.19667 19.0217 2.00067 18.5507 2 18ZM17 18C17.55 18 18.021 17.8043 18.413 17.413C18.805 17.0217 19.0007 16.5507 19 16C18.9993 15.4493 18.8037 14.9787 18.413 14.588C18.0223 14.1973 17.5513 14.0013 17 14C16.4487 13.9987 15.978 14.1947 15.588 14.588C15.198 14.9813 15.002 15.452 15 16C14.998 16.548 15.194 17.019 15.588 17.413C15.982 17.807 16.4527 18.0027 17 18ZM10 12C8.9 12 7.95833 11.6083 7.175 10.825C6.39167 10.0417 6 9.1 6 8C6 6.9 6.39167 5.95833 7.175 5.175C7.95833 4.39167 8.9 4 10 4C11.1 4 12.0417 4.39167 12.825 5.175C13.6083 5.95833 14 6.9 14 8C14 9.1 13.6083 10.0417 12.825 10.825C12.0417 11.6083 11.1 12 10 12ZM15.85 20.2L15.7 19.5C15.5 19.4167 15.3127 19.3293 15.138 19.238C14.9633 19.1467 14.784 19.034 14.6 18.9L13.875 19.125C13.6583 19.1917 13.446 19.1833 13.238 19.1C13.03 19.0167 12.8673 18.8833 12.75 18.7L12.55 18.35C12.4333 18.15 12.3917 17.9333 12.425 17.7C12.4583 17.4667 12.5667 17.275 12.75 17.125L13.3 16.65C13.2667 16.4167 13.25 16.2 13.25 16C13.25 15.8 13.2667 15.5833 13.3 15.35L12.75 14.875C12.5667 14.725 12.4583 14.5373 12.425 14.312C12.3917 14.0867 12.4333 13.8743 12.55 13.675L12.775 13.3C12.8917 13.1167 13.05 12.9833 13.25 12.9C13.45 12.8167 13.6583 12.8083 13.875 12.875L14.6 13.1C14.7833 12.9667 14.9627 12.854 15.138 12.762C15.3133 12.67 15.5007 12.5827 15.7 12.5L15.85 11.775C15.9 11.5417 16.0127 11.3543 16.188 11.213C16.3633 11.0717 16.5673 11.0007 16.8 11H17.2C17.4333 11 17.6377 11.075 17.813 11.225C17.9883 11.375 18.1007 11.5667 18.15 11.8L18.3 12.5C18.5 12.5833 18.6873 12.675 18.862 12.775C19.0367 12.875 19.216 13 19.4 13.15L20.075 12.925C20.3083 12.8417 20.5333 12.8417 20.75 12.925C20.9667 13.0083 21.1333 13.15 21.25 13.35L21.45 13.7C21.5667 13.9 21.6083 14.1167 21.575 14.35C21.5417 14.5833 21.4333 14.775 21.25 14.925L20.7 15.4C20.7333 15.6 20.75 15.8083 20.75 16.025C20.75 16.2417 20.7333 16.45 20.7 16.65L21.25 17.125C21.4333 17.275 21.5417 17.4627 21.575 17.688C21.6083 17.9133 21.5667 18.1257 21.45 18.325L21.225 18.7C21.1083 18.8833 20.95 19.0167 20.75 19.1C20.55 19.1833 20.3417 19.1917 20.125 19.125L19.4 18.9C19.2167 19.0333 19.0373 19.1457 18.862 19.237C18.6867 19.3283 18.4993 19.416 18.3 19.5L18.15 20.225C18.1 20.4583 17.9877 20.646 17.813 20.788C17.6383 20.93 17.434 21.0007 17.2 21H16.8C16.5667 21 16.3627 20.925 16.188 20.775C16.0133 20.625 15.9007 20.4333 15.85 20.2Z" fill="white"/>
-                    </svg>
-
-                    <span class="font-medium">Manage User</span>
-                  </NuxtLink>
-
-                  <NuxtLink
-                      to="/user-management/manage-role"
-                      class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors"
-                      :class="{ 'bg-[#DCF1FF] text-[#005B8F]': isActiveRoute('/user-management/manage-role'), 'text-white': !isActiveRoute('/user-management/manage-role') }"
-                  >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M2 18V17.2C2 16.6333 2.14167 16.1127 2.425 15.638C2.70833 15.1633 3.1 14.8007 3.6 14.55C4.55 14.0667 5.53767 13.6833 6.563 13.4C7.58833 13.1167 8.634 12.975 9.7 12.975C9.93333 12.975 10.1167 13.0793 10.25 13.288C10.3833 13.4967 10.4083 13.7173 10.325 13.95C10.225 14.3 10.15 14.65 10.1 15C10.05 15.35 10.025 15.7083 10.025 16.075C10.025 16.5583 10.075 17.025 10.175 17.475C10.275 17.925 10.4167 18.3667 10.6 18.8C10.7333 19.0833 10.721 19.3543 10.563 19.613C10.405 19.8717 10.184 20.0007 9.9 20H4C3.45 20 2.97933 19.8043 2.588 19.413C2.19667 19.0217 2.00067 18.5507 2 18ZM17 18C17.55 18 18.021 17.8043 18.413 17.413C18.805 17.0217 19.0007 16.5507 19 16C18.9993 15.4493 18.8037 14.9787 18.413 14.588C18.0223 14.1973 17.5513 14.0013 17 14C16.4487 13.9987 15.978 14.1947 15.588 14.588C15.198 14.9813 15.002 15.452 15 16C14.998 16.548 15.194 17.019 15.588 17.413C15.982 17.807 16.4527 18.0027 17 18ZM10 12C8.9 12 7.95833 11.6083 7.175 10.825C6.39167 10.0417 6 9.1 6 8C6 6.9 6.39167 5.95833 7.175 5.175C7.95833 4.39167 8.9 4 10 4C11.1 4 12.0417 4.39167 12.825 5.175C13.6083 5.95833 14 6.9 14 8C14 9.1 13.6083 10.0417 12.825 10.825C12.0417 11.6083 11.1 12 10 12ZM15.85 20.2L15.7 19.5C15.5 19.4167 15.3127 19.3293 15.138 19.238C14.9633 19.1467 14.784 19.034 14.6 18.9L13.875 19.125C13.6583 19.1917 13.446 19.1833 13.238 19.1C13.03 19.0167 12.8673 18.8833 12.75 18.7L12.55 18.35C12.4333 18.15 12.3917 17.9333 12.425 17.7C12.4583 17.4667 12.5667 17.275 12.75 17.125L13.3 16.65C13.2667 16.4167 13.25 16.2 13.25 16C13.25 15.8 13.2667 15.5833 13.3 15.35L12.75 14.875C12.5667 14.725 12.4583 14.5373 12.425 14.312C12.3917 14.0867 12.4333 13.8743 12.55 13.675L12.775 13.3C12.8917 13.1167 13.05 12.9833 13.25 12.9C13.45 12.8167 13.6583 12.8083 13.875 12.875L14.6 13.1C14.7833 12.9667 14.9627 12.854 15.138 12.762C15.3133 12.67 15.5007 12.5827 15.7 12.5L15.85 11.775C15.9 11.5417 16.0127 11.3543 16.188 11.213C16.3633 11.0717 16.5673 11.0007 16.8 11H17.2C17.4333 11 17.6377 11.075 17.813 11.225C17.9883 11.375 18.1007 11.5667 18.15 11.8L18.3 12.5C18.5 12.5833 18.6873 12.675 18.862 12.775C19.0367 12.875 19.216 13 19.4 13.15L20.075 12.925C20.3083 12.8417 20.5333 12.8417 20.75 12.925C20.9667 13.0083 21.1333 13.15 21.25 13.35L21.45 13.7C21.5667 13.9 21.6083 14.1167 21.575 14.35C21.5417 14.5833 21.4333 14.775 21.25 14.925L20.7 15.4C20.7333 15.6 20.75 15.8083 20.75 16.025C20.75 16.2417 20.7333 16.45 20.7 16.65L21.25 17.125C21.4333 17.275 21.5417 17.4627 21.575 17.688C21.6083 17.9133 21.5667 18.1257 21.45 18.325L21.225 18.7C21.1083 18.8833 20.95 19.0167 20.75 19.1C20.55 19.1833 20.3417 19.1917 20.125 19.125L19.4 18.9C19.2167 19.0333 19.0373 19.1457 18.862 19.237C18.6867 19.3283 18.4993 19.416 18.3 19.5L18.15 20.225C18.1 20.4583 17.9877 20.646 17.813 20.788C17.6383 20.93 17.434 21.0007 17.2 21H16.8C16.5667 21 16.3627 20.925 16.188 20.775C16.0133 20.625 15.9007 20.4333 15.85 20.2Z" fill="white"/>
-                    </svg>
-                    <span class="font-medium">Manage Role</span>
-                  </NuxtLink>
-                </div>
-              </transition>
-            </div>
-
-
-            <NuxtLink
-                to="/reports"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-lg  transition-colors"
-                :class="{ 'bg-[#DCF1FF] text-[#005B8F]': isActiveRoute('/reports'), 'text-white': !isActiveRoute('/reports') }"
-            >
-              <svg width="24" height="24" stroke="currentColor" viewBox="0 0 24 24" fill="none"
-                   xmlns="http://www.w3.org/2000/svg">
-                <mask id="mask0_2540_311" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24"
-                      height="24">
-                  <rect width="24" height="24" fill="#D9D9D9" />
-                </mask>
-                <g mask="url(#mask0_2540_311)">
-                  <path
-                      d="M3 21V19L5 17V21H3ZM7 21V15L9 13V21H7ZM11 21V13L13 15.025V21H11ZM15 21V15.025L17 13.025V21H15ZM19 21V11L21 9V21H19ZM3 15.825V13L10 6L14 10L21 3V5.825L14 12.825L10 8.825L3 15.825Z"
-                      fill="white" />
-                </g>
-              </svg>
-              <span class="font-medium">Reporting</span>
+            <!-- Single item -->
+            <NuxtLink v-else :to="item.path" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors"
+              :class="{ 'bg-[#DCF1FF] text-[#005B8F]': isActiveRoute(item.path), 'text-white hover:bg-[#004a73]': !isActiveRoute(item.path) }">
+               <img :src="item.icon" />
+              <span class="text-sm font-medium truncate">{{ item.title }}</span>
             </NuxtLink>
-
-            <!-- <NuxtLink
-        to="/attributes"
-        class="flex items-center gap-3 px-3 py-2.5 rounded-lg  transition-colors"
-        :class="{ 'bg-[#DCF1FF] text-[#005B8F]': isActiveRoute('/attributes'), 'text-white': !isActiveRoute('/attributes') }"
-      >
-                   <svg width="24" height="24" stroke="currentColor" viewBox="0 0 24 24" fill="none"
-          xmlns="http://www.w3.org/2000/svg">
-          <mask id="mask0_2540_311" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24"
-            height="24">
-            <rect width="24" height="24" fill="#D9D9D9" />
-          </mask>
-          <g mask="url(#mask0_2540_311)">
-            <path
-              d="M3 21V19L5 17V21H3ZM7 21V15L9 13V21H7ZM11 21V13L13 15.025V21H11ZM15 21V15.025L17 13.025V21H15ZM19 21V11L21 9V21H19ZM3 15.825V13L10 6L14 10L21 3V5.825L14 12.825L10 8.825L3 15.825Z"
-              fill="white" />
-          </g>
-        </svg>
-        <span class="font-medium">Attributes</span>
-      </NuxtLink> -->
-
-            <NuxtLink
-                to="/activity-log"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-lg  transition-colors"
-                :class="{ 'bg-[#DCF1FF] text-[#005B8F]': isActiveRoute('/activity-log'), 'text-white': !isActiveRoute('/activity-log') }"
-            >
-              <svg width="24" height="24" stroke="currentColor" viewBox="0 0 24 24" fill="none"
-                   xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd"
-                      d="M5.25 3.75V20.25H18.75V3.75H5.25ZM4.5 1.5C4.10218 1.5 3.72064 1.65804 3.43934 1.93934C3.15804 2.22064 3 2.60218 3 3V21C3 21.3978 3.15804 21.7794 3.43934 22.0607C3.72064 22.342 4.10218 22.5 4.5 22.5H19.5C19.8978 22.5 20.2794 22.342 20.5607 22.0607C20.842 21.7794 21 21.3978 21 21V3C21 2.60218 20.842 2.22064 20.5607 1.93934C20.2794 1.65804 19.8978 1.5 19.5 1.5H4.5ZM12 16.5C12 16.2016 12.1185 15.9155 12.3295 15.7045C12.5405 15.4935 12.8266 15.375 13.125 15.375H15.75C16.0484 15.375 16.3345 15.4935 16.5455 15.7045C16.7565 15.9155 16.875 16.2016 16.875 16.5C16.875 16.7984 16.7565 17.0845 16.5455 17.2955C16.3345 17.5065 16.0484 17.625 15.75 17.625H13.125C12.8266 17.625 12.5405 17.5065 12.3295 17.2955C12.1185 17.0845 12 16.7984 12 16.5ZM9 18C9.39782 18 9.77936 17.842 10.0607 17.5607C10.342 17.2794 10.5 16.8978 10.5 16.5C10.5 16.1022 10.342 15.7206 10.0607 15.4393C9.77936 15.158 9.39782 15 9 15C8.60218 15 8.22064 15.158 7.93934 15.4393C7.65804 15.7206 7.5 16.1022 7.5 16.5C7.5 16.8978 7.65804 17.2794 7.93934 17.5607C8.22064 17.842 8.60218 18 9 18ZM12 12C12 11.7016 12.1185 11.4155 12.3295 11.2045C12.5405 10.9935 12.8266 10.875 13.125 10.875H15.75C16.0484 10.875 16.3345 10.9935 16.5455 11.2045C16.7565 11.4155 16.875 11.7016 16.875 12C16.875 12.2984 16.7565 12.5845 16.5455 12.7955C16.3345 13.0065 16.0484 13.125 15.75 13.125H13.125C12.8266 13.125 12.5405 13.0065 12.3295 12.7955C12.1185 12.5845 12 12.2984 12 12ZM9 13.5C9.39782 13.5 9.77936 13.342 10.0607 13.0607C10.342 12.7794 10.5 12.3978 10.5 12C10.5 11.6022 10.342 11.2206 10.0607 10.9393C9.77936 10.658 9.39782 10.5 9 10.5C8.60218 10.5 8.22064 10.658 7.93934 10.9393C7.65804 11.2206 7.5 11.6022 7.5 12C7.5 12.3978 7.65804 12.7794 7.93934 13.0607C8.22064 13.342 8.60218 13.5 9 13.5ZM12 7.5C12 7.20163 12.1185 6.91548 12.3295 6.7045C12.5405 6.49353 12.8266 6.375 13.125 6.375H15.75C16.0484 6.375 16.3345 6.49353 16.5455 6.7045C16.7565 6.91548 16.875 7.20163 16.875 7.5C16.875 7.79837 16.7565 8.08452 16.5455 8.2955C16.3345 8.50647 16.0484 8.625 15.75 8.625H13.125C12.8266 8.625 12.5405 8.50647 12.3295 8.2955C12.1185 8.08452 12 7.79837 12 7.5ZM9 9C9.39782 9 9.77936 8.84196 10.0607 8.56066C10.342 8.27936 10.5 7.89782 10.5 7.5C10.5 7.10218 10.342 6.72064 10.0607 6.43934C9.77936 6.15804 9.39782 6 9 6C8.60218 6 8.22064 6.15804 7.93934 6.43934C7.65804 6.72064 7.5 7.10218 7.5 7.5C7.5 7.89782 7.65804 8.27936 7.93934 8.56066C8.22064 8.84196 8.60218 9 9 9Z"
-                      fill="white" />
-              </svg>
-              <span class="font-medium">Activity Log</span>
-            </NuxtLink>
-
-            <NuxtLink
-                to="/notification"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-lg  transition-colors"
-                :class="{ 'bg-[#DCF1FF] text-[#005B8F]': isActiveRoute('/notification'), 'text-white': !isActiveRoute('/notification') }"
-            >
-              <svg width="24" height="24" stroke="currentColor" viewBox="0 0 24 24" fill="none"
-                   xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd"
-                      d="M14.7521 1.914C14.1918 2.68512 13.852 3.59423 13.7692 4.5438C13.6864 5.49337 13.8636 6.44758 14.282 7.30406C14.7003 8.16054 15.3439 8.88697 16.1437 9.40543C16.9436 9.92389 17.8695 10.2148 18.8221 10.247V10.258C18.8371 10.456 18.8521 10.659 18.8721 10.855C19.1091 13.102 19.6491 14.645 20.1681 15.658C20.5131 16.333 20.8521 16.781 21.0921 17.052C21.1974 17.1715 21.311 17.2834 21.4321 17.387L21.4421 17.393C21.5704 17.4861 21.6659 17.6175 21.7149 17.7683C21.7639 17.9191 21.7638 18.0815 21.7147 18.2323C21.6656 18.383 21.57 18.5143 21.4416 18.6074C21.3132 18.7004 21.1586 18.7503 21.0001 18.75H3.00009C2.84189 18.7498 2.6878 18.6996 2.55986 18.6066C2.43192 18.5135 2.33667 18.3824 2.28775 18.232C2.23882 18.0815 2.23872 17.9195 2.28745 17.769C2.33619 17.6184 2.43127 17.4872 2.55909 17.394L2.56709 17.387L2.63109 17.333C2.69109 17.279 2.78809 17.188 2.90809 17.052C3.14809 16.782 3.48709 16.334 3.83209 15.659C4.52209 14.31 5.25009 12.03 5.25009 8.4C5.25009 6.519 5.95009 4.706 7.21009 3.362C8.47209 2.016 10.1941 1.25 12.0001 1.25C12.3828 1.25 12.7604 1.28367 13.1331 1.351C13.3711 1.394 14.1511 1.637 14.7521 1.914Z"
-                      fill="white" />
-                <path fill-rule="evenodd" clip-rule="evenodd"
-                      d="M15.25 5C15.25 4.00544 15.6451 3.05161 16.3484 2.34835C17.0516 1.64509 18.0055 1.25 19 1.25C19.9946 1.25 20.9484 1.64509 21.6517 2.34835C22.3549 3.05161 22.75 4.00544 22.75 5C22.75 5.99456 22.3549 6.94839 21.6517 7.65165C20.9484 8.35491 19.9946 8.75 19 8.75C18.0055 8.75 17.0516 8.35491 16.3484 7.65165C15.6451 6.94839 15.25 5.99456 15.25 5ZM9.89404 20.351C9.97926 20.3016 10.0734 20.2695 10.171 20.2565C10.2687 20.2435 10.3679 20.2498 10.4631 20.2752C10.5583 20.3005 10.6475 20.3444 10.7258 20.4042C10.804 20.4641 10.8697 20.5388 10.919 20.624C11.0289 20.8133 11.1867 20.9704 11.3764 21.0796C11.5661 21.1889 11.7811 21.2464 12 21.2464C12.2189 21.2464 12.434 21.1889 12.6237 21.0796C12.8134 20.9704 12.9711 20.8133 13.081 20.624C13.1305 20.5388 13.1962 20.4641 13.2745 20.4043C13.3528 20.3445 13.4421 20.3007 13.5373 20.2754C13.6326 20.2501 13.7319 20.2438 13.8295 20.2568C13.9272 20.2699 14.0213 20.3021 14.1065 20.3515C14.1918 20.4009 14.2664 20.4667 14.3262 20.545C14.3861 20.6233 14.4299 20.7126 14.4552 20.8078C14.4805 20.903 14.4868 21.0023 14.4737 21.1C14.4607 21.1976 14.4285 21.2918 14.379 21.377C14.1373 21.7938 13.7903 22.1399 13.3728 22.3804C12.9553 22.6209 12.4819 22.7476 12 22.7476C11.5182 22.7476 11.0448 22.6209 10.6273 22.3804C10.2097 22.1399 9.86274 21.7938 9.62104 21.377C9.5715 21.2917 9.53926 21.1975 9.52617 21.0998C9.51308 21.002 9.51939 20.9027 9.54475 20.8074C9.57011 20.7121 9.61401 20.6227 9.67394 20.5444C9.73388 20.4661 9.80867 20.4004 9.89404 20.351Z"
-                      fill="white" />
-              </svg>
-              <span class="font-medium">Notifications</span>
-            </NuxtLink>
-
-            <NuxtLink
-                to="/profile"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-lg  transition-colors"
-                :class="{ 'bg-[#DCF1FF] text-[#005B8F]': isActiveRoute('/profile'), 'text-white': !isActiveRoute('/profile') }"
-            >
-              <svg width="24" height="24" stroke="currentColor" viewBox="0 0 24 24" fill="none"
-                   xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd"
-                      d="M8 7C8 5.93913 8.42143 4.92172 9.17157 4.17157C9.92172 3.42143 10.9391 3 12 3C13.0609 3 14.0783 3.42143 14.8284 4.17157C15.5786 4.92172 16 5.93913 16 7C16 8.06087 15.5786 9.07828 14.8284 9.82843C14.0783 10.5786 13.0609 11 12 11C10.9391 11 9.92172 10.5786 9.17157 9.82843C8.42143 9.07828 8 8.06087 8 7ZM8 13C6.67392 13 5.40215 13.5268 4.46447 14.4645C3.52678 15.4021 3 16.6739 3 18C3 18.7956 3.31607 19.5587 3.87868 20.1213C4.44129 20.6839 5.20435 21 6 21H18C18.7956 21 19.5587 20.6839 20.1213 20.1213C20.6839 19.5587 21 18.7956 21 18C21 16.6739 20.4732 15.4021 19.5355 14.4645C18.5979 13.5268 17.3261 13 16 13H8Z"
-                      fill="white" />
-              </svg>
-              <span class="font-medium">Profile</span>
-            </NuxtLink>
-          </div>
+           </div>
+           </section>
+          </template>
         </div>
       </nav>
 
       <!-- Logout -->
-      <div class="p-4 border-t border-[#004a73]">
-        <button
-            @click="showLogoutModal = true"
-            class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white transition-colors w-full"
-        >
+      <div class="p-4 border-t border-[#004a73] flex-shrink-0">
+        <button @click="showLogoutModal = true" 
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white hover:bg-[#004a73] transition-colors w-full">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
           </svg>
-          <span class="font-medium">Log Out</span>
+          <span class="text-sm font-medium">Log Out</span>
         </button>
       </div>
     </aside>
 
     <!-- Main Content -->
-    <div class="flex-1 lg:ml-80 w-full">
+    <div class="flex-1 lg:ml-64 w-full min-w-0">
       <!-- Header -->
-      <header class="bg-white shadow-sm sticky top-0 z-[60]">
+      <header class="bg-white shadow-sm sticky top-0 z-30">
         <div class="px-4 lg:px-6 py-4 flex items-center justify-between gap-4">
           <!-- Mobile Menu Button -->
-          <button
-              @click="mobileMenuOpen = !mobileMenuOpen"
-              class="lg:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-          >
+          <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                  v-if="!mobileMenuOpen"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 6h16M4 12h16M4 18h16"
-              />
-              <path
-                  v-else
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12"
-              />
+              <path v-if="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M4 6h16M4 12h16M4 18h16" />
+              <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
 
           <!-- Search -->
-          <div class="flex-1 max-w-xl">
+          <div class="flex-1 max-w-xl min-w-0">
             <div class="relative">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M21.0002 21.0002L16.6572 16.6572M16.6572 16.6572C17.4001 15.9143 17.9894 15.0324 18.3914 14.0618C18.7935 13.0911 19.0004 12.0508 19.0004 11.0002C19.0004 9.9496 18.7935 8.90929 18.3914 7.93866C17.9894 6.96803 17.4001 6.08609 16.6572 5.34321C15.9143 4.60032 15.0324 4.01103 14.0618 3.60898C13.0911 3.20693 12.0508 3 11.0002 3C9.9496 3 8.90929 3.20693 7.93866 3.60898C6.96803 4.01103 6.08609 4.60032 5.34321 5.34321C3.84288 6.84354 3 8.87842 3 11.0002C3 13.122 3.84288 15.1569 5.34321 16.6572C6.84354 18.1575 8.87842 19.0004 11.0002 19.0004C13.122 19.0004 15.1569 18.1575 16.6572 16.6572Z" stroke="#475569" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
-              <input
-                  type="text"
-                  placeholder="Search names, roles"
-                  @focus="showSearchModal = true"
-                  class="block w-full pl-10 pr-3 py-4 border-[0.5px] border-gray-100 rounded-lg focus:ring-2 focus:ring-[#005B8F] focus:border-transparent cursor-pointer text-base"
-                  readonly
-              />
+              <input type="text" placeholder="Search" @focus="showSearchModal = true"
+                class="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#005B8F] focus:border-transparent cursor-pointer text-sm"
+                readonly />
             </div>
           </div>
 
           <!-- User Info -->
-          <div class="flex items-center gap-2 lg:gap-4">
-            <!-- Notification Icon with Enhanced Dropdown -->
+          <div class="flex items-center gap-2 lg:gap-3">
+            <!-- Notifications -->
             <div class="relative">
-              <button
-                  @click="toggleNotifications"
-                  class="relative p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-              >
+              <button @click="toggleNotifications" class="relative p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
                 <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
-                <span
-                    v-if="unreadCount > 0"
-                    class="absolute top-1 right-1 w-4 h-4 lg:w-5 lg:h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-[10px] lg:text-xs font-medium"
-                >
+                <span v-if="unreadCount > 0" 
+                  class="absolute top-1 right-1 w-4 h-4 lg:w-5 lg:h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-[10px] lg:text-xs font-medium">
                   {{ unreadCount > 99 ? '99+' : unreadCount }}
                 </span>
               </button>
 
-              <!-- Enhanced Notification Dropdown -->
-              <transition
-                  enter-active-class="transition ease-out duration-100"
-                  enter-from-class="transform opacity-0 scale-95"
-                  enter-to-class="transform opacity-100 scale-100"
-                  leave-active-class="transition ease-in duration-75"
-                  leave-from-class="transform opacity-100 scale-100"
-                  leave-to-class="transform opacity-0 scale-95"
-              >
-                <div
-                    v-if="showNotifications"
-                    class="absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden z-[55]"
-                >
-                  <!-- Header -->
+              <!-- Notification Dropdown -->
+              <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95"
+                enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75"
+                leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
+                <div v-if="showNotifications" 
+                  class="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden z-50">
                   <div class="p-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
                     <div>
-                      <h3 class="font-semibold text-gray-900">Notifications</h3>
-                      <p class="text-xs text-gray-500 mt-0.5" v-if="unreadCount > 0">
-                        {{ unreadCount }} unread {{ unreadCount === 1 ? 'notification' : 'notifications' }}
+                      <h3 class="font-semibold text-gray-900 text-sm">Notifications</h3>
+                      <p v-if="unreadCount > 0" class="text-xs text-gray-500 mt-0.5">
+                        {{ unreadCount }} unread
                       </p>
                     </div>
-                    <button
-                        v-if="notificationsLoading"
-                        class="text-[#005B8F]"
-                    >
-                      <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      </svg>
-                    </button>
                   </div>
 
-                  <!-- Notifications List -->
                   <div class="max-h-[400px] overflow-y-auto">
-                    <!-- Loading State -->
                     <div v-if="notificationsLoading && displayedNotifications.length === 0" class="p-8 text-center">
                       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#005B8F] mx-auto"></div>
-                      <p class="text-sm text-gray-500 mt-2">Loading notifications...</p>
+                      <p class="text-sm text-gray-500 mt-2">Loading...</p>
                     </div>
 
-                    <!-- Empty State -->
-                    <div
-                        v-else-if="displayedNotifications.length === 0"
-                        class="p-8 text-center"
-                    >
-                      <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                      </svg>
+                    <div v-else-if="displayedNotifications.length === 0" class="p-8 text-center">
                       <p class="text-sm font-medium text-gray-900">No notifications</p>
                       <p class="text-xs text-gray-500 mt-1">You're all caught up!</p>
                     </div>
 
-                    <!-- Notification Items -->
                     <div v-else>
-                      <div
-                          v-for="notification in displayedNotifications"
-                          :key="notification.notification_id"
-                          class="border-b border-gray-100 hover:bg-gray-50 transition-colors"
-                          :class="{ 'bg-blue-50/50': !notification.read }"
-                      >
+                      <div v-for="n in displayedNotifications" :key="n.notification_id"
+                        class="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                        :class="{ 'bg-blue-50/50': !n.read }">
                         <div class="p-4">
                           <div class="flex items-start gap-3">
-                            <!-- Icon -->
-                            <div
-                                class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
-                                :class="notification.read ? 'bg-gray-100' : 'bg-[#005B8F]/10'"
-                            >
-                              <svg
-                                  class="w-5 h-5"
-                                  :class="notification.read ? 'text-gray-500' : 'text-[#005B8F]'"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                              >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    :d="getNotificationIcon(notification.notification_type)"
-                                />
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
+                              :class="n.read ? 'bg-gray-100' : 'bg-[#005B8F]/10'">
+                              <svg class="w-5 h-5" :class="n.read ? 'text-gray-500' : 'text-[#005B8F]'"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  :d="getNotificationIcon(n.notification_type)" />
                               </svg>
                             </div>
 
-                            <!-- Content -->
                             <div class="flex-1 min-w-0">
                               <div class="flex items-start justify-between gap-2">
-                                <p
-                                    class="text-sm font-semibold text-gray-900 line-clamp-1"
-                                    :class="{ 'font-bold': !notification.read }"
-                                >
-                                  {{ notification.title }}
+                                <p class="text-sm font-semibold text-gray-900 truncate" :class="{ 'font-bold': !n.read }">
+                                  {{ n.title }}
                                 </p>
-                                <span
-                                    v-if="!notification.read"
-                                    class="flex-shrink-0 w-2 h-2 bg-[#005B8F] rounded-full mt-1"
-                                ></span>
+                                <span v-if="!n.read" class="flex-shrink-0 w-2 h-2 bg-[#005B8F] rounded-full mt-1"></span>
                               </div>
-                              <p class="text-xs text-gray-600 mt-1 line-clamp-2">
-                                {{ notification.message }}
-                              </p>
+                              <p class="text-xs text-gray-600 mt-1 line-clamp-2">{{ n.message }}</p>
                               <div class="flex items-center justify-between mt-2">
-                                <span class="text-xs text-gray-400">
-                                  {{ getRelativeTime(notification.created_at) }}
-                                </span>
-
-                                <!-- Action Buttons -->
-                                <div class="flex items-center gap-2">
-                                  <button
-                                      v-if="!notification.read"
-                                      @click.stop="handleMarkAsRead(notification.notification_id)"
-                                      class="text-xs text-[#005B8F] hover:text-[#004a73] font-medium"
-                                  >
-                                    Mark read
-                                  </button>
-                                  <button
-                                      v-else
-                                      @click.stop="handleMarkAsUnread(notification.notification_id)"
-                                      class="text-xs text-gray-500 hover:text-gray-700 font-medium"
-                                  >
-                                    Mark unread
-                                  </button>
-                                </div>
+                                <span class="text-xs text-gray-400">{{ getRelativeTime(n.created_at) }}</span>
+                                <button v-if="!n.read" @click.stop="handleMarkAsRead(n.notification_id)"
+                                  class="text-xs text-[#005B8F] hover:text-[#004a73] font-medium">Mark read</button>
+                                <button v-else @click.stop="handleMarkAsUnread(n.notification_id)"
+                                  class="text-xs text-gray-500 hover:text-gray-700 font-medium">Mark unread</button>
                               </div>
                             </div>
                           </div>
@@ -815,15 +452,8 @@ onUnmounted(() => {
                     </div>
                   </div>
 
-                  <!-- Footer -->
-                  <div
-                      v-if="displayedNotifications.length > 0"
-                      class="p-3 bg-gray-50 text-center border-t border-gray-200"
-                  >
-                    <button
-                        @click="viewAllNotifications"
-                        class="text-sm text-[#005B8F] hover:text-[#004a73] font-semibold"
-                    >
+                  <div v-if="displayedNotifications.length > 0" class="p-3 bg-gray-50 text-center border-t border-gray-200">
+                    <button @click="viewAllNotifications" class="text-sm text-[#005B8F] hover:text-[#004a73] font-semibold">
                       View all notifications
                     </button>
                   </div>
@@ -831,64 +461,42 @@ onUnmounted(() => {
               </transition>
             </div>
 
-            <!-- User Profile Dropdown (previous code remains the same) -->
+            <!-- User Profile -->
             <div class="relative">
-              <button
-                  @click="toggleUserMenu"
-                  class="flex items-center gap-2 lg:gap-3 hover:bg-gray-50 rounded-lg p-1 lg:p-2 transition-colors"
-              >
-                <div class="w-8 h-8 lg:w-10 lg:h-10 bg-[#005B8F] rounded-full flex items-center justify-center text-white font-medium text-sm">
+              <button @click="toggleUserMenu" class="flex items-center gap-2 hover:bg-gray-50 rounded-lg p-1 lg:p-2 transition-colors">
+                <div class="w-8 h-8 lg:w-10 lg:h-10 bg-[#005B8F] rounded-full flex items-center justify-center text-white font-medium text-sm flex-shrink-0">
                   {{ userInitials }}
                 </div>
-                <div class="hidden md:block text-sm text-left">
-                  <p class="font-medium text-gray-900">{{ userFullName }}</p>
-                  <p class="text-gray-500 text-xs">{{ userRole }}</p>
+                <div class="hidden md:block text-left min-w-0">
+                  <p class="font-medium text-gray-900 text-sm truncate">{{ userFullName }}</p>
+                  <p class="text-gray-500 text-xs truncate">{{ userRole }}</p>
                 </div>
-                <svg
-                    class="w-4 h-4 lg:w-5 lg:h-5 text-gray-400 transition-transform hidden md:block"
-                    :class="{ 'rotate-180': showUserMenu }"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
+                <svg class="w-4 h-4 text-gray-400 transition-transform hidden md:block flex-shrink-0"
+                  :class="{ 'rotate-180': showUserMenu }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
 
-              <!-- User Dropdown -->
-              <transition
-                  enter-active-class="transition ease-out duration-100"
-                  enter-from-class="transform opacity-0 scale-95"
-                  enter-to-class="transform opacity-100 scale-100"
-                  leave-active-class="transition ease-in duration-75"
-                  leave-from-class="transform opacity-100 scale-100"
-                  leave-to-class="transform opacity-0 scale-95"
-              >
-                <div
-                    v-if="showUserMenu"
-                    class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-[55]"
-                >
+              <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95"
+                enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75"
+                leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
+                <div v-if="showUserMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-50">
                   <div class="md:hidden p-4 border-b border-gray-200 bg-gray-50">
                     <p class="font-medium text-gray-900 text-sm">{{ userFullName }}</p>
                     <p class="text-gray-500 text-xs">{{ userRole }}</p>
                   </div>
-
-                  <NuxtLink
-                      to="/profile"
-                      class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
-                      @click="showUserMenu = false"
-                  >
+                  <NuxtLink to="/profile" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                    @click="showUserMenu = false">
                     <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                     <span class="text-sm font-medium text-gray-700">Profile</span>
                   </NuxtLink>
-                  <button
-                      @click="handleLogoutClick"
-                      class="flex items-center gap-3 px-4 py-3 hover:bg-red-50 transition-colors w-full text-left"
-                  >
+                  <button @click="handleLogoutClick" class="flex items-center gap-3 px-4 py-3 hover:bg-red-50 transition-colors w-full text-left">
                     <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                     </svg>
                     <span class="text-sm font-medium text-red-600">Logout</span>
                   </button>
@@ -900,28 +508,19 @@ onUnmounted(() => {
       </header>
 
       <!-- Page Content -->
-      <main class="p-4 lg:p-6">
+      <main class="p-4 lg:p-6 bg-white">
         <slot />
       </main>
     </div>
 
-    <!-- Global Search Modal -->
+    <!-- Search Modal -->
     <Teleport to="body">
-      <transition
-          enter-active-class="transition ease-out duration-200"
-          enter-from-class="opacity-0"
-          enter-to-class="opacity-100"
-          leave-active-class="transition ease-in duration-150"
-          leave-from-class="opacity-100"
-          leave-to-class="opacity-0"
-      >
-        <div
-            v-if="showSearchModal"
-            class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center pt-10 lg:pt-20 px-4"
-            @click.self="showSearchModal = false"
-        >
+      <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0"
+        enter-to-class="opacity-100" leave-active-class="transition ease-in duration-150"
+        leave-from-class="opacity-100" leave-to-class="opacity-0">
+        <div v-if="showSearchModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center pt-20 px-4"
+          @click.self="showSearchModal = false">
           <div class="w-full max-w-2xl bg-white rounded-lg shadow-2xl overflow-hidden">
-            <!-- Search Input -->
             <div class="p-4 border-b border-gray-200">
               <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -929,70 +528,50 @@ onUnmounted(() => {
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </div>
-                <input
-                    ref="searchInput"
-                    v-model="searchQuery"
-                    type="text"
-                    placeholder="Search pages, features..."
-                    class="block w-full pl-12 pr-20 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-[#005B8F] focus:border-[#005B8F] focus:outline-none"
-                    @keyup.esc="showSearchModal = false"
-                />
+                <input ref="searchInput" v-model="searchQuery" type="text" placeholder="Search pages..."
+                  class="block w-full pl-12 pr-20 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#005B8F] focus:border-[#005B8F] focus:outline-none"
+                  @keyup.esc="showSearchModal = false" />
                 <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
                   <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded border border-gray-300">ESC</span>
                 </div>
               </div>
             </div>
 
-            <!-- Search Results -->
             <div class="max-h-96 overflow-y-auto">
               <div v-if="filteredSearchResults.length === 0" class="p-8 text-center">
                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <p class="mt-2 text-sm text-gray-600">No results found for "{{ searchQuery }}"</p>
+                <p class="mt-2 text-sm text-gray-600">No results found</p>
               </div>
 
               <div v-else class="p-2">
-                <!-- Group by category -->
                 <div v-for="(items, category) in groupedResults" :key="category" class="mb-4">
                   <h3 class="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                     {{ category }}
                   </h3>
                   <div class="space-y-1">
-                    <button
-                        v-for="item in items"
-                        :key="item.path"
-                        @click="navigateToPage(item.path)"
-                        class="w-full flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-[#005B8F]/5 transition-colors group text-left"
-                    >
+                    <button v-for="item in items" :key="item.path" @click="navigateToPage(item.path)"
+                      class="w-full flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-[#005B8F]/5 transition-colors group text-left">
                       <div class="w-10 h-10 bg-[#005B8F]/10 rounded-lg flex items-center justify-center group-hover:bg-[#005B8F]/20 transition-colors">
                         <svg class="w-5 h-5 text-[#005B8F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                         </svg>
                       </div>
-                      <div class="flex-1">
-                        <p class="text-sm font-medium text-gray-900">{{ item.title }}</p>
-                        <p class="text-xs text-gray-500">{{ item.path }}</p>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 truncate">{{ item.title }}</p>
+                        <p class="text-xs text-gray-500 truncate">{{ item.path }}</p>
                       </div>
-                      <svg class="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                      </svg>
                     </button>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Footer -->
             <div class="p-3 border-t border-gray-200 bg-gray-50">
               <div class="flex items-center justify-between text-xs text-gray-500">
                 <span>Press ESC to close</span>
-                <div class="flex items-center gap-2">
-                  <kbd class="px-2 py-1 bg-white border border-gray-300 rounded text-gray-700">↑↓</kbd>
-                  <span>to navigate</span>
-                  <kbd class="px-2 py-1 bg-white border border-gray-300 rounded text-gray-700">↵</kbd>
-                  <span>to select</span>
-                </div>
               </div>
             </div>
           </div>
@@ -1000,41 +579,30 @@ onUnmounted(() => {
       </transition>
     </Teleport>
 
-    <!-- Logout Confirmation Modal -->
+    <!-- Logout Modal -->
     <Teleport to="body">
-      <transition
-          enter-active-class="transition ease-out duration-200"
-          enter-from-class="opacity-0"
-          enter-to-class="opacity-100"
-          leave-active-class="transition ease-in duration-150"
-          leave-from-class="opacity-100"
-          leave-to-class="opacity-0"
-      >
-        <div
-            v-if="showLogoutModal"
-            class="fixed backdrop-blur-lg inset-0 bg-black/50  z-[9999] flex items-center justify-center p-4"
-            @click.self="showLogoutModal = false"
-        >
+      <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0"
+        enter-to-class="opacity-100" leave-active-class="transition ease-in duration-150"
+        leave-from-class="opacity-100" leave-to-class="opacity-0">
+        <div v-if="showLogoutModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4"
+          @click.self="showLogoutModal = false">
           <div class="bg-white rounded-lg shadow-2xl max-w-md w-full overflow-hidden">
             <div class="p-6">
               <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
                 <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                 </svg>
               </div>
               <h3 class="text-lg font-medium text-gray-900 text-center mb-2">Confirm Logout</h3>
-              <p class="text-sm text-gray-600 text-center mb-6">Are you sure you want to log out of your account?</p>
+              <p class="text-sm text-gray-600 text-center mb-6">Are you sure you want to log out?</p>
               <div class="flex gap-3">
-                <button
-                    @click="showLogoutModal = false"
-                    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
-                >
+                <button @click="showLogoutModal = false"
+                  class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
                   Cancel
                 </button>
-                <button
-                    @click="confirmLogout"
-                    class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
-                >
+                <button @click="confirmLogout"
+                  class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors">
                   Logout
                 </button>
               </div>
@@ -1045,32 +613,11 @@ onUnmounted(() => {
     </Teleport>
 
     <!-- Click Outside Handler -->
-    <div
-        v-if="showNotifications || showUserMenu"
-        class="fixed inset-0 z-[45]"
-        @click="closeAllDropdowns"
-    ></div>
+    <div v-if="showNotifications || showUserMenu" class="fixed inset-0 z-40" @click="closeAllDropdowns"></div>
   </div>
 </template>
 
 <style scoped>
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-
-.line-clamp-1 {
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;

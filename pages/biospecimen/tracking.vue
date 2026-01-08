@@ -2,20 +2,20 @@
   <div class="min-h-screen">
     <div class="flex">
       <main class="mx-auto container">
-        <div class="mb-6  rounded-xl bg-[#9A0FB5] px-6 md:px-8 py-4">
+        <div class="mb-6 rounded-xl bg-[#DCF1FF] text-[#005B8F] py-4 px-6">
           <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <h1 class="text-xl font-bold text-white">BioSpecimen Tracking</h1>
+            <h1 class="text-xl font-bold bg-[#DCF1FF] text-[#005B8F]">BioSpecimen Tracking</h1>
 
             <div class="flex flex-wrap gap-2">
               <button @click="openRequestMovementModal"
-                      class="px-4 py-3 font-semibold bg-[#D8F1FE] text-[#005B8F] rounded-lg transition flex items-center gap-2 text-sm">
+                      class="px-4 py-3 font-semibold text-[#DCF1FF] bg-[#005B8F] rounded-lg transition flex items-center gap-2 text-sm">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
                 Request Movement
               </button>
               <button @click="openRequestDisposalModal"
-                      class="px-4 py-3 font-semibold bg-[#D8F1FE] text-[#005B8F] rounded-lg transition flex items-center gap-2 text-sm">
+                      class="px-4 py-3 font-semibold text-[#DCF1FF] bg-[#005B8F] rounded-lg transition flex items-center gap-2 text-sm">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -29,19 +29,18 @@
         <!-- Filters -->
         <div class="bg-white rounded-lg shadow-sm p-4 md:p-6 mb-6">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <UiSelectInput label="Status" :options="statusOptions" position="standalone" v-model="filters.status" />
             <UiAnimatedInput label="Start date" type="date" v-model="filters.dateRange.from" />
             <UiAnimatedInput label="End date" type="date" v-model="filters.dateRange.to" />
-          </div>
-          <div class="space-x-6">
-            <button @click="applyFilters" :disabled="isLoadingAnyData"
-                    class="flex-1 px-4 py-2 bg-[#005B8F] text-white rounded hover:bg-[#004a73] transition text-sm font-medium disabled:opacity-50">
-              {{ isLoadingAnyData ? 'Loading...' : 'Search' }}
-            </button>
-            <button @click="clearFilters" :disabled="isLoadingAnyData"
-                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition text-sm font-medium disabled:opacity-50">
-              Clear Filter
-            </button>
+            <div class="space-x-6">
+              <button @click="applyFilters" :disabled="isLoadingAnyData"
+                      class="flex-1 px-4 py-2 bg-[#005B8F] text-white rounded hover:bg-[#004a73] transition text-sm font-medium disabled:opacity-50">
+                {{ isLoadingAnyData ? 'Loading...' : 'Search' }}
+              </button>
+              <button @click="clearFilters" :disabled="isLoadingAnyData"
+                      class="px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-25 transition text-sm font-medium disabled:opacity-50">
+                Clear Filter
+              </button>
+            </div>
           </div>
         </div>
 
@@ -81,7 +80,7 @@
                   </path>
                 </svg>
               </div>
-              <div v-else-if="pendingMovementData.length === 0" class="px-6 py-12 text-center">
+              <div v-else-if="paginatedPendingMovement.length === 0" class="px-6 py-12 text-center">
                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
@@ -89,26 +88,20 @@
                 <p class="mt-2 text-gray-500">No pending movement requests</p>
               </div>
               <table v-else class="w-full min-w-max">
-                <thead class="bg-gray-50">
+                <thead class="bg-gray-25">
                 <tr>
-                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Sample ID
-                  </th>
-                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Source
-                    Location</th>
-                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                    Destination Location</th>
-                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Requested
-                    Date</th>
-                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Approved
-                    Date</th>
-                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Requested
-                    By</th>
-                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Action
-                  </th>
+                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Sample ID</th>
+                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Source Location</th>
+                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Destination Location</th>
+                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Requested Date</th>
+                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Approved Date</th>
+                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Requested By</th>
+                   <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Description</th>
+                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Action</th>
                 </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-100">
-                <tr v-for="item in pendingMovementData" :key="item.id" class="hover:bg-gray-50">
+                <tr v-for="item in paginatedPendingMovement" :key="item.id" class="hover:bg-gray-25">
                   <td class="px-4 py-4 text-sm text-gray-900">{{ item.sampleId }}</td>
                   <td class="px-4 py-4 text-sm text-gray-600">
                     <div class="flex items-center gap-1">
@@ -133,24 +126,44 @@
                   <td class="px-4 py-4 text-sm text-gray-600">{{ item.requestedDate }}</td>
                   <td class="px-4 py-4 text-sm text-gray-600">{{ item.approvedDate }}</td>
                   <td class="px-4 py-4 text-sm text-gray-600">{{ item.requestedBy }}</td>
+                  <td class="px-4 py-4 text-sm text-gray-600">{{ item.description ?? 'N/a' }}</td>
+                  <!-- <td class="px-4 py-4 text-sm">
+                    <span :class="[
+                      'px-3 py-1 rounded-full text-xs font-medium',
+                      item.completionStatus === 'Confirmed' || item.completionStatus === 'confirmed' ? 'bg-green-100 text-green-700' :
+                        item.completionStatus === 'Moved' || item.completionStatus === 'moved' ? 'bg-blue-100 text-blue-700' :
+                          item.completionStatus === 'Approved' || item.completionStatus === 'approved' ? 'bg-orange-100 text-orange-700' :
+                            item.completionStatus === 'completed' ? 'bg-green-100 text-green-700' :
+                              'bg-gray-100 text-gray-700'
+                    ]">
+                      {{ item.completionStatus }}
+                    </span>
+                  </td> -->
                   <td class="px-4 py-4 text-sm">
-                    <div class="flex gap-2">
-                      <button @click="openRejectModal(item, 'tracking')"
-                              class="px-3 py-1 text-xs border border-red-300 text-red-600 rounded hover:bg-red-50 transition">
-                        Reject
-                      </button>
-                      <button @click="openApproveModal(item, 'tracking')"
-                              class="px-3 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200 transition">
-                        Approve
-                      </button>
-                    </div>
+                    <button @click="openViewDetailsModal(item, 'disposal')"
+                            class="p-2 hover:bg-gray-100 rounded transition">
+                      <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                        <path fill-rule="evenodd"
+                              d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                              clip-rule="evenodd" />
+                      </svg>
+                    </button>
                   </td>
                 </tr>
                 </tbody>
               </table>
+              <Pagination 
+                v-if="paginatedCompleteDisposal.length > 0"
+                v-model:currentPage="completeDisposalPage" 
+                v-model:pageSize="completeDisposalPageSize"
+                :totalItems="completeDisposalTotal" 
+                :pageSizeOptions="[10, 25, 50, 100]" 
+              />
             </div>
 
-            <!-- Pending Disposal Tab -->
+
+                        <!-- Pending Disposal Tab -->
             <div v-show="activeTab === 'pending-disposal'">
               <div v-if="loadingPendingDisposal" class="flex items-center justify-center py-12">
                 <svg class="animate-spin h-8 w-8 text-[#005B8F]" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -183,8 +196,8 @@
                     Date</th>
                   <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Requested
                     By</th>
-                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Status
-                  </th>
+                  <!-- <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Status
+                  </th> -->
                   <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Action
                   </th>
                 </tr>
@@ -215,7 +228,7 @@
                   <td class="px-4 py-4 text-sm text-gray-600">{{ item.requestedDate }}</td>
                   <td class="px-4 py-4 text-sm text-gray-600">{{ item.approvedDate }}</td>
                   <td class="px-4 py-4 text-sm text-gray-600">{{ item.requestedBy }}</td>
-                  <td class="px-4 py-4 text-sm text-gray-600">-</td>
+                  <!-- <td class="px-4 py-4 text-sm text-gray-600">-</td> -->
                   <td class="px-4 py-4 text-sm">
                     <div class="flex gap-2">
                       <button @click="openRejectModal(item, 'disposal')"
@@ -231,6 +244,13 @@
                 </tr>
                 </tbody>
               </table>
+                              <Pagination 
+  v-if="pendingDisposalData.length > 0"
+  v-model:currentPage="pendingDisposalPage" 
+  v-model:pageSize="pendingDisposalPageSize"
+  :totalItems="pendingDisposalTotal" 
+  :pageSizeOptions="[10, 25, 50, 100]" 
+/>
             </div>
 
             <!-- Complete Movement Tab -->
@@ -268,8 +288,8 @@
                     By</th>
                   <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Description</th>
-                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Status
-                  </th>
+                  <!-- <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Status
+                  </th> -->
                   <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Action
                   </th>
                 </tr>
@@ -301,7 +321,7 @@
                   <td class="px-4 py-4 text-sm text-gray-600">{{ item.approvedDate }}</td>
                   <td class="px-4 py-4 text-sm text-gray-600">{{ item.requestedBy }}</td>
                   <td class="px-4 py-4 text-sm text-gray-600">{{ item.description || 'N/A' }}</td>
-                  <td class="px-4 py-4 text-sm">
+                  <!-- <td class="px-4 py-4 text-sm">
                       <span :class="[
                         'px-3 py-1 rounded-full text-xs font-medium',
                         item.completionStatus === 'Confirmed' || item.completionStatus === 'confirmed' ? 'bg-green-100 text-green-700' :
@@ -312,7 +332,7 @@
                       ]">
                         {{ item.completionStatus }}
                       </span>
-                  </td>
+                  </td> -->
                   <td class="px-4 py-4 text-sm">
                     <button @click="openViewDetailsModal(item, 'tracking')"
                             class="p-2 hover:bg-gray-100 rounded transition">
@@ -327,6 +347,13 @@
                 </tr>
                 </tbody>
               </table>
+                              <Pagination 
+  v-if="completeMovementData.length > 0"
+  v-model:currentPage="completeMovementPage" 
+  v-model:pageSize="completeMovementPageSize"
+  :totalItems="completeMovementTotal" 
+  :pageSizeOptions="[10, 25, 50, 100]" 
+/>
             </div>
 
             <!-- Complete Disposal Tab -->
@@ -364,8 +391,8 @@
                     By</th>
                   <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Description</th>
-                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Status
-                  </th>
+                  <!-- <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Status
+                  </th> -->
                   <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Action
                   </th>
                 </tr>
@@ -397,7 +424,7 @@
                   <td class="px-4 py-4 text-sm text-gray-600">{{ item.approvedDate }}</td>
                   <td class="px-4 py-4 text-sm text-gray-600">{{ item.requestedBy }}</td>
                   <td class="px-4 py-4 text-sm text-gray-600">{{ item.description || 'N/A' }}</td>
-                  <td class="px-4 py-4 text-sm">
+                  <!-- <td class="px-4 py-4 text-sm">
                       <span :class="[
                         'px-3 py-1 rounded-full text-xs font-medium',
                         item.completionStatus === 'Confirmed' || item.completionStatus === 'confirmed' ? 'bg-green-100 text-green-700' :
@@ -408,7 +435,7 @@
                       ]">
                         {{ item.completionStatus }}
                       </span>
-                  </td>
+                  </td> -->
                   <td class="px-4 py-4 text-sm">
                     <button @click="openViewDetailsModal(item, 'disposal')"
                             class="p-2 hover:bg-gray-100 rounded transition">
@@ -423,6 +450,13 @@
                 </tr>
                 </tbody>
               </table>
+                              <Pagination 
+                    v-if="completeDisposalData.length > 0"
+                    v-model:currentPage="completeDisposalPage" 
+                    v-model:pageSize="completeDisposalPageSize"
+                    :totalItems="completeDisposalTotal" 
+                    :pageSizeOptions="[10, 25, 50, 100]" 
+                  />
             </div>
           </div>
         </div>
@@ -433,7 +467,7 @@
     <Teleport to="body">
       <div
           v-if="showRequestMovementModal"
-          class="fixed inset-0 bg-black backdrop-blur-lg bg-opacity-50 flex items-center justify-center p-4 z-[9999]"
+          class="fixed inset-0 bg-black bg-black/50 backdrop-blur-lg bg-opacity-50 flex items-center justify-center p-4 z-[9999]"
           @click.self="closeRequestMovementModal"
       >
         <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -452,16 +486,14 @@
                     :options="samples"
                     label="Sample UUID"
                     v-model="movementForm.sample_uuid"
+                    @update:modelValue="onSampleSelect"
                 >
-                  <!-- Custom option display in dropdown -->
                   <template #default="{ option }">
                     <div class="flex flex-col">
                       <span class="font-medium">{{ option.sample_label }}</span>
                       <span class="text-xs text-gray-500">UUID: {{ option.uuid }}</span>
                     </div>
                   </template>
-
-                  <!-- Custom selected label display -->
                   <template #selected-label="{ option }">
                     {{ option.sample_label }}
                   </template>
@@ -471,6 +503,8 @@
                     label="Requested By"
                     v-model="movementForm.request_by"
                     type="text"
+                    :readonly="true"
+                    class="bg-gray-25"
                 />
                 <UiSelectInput
                     v-model="movementForm.movement_type"
@@ -487,26 +521,32 @@
                       v-model="movementForm.source_site"
                       :options="siteOptions"
                       label="Site"
+                      :disabled="true"
                   />
                   <UiSelectInput
                       v-model="movementForm.source_freezer"
-                      :options="freezerOptions"
+                      :options="sourceFreezersForDisplay"
                       label="Freezer"
+                      :disabled="true"
                   />
                   <UiSelectInput
                       v-model="movementForm.source_rack"
-                      :options="rackOptions"
+                      :options="sourceRacksForDisplay"
                       label="Rack"
+                      :disabled="true"
                   />
                   <UiSelectInput
                       v-model="movementForm.source_box"
-                      :options="boxOptions"
+                      :options="sourceBoxesForDisplay"
                       label="Box"
+                      :disabled="true"
                   />
                   <UiAnimatedInput
                       label="Position"
                       v-model="movementForm.source_position"
                       type="number"
+                      :readonly="true"
+                      class="bg-gray-25"
                   />
                 </div>
               </div>
@@ -519,27 +559,172 @@
                       v-model="movementForm.destination_site"
                       :options="siteOptions"
                       label="Site"
+                      @update:modelValue="onDestinationSiteChange"
                   />
                   <UiSelectInput
                       v-model="movementForm.destination_freezer"
-                      :options="freezerOptions"
+                      :options="filteredDestinationFreezers"
                       label="Freezer"
+                      @update:modelValue="onDestinationFreezerChange"
+                      :disabled="!movementForm.destination_site"
                   />
                   <UiSelectInput
                       v-model="movementForm.destination_rack"
-                      :options="rackOptions"
+                      :options="filteredDestinationRacks"
                       label="Rack"
+                      @update:modelValue="onDestinationRackChange"
+                      :disabled="!movementForm.destination_freezer"
                   />
                   <UiSelectInput
                       v-model="movementForm.destination_box"
-                      :options="boxOptions"
+                      :options="filteredDestinationBoxes"
                       label="Box"
+                      @update:modelValue="onDestinationBoxChange(movementForm.destination_box)"
+                      :disabled="!movementForm.destination_rack"
                   />
-                  <UiAnimatedInput
+                  <!-- Replace the current position input with this: -->
+<div v-if="movementForm.destination_box" class="md:col-span-3">
+  <label class="block text-sm font-medium text-gray-700 mb-2">
+    Select Position <span class="text-red-500">*</span>
+  </label>
+
+  <!-- Current Selection Display -->
+  <div class="bg-gray-25 p-3 rounded-lg border border-gray-50 mb-3">
+    <div class="text-xs text-gray-600 flex items-center gap-1 flex-wrap">
+      <span>{{ movementForm.destination_site || 'Select Site' }}</span>
+      <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+      </svg>
+      <span>{{ movementForm.destination_freezer || 'Select Freezer' }}</span>
+      <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+      </svg>
+      <span>{{ movementForm.destination_rack || 'Select Rack' }}</span>
+      <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+      </svg>
+      <span>{{ movementForm.destination_box || 'Select Box' }}</span>
+      <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+      </svg>
+      <span class="font-semibold text-blue-600">
+        {{ getPositionLabel(movementForm.destination_position) }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div v-if="fetchingOccupancy" class="text-center py-8">
+    <svg class="animate-spin h-8 w-8 text-[#005B8F] mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>
+    <p class="mt-2 text-sm text-gray-600">Loading box occupancy...</p>
+  </div>
+
+  <!-- Box Grid -->
+   <div v-else-if="boxTemplate" class="overflow-x-auto rounded-lg bg-gray-25 p-3">
+  <div class="grid gap-2 mb-4" :style="{ gridTemplateColumns: `repeat(${boxTemplate.columns}, minmax(0, 1fr))` }">
+    <template v-for="row in boxTemplate.rows" :key="row">
+      <button
+        v-for="col in boxTemplate.columns"
+        :key="`${row}-${col}`"
+        type="button"
+        @click="selectPosition(row, col)"
+        :class="[
+          'w-full aspect-square text-xs font-semibold rounded-lg border-[0.5px] transition-all duration-200 transform hover:scale-105',
+          movementForm.destination_position === getPositionNumber(row, col)
+            ? 'bg-[#005B8F] text-white border-blue-700 shadow-lg scale-110'
+            : isPositionOccupied(row, col)
+              ? 'bg-gray-300 text-gray-500 border-gray-400 cursor-not-allowed opacity-60'
+              : 'bg-white text-gray-700 border-gray-100 hover:border-blue-400 hover:shadow-md'
+        ]"
+        :disabled="isPositionOccupied(row, col) || trackingSample"
+      >
+        {{ getRowLabel(row) }}{{ col }}
+      </button>
+    </template>
+  </div>
+</div>
+  <!-- <div v-else-if="boxTemplate" class="overflow-x-auto rounded-lg bg-gray-25 p-3">
+    <div class="inline-block min-w-full">
+      <div class="grid gap-2 mb-4">
+        <div v-for="row in boxTemplate.rows" :key="row" class="flex gap-2">
+          <button
+            v-for="col in boxTemplate.columns"
+            :key="`${row}-${col}`"
+            type="button"
+            @click="selectPosition(row, col)"
+            :class="[
+              'w-10 h-10 text-xs font-semibold rounded-lg border transition-all duration-200 transform hover:scale-105',
+              movementForm.destination_position === getPositionNumber(row, col)
+                ? 'bg-[#005B8F] text-white border-blue-700 shadow-lg scale-110'
+                : isPositionOccupied(row, col)
+                  ? 'bg-gray-300 text-gray-500 border-gray-400 cursor-not-allowed opacity-60'
+                  : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400 hover:shadow-md'
+            ]"
+            :disabled="isPositionOccupied(row, col) || trackingSample"
+          >
+            {{ getRowLabel(row) }}{{ col }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div> -->
+
+  <!-- Box Statistics -->
+  <div v-if="boxOccupancyData?.statistics" class="mt-4 bg-white p-4 rounded-lg border-[0.5px] border-gray-50">
+    <h4 class="text-sm font-semibold text-gray-700 mb-3">Box Statistics</h4>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div class="text-center">
+        <p class="text-xs text-gray-600">Total</p>
+        <p class="text-lg font-bold text-gray-900">{{ boxOccupancyData.statistics.total_positions }}</p>
+      </div>
+      <div class="text-center">
+        <p class="text-xs text-gray-600">Occupied</p>
+        <p class="text-lg font-bold text-red-600">{{ boxOccupancyData.statistics.occupied }}</p>
+      </div>
+      <div class="text-center">
+        <p class="text-xs text-gray-600">Available</p>
+        <p class="text-lg font-bold text-green-600">{{ boxOccupancyData.statistics.available }}</p>
+      </div>
+      <div class="text-center">
+        <p class="text-xs text-gray-600">Utilization</p>
+        <p class="text-lg font-bold text-blue-600">{{ boxOccupancyData.statistics.utilization_percentage }}%</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="flex flex-wrap gap-4 text-sm bg-white p-3 rounded-lg border-[0.5px] border-gray-50 mt-4">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 bg-white border[0.5px] border-gray-300 rounded-lg"></div>
+      <span class="text-gray-700">Available</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 bg-gray-300 border-[0.5px] border-gray-400 rounded-lg"></div>
+      <span class="text-gray-700">Occupied</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 bg-[#005B8F] border[0.5px] border-blue-700 rounded-lg"></div>
+      <span class="text-gray-700">Selected</span>
+    </div>
+  </div>
+</div>
+
+<!-- Empty State -->
+<div v-else class="md:col-span-3 text-center py-8 bg-gray-25 rounded-lg">
+  <svg class="w-12 h-12 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+  </svg>
+  <p class="text-sm text-gray-600">Select a box to view available positions</p>
+</div>
+                  <!-- <UiAnimatedInput
                       label="Position"
                       v-model="movementForm.destination_position"
                       type="number"
-                  />
+                      :disabled="!movementForm.destination_box"
+                  /> -->
                 </div>
               </div>
 
@@ -564,44 +749,6 @@
                   />
                 </div>
               </div>
-
-              <!-- Approvers -->
-              <div class="border-t pt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Approved By (Optional)</label>
-                <div class="flex gap-2">
-                  <UiAnimatedInput
-                      v-model="approverInput"
-                      type="text"
-                      label="Add Approver"
-                      @keyup.enter="addApprover"
-                  />
-                  <button
-                      @click="addApprover"
-                      type="button"
-                      class="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition text-sm"
-                  >
-                    Add
-                  </button>
-                </div>
-                <div v-if="movementForm.approved_by.length > 0" class="mt-2 flex flex-wrap gap-2">
-                  <span
-                      v-for="(approver, index) in movementForm.approved_by"
-                      :key="index"
-                      class="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm"
-                  >
-                    {{ approver }}
-                    <button
-                        @click="removeApprover(index)"
-                        type="button"
-                        class="hover:text-blue-900"
-                    >
-                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                      </svg>
-                    </button>
-                  </span>
-                </div>
-              </div>
             </div>
 
             <div class="flex justify-end gap-3 mt-6">
@@ -609,7 +756,7 @@
                   @click="closeRequestMovementModal"
                   type="button"
                   :disabled="trackingSample"
-                  class="px-6 py-3 border border-gray-300 text-sm text-gray-700 rounded-lg hover:bg-gray-50 transition disabled:opacity-50"
+                  class="px-6 py-3 border border-gray-300 text-sm text-gray-700 rounded-lg hover:bg-gray-25 transition disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -637,7 +784,7 @@
     <Teleport to="body">
       <div
           v-if="showRequestDisposalModal"
-          class="fixed inset-0 backdrop-blur-lg bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]"
+          class="fixed inset-0 bg-black/50 backdrop-blur-lg bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]"
           @click.self="closeRequestDisposalModal"
       >
         <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl">
@@ -656,15 +803,12 @@
                     label="Sample UUID"
                     v-model="disposalForm.sample_uuid"
                 >
-                  <!-- Custom option display in dropdown -->
                   <template #default="{ option }">
                     <div class="flex flex-col">
                       <span class="font-medium">{{ option.sample_label }}</span>
                       <span class="text-xs text-gray-500">UUID: {{ option.uuid }}</span>
                     </div>
                   </template>
-
-                  <!-- Custom selected label display -->
                   <template #selected-label="{ option }">
                     {{ option.sample_label }}
                   </template>
@@ -673,6 +817,8 @@
                     label="Requested By"
                     v-model="disposalForm.request_by"
                     type="text"
+                    :readonly="true"
+                    class="bg-gray-25"
                 />
               </div>
 
@@ -712,7 +858,7 @@
                   @click="closeRequestDisposalModal"
                   type="button"
                   :disabled="loading"
-                  class="px-6 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition disabled:opacity-50"
+                  class="px-6 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-25 transition disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -737,16 +883,14 @@
     </Teleport>
 
     <!-- View Details Modal -->
- <!-- View Details Modal -->
     <Teleport to="body">
       <div
           v-if="showViewDetailsModal"
-          class="fixed inset-0 backdrop-blur-lg bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]"
+          class="fixed inset-0 bg-black/50 backdrop-blur-lg bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]"
           @click.self="closeViewDetailsModal"
       >
         <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
           <div class="p-6">
-            <!-- Header -->
             <div class="flex items-center gap-3 mb-6">
               <button
                   @click="closeViewDetailsModal"
@@ -760,53 +904,37 @@
             </div>
 
             <div v-if="selectedItem" class="space-y-6">
-              <!-- Movement Information -->
               <div>
                 <h3 class="text-base font-semibold text-[#005B8F] mb-4">Movement Information</h3>
                 <div class="space-y-4">
-                  <!-- Sample ID -->
                   <div class="flex justify-between items-start py-2">
                     <span class="text-sm text-gray-700">Sample ID</span>
                     <span class="text-sm font-medium text-gray-900 text-right">{{ selectedItem.sampleId || 'Not available' }}</span>
                   </div>
-                  
-                  <!-- Source Location -->
                   <div class="flex justify-between items-start py-2">
                     <span class="text-sm text-gray-700">Source Location</span>
                     <span class="text-sm font-medium text-gray-900 text-right">{{ selectedItem.sourceLocation || 'Not available' }}</span>
                   </div>
-                  
-                  <!-- Destination Location -->
                   <div class="flex justify-between items-start py-2">
                     <span class="text-sm text-gray-700">Destination Location</span>
                     <span class="text-sm font-medium text-gray-900 text-right">{{ selectedItem.destinationLocation || 'Not available' }}</span>
                   </div>
-                  
-                  <!-- Requested Date -->
                   <div class="flex justify-between items-start py-2">
                     <span class="text-sm text-gray-700">Requested Date</span>
                     <span class="text-sm font-medium text-gray-900 text-right">{{ selectedItem.requested_at || 'Not available' }}</span>
                   </div>
-                  
-                  <!-- Approved Date -->
                   <div class="flex justify-between items-start py-2">
                     <span class="text-sm text-gray-700">Approved Date</span>
                     <span class="text-sm font-medium text-gray-900 text-right">{{ selectedItem.approved_at || 'Pending approval' }}</span>
                   </div>
-                  
-                  <!-- Requested by -->
                   <div class="flex justify-between items-start py-2">
                     <span class="text-sm text-gray-700">Requested by</span>
                     <span class="text-sm font-medium text-gray-900 text-right">{{ selectedItem.requestedBy || 'Not available' }}</span>
                   </div>
-                  
-                  <!-- Received by (if available from details) -->
                   <div v-if="selectedItem.receivedBy" class="flex justify-between items-start py-2">
                     <span class="text-sm text-gray-700">Received by</span>
                     <span class="text-sm font-medium text-gray-900 text-right">{{ selectedItem.receivedBy }}</span>
                   </div>
-                  
-                  <!-- Request Reason -->
                   <div v-if="selectedItem.description" class="flex justify-between items-start py-2">
                     <span class="text-sm text-gray-700">Request Reason</span>
                     <span class="text-sm font-medium text-gray-900 text-right max-w-xs">{{ selectedItem.description }}</span>
@@ -814,17 +942,14 @@
                 </div>
               </div>
 
-              <!-- Timeline Progress -->
               <div class="relative pl-8 space-y-6 mt-8">
-                <!-- Vertical line -->
                 <div class="absolute left-4 top-3 bottom-3 w-0.5 bg-gray-200"></div>
 
-                <!-- Movement Requested -->
                 <div class="relative">
                   <div class="absolute -left-[1.9rem] top-1 w-6 h-6 rounded-full bg-gray-300 border-4 border-white flex items-center justify-center">
                     <div class="w-2 h-2 rounded-full bg-white"></div>
                   </div>
-                  <div class="bg-gray-50 rounded-lg p-4">
+                  <div class="bg-gray-25 rounded-lg p-4">
                     <h4 class="font-semibold text-gray-900 mb-1">Movement Requested</h4>
                     <p class="text-sm text-gray-600">
                       {{ selectedItem.requested_at || 'Date not available' }}
@@ -833,12 +958,11 @@
                   </div>
                 </div>
 
-                <!-- Request Approved -->
                 <div class="relative" v-if="selectedItem.approved_at && selectedItem.approved_at !== 'N/A' && selectedItem.approved_at !== 'Pending approval'">
                   <div class="absolute -left-[1.9rem] top-1 w-6 h-6 rounded-full bg-blue-500 border-4 border-white flex items-center justify-center">
                     <div class="w-2 h-2 rounded-full bg-white"></div>
                   </div>
-                  <div class="bg-gray-50 rounded-lg p-4">
+                  <div class="bg-gray-25 rounded-lg p-4">
                     <h4 class="font-semibold text-gray-900 mb-1">Request Approved</h4>
                     <p class="text-sm text-gray-600">
                       {{ selectedItem.approved_at }}
@@ -847,12 +971,11 @@
                   </div>
                 </div>
 
-                <!-- Sample Moved -->
                 <div class="relative" v-if="selectedItem.completionStatus && (selectedItem.completionStatus.toLowerCase() === 'completed' || selectedItem.completionStatus.toLowerCase() === 'moved' || selectedItem.completionStatus.toLowerCase() === 'confirmed')">
                   <div class="absolute -left-[1.9rem] top-1 w-6 h-6 rounded-full bg-green-500 border-4 border-white flex items-center justify-center">
                     <div class="w-2 h-2 rounded-full bg-white"></div>
                   </div>
-                  <div class="bg-gray-50 rounded-lg p-4">
+                  <div class="bg-gray-25 rounded-lg p-4">
                     <h4 class="font-semibold text-gray-900 mb-1">Sample Moved</h4>
                     <p class="text-sm text-gray-600">
                       {{ selectedItem.movedDate || selectedItem.approvedDate || 'Date not available' }}
@@ -862,12 +985,11 @@
                   </div>
                 </div>
 
-                <!-- Transfer Confirmed -->
                 <div class="relative" v-if="selectedItem.completionStatus && selectedItem.completionStatus.toLowerCase() === 'confirmed'">
                   <div class="absolute -left-[1.9rem] top-1 w-6 h-6 rounded-full bg-purple-500 border-4 border-white flex items-center justify-center">
                     <div class="w-2 h-2 rounded-full bg-white"></div>
                   </div>
-                  <div class="bg-gray-50 rounded-lg p-4">
+                  <div class="bg-gray-25 rounded-lg p-4">
                     <h4 class="font-semibold text-gray-900 mb-1">Transfer Confirmed</h4>
                     <p class="text-sm text-gray-600">
                       {{ selectedItem.confirmedDate || selectedItem.approved_at || 'Date not available' }}
@@ -877,7 +999,6 @@
                   </div>
                 </div>
 
-                <!-- Rejected State (if applicable) -->
                 <div class="relative" v-if="selectedItem.completionStatus && selectedItem.completionStatus.toLowerCase() === 'rejected'">
                   <div class="absolute -left-[1.9rem] top-1 w-6 h-6 rounded-full bg-red-500 border-4 border-white flex items-center justify-center">
                     <div class="w-2 h-2 rounded-full bg-white"></div>
@@ -904,7 +1025,7 @@
     <Teleport to="body">
       <div
           v-if="showApproveModal"
-          class="fixed inset-0 bg-black backdrop-blur-lg bg-opacity-50 flex items-center justify-center p-4 z-[9999]"
+          class="fixed inset-0 bg-black bg-black/50 backdrop-blur-lg bg-opacity-50 flex items-center justify-center p-4 z-[9999]"
           @click.self="closeApproveModal"
       >
         <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
@@ -922,7 +1043,7 @@
               Are you sure you want to approve this {{ getRequestType }} request for sample <span class="font-semibold">{{ selectedItem?.sampleId }}</span>?
             </p>
 
-            <div class="bg-gray-50 rounded-lg p-4 mb-6 space-y-2">
+            <div class="bg-gray-25 rounded-lg p-4 mb-6 space-y-2">
               <div class="flex justify-between text-sm">
                 <span class="text-gray-600">Source:</span>
                 <span class="text-gray-900 font-medium">{{ selectedItem?.sourceLocation }}</span>
@@ -941,7 +1062,7 @@
               <button
                   @click="closeApproveModal"
                   :disabled="loadingApproveTracking || loadingApproveDisposal"
-                  class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium disabled:opacity-50"
+                  class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-25 transition font-medium disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -968,7 +1089,7 @@
     <Teleport to="body">
       <div
           v-if="showRejectModal"
-          class="fixed inset-0 bg-black backdrop-blur-lg bg-opacity-50 flex items-center justify-center p-4 z-[9999]"
+          class="fixed inset-0 bg-black bg-black/50 backdrop-blur-lg bg-opacity-50 flex items-center justify-center p-4 z-[9999]"
           @click.self="closeRejectModal"
       >
         <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
@@ -986,7 +1107,7 @@
               Are you sure you want to reject this {{ getRequestType }} request for sample <span class="font-semibold">{{ selectedItem?.sampleId }}</span>?
             </p>
 
-            <div class="bg-gray-50 rounded-lg p-4 mb-4 space-y-2">
+            <div class="bg-gray-25 rounded-lg p-4 mb-4 space-y-2">
               <div class="flex justify-between text-sm">
                 <span class="text-gray-600">Source:</span>
                 <span class="text-gray-900 font-medium">{{ selectedItem?.sourceLocation }}</span>
@@ -1015,7 +1136,7 @@
               <button
                   @click="closeRejectModal"
                   :disabled="loadingRejectTracking || loadingRejectDisposal"
-                  class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium disabled:opacity-50"
+                  class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-25 transition font-medium disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -1041,7 +1162,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useTrackSample } from "@/composables/modules/biosample/useTrackSample"
 import { useDisposeSample } from "@/composables/modules/biosample/useDisposeSample"
 import { useGetSites } from '@/composables/modules/sites/useGetSites'
@@ -1057,7 +1178,10 @@ import { useApproveTrackingRequest } from '@/composables/modules/track/useApprov
 import { useRejectTrackingRequest } from '@/composables/modules/track/useRejectTrackingRequest'
 import { useGetPendingTrackingRequests } from '@/composables/modules/track/useGetPendingTrackingRequests'
 import { useGetCompletedTrackingRequests } from '@/composables/modules/track/useGetCompletedTrackingRequests'
-
+import { usePagination } from '@/composables/core/usePagination'
+import { useGetBoxOccupancy } from "@/composables/modules/box/useGetBoxOccupancy"
+import { useGetUtilizationLevel } from "@/composables/modules/reporting/useGetUtilizationLevel"
+import { useUser } from '@/composables/modules/auth/user'
 // Tracking composables
 const { loading: loadingApproveTracking, approveTrackingRequest } = useApproveTrackingRequest()
 const { loading: loadingRejectTracking, rejectTrackingRequest } = useRejectTrackingRequest()
@@ -1069,7 +1193,12 @@ const { loading: loadingApproveDisposal, approveDisposalRequest } = useApproveDi
 const { loading: loadingRejectDisposal, rejectDisposalRequest } = useRejectDisposalRequest()
 const { loading: loadingPendingDisposal, pendingRequests: pendingDisposalRequests, getPendingDisposalRequests } = useGetPendingDisposalRequests()
 const { loading: loadingCompletedDisposal, completedRequests: completedDisposalRequests, getCompletedDisposalRequests } = useGetCompletedDisposalRequests()
-
+const { 
+  loading: utilizationLoading,
+  utilizationData,
+  getUtilizationLevel 
+} = useGetUtilizationLevel()
+const { loading: fetchingOccupancy, occupancy, getBoxOccupancy } = useGetBoxOccupancy()
 // Other composables
 const { loading: trackingSample, trackingData, trackSample } = useTrackSample()
 const { loading, disposeSample } = useDisposeSample()
@@ -1078,11 +1207,23 @@ const { loading: loadingRacks, racks, getRacks } = useGetRacks()
 const { loading: loadingFreezers, freezers, getFreezers } = useGetFreezers()
 const { loading: loadingBoxes, boxes, getBoxes } = useGetBoxes()
 const { samples, loading: fetchingSamples } = useGetAllSamples()
+const { user } = useUser()
 
-// Add these new refs for tabs
+const boxOccupancyData = ref<any>(null)
+const boxTemplate = computed(() => boxOccupancyData.value?.template)
+
+// Get current user
+const currentUser = computed(() => {
+  // Try to get from Nuxt auth or your auth system
+  // This is a placeholder - adjust based on your auth implementation
+//   if (process.client) {
+//     return localStorage.getItem('userName') || localStorage.getItem('userEmail') || 'Current User'
+//   }
+  return `${user.value?.first_name || user.value?.last_name}`
+})
+
 const activeTab = ref('pending-movement')
 
-// Define SVG icon components
 const ClockIcon = {
   template: `
     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1159,7 +1300,6 @@ interface BioSpecimen {
 
 const selectedType = ref<'tracking' | 'disposal'>('tracking')
 
-// Filters
 const filters = ref({
   status: 'All Status',
   dateRange: { from: '', to: '' } as DateRange
@@ -1173,7 +1313,6 @@ const statusOptions = ref([
   'Complete Disposal'
 ])
 
-// Helper functions
 const formatDate = (dateString: string) => {
   if (!dateString) return 'N/A'
   const date = new Date(dateString)
@@ -1200,7 +1339,6 @@ const formatLocation = (location: any) => {
   return parts.length > 0 ? parts.join(', ') : 'N/A'
 }
 
-// Data transformation helpers
 const transformTrackingRequest = (request: any): BioSpecimen => {
   return {
     id: request.request_id || request.id,
@@ -1235,7 +1373,6 @@ const transformDisposalRequest = (request: any): BioSpecimen => {
   }
 }
 
-// Dynamic options from composables
 const siteOptions = computed(() => {
   if (!sites.value || sites.value.length === 0) return []
   return sites.value.map((site: any) => site.site_name)
@@ -1256,7 +1393,44 @@ const boxOptions = computed(() => {
   return boxes.value.map((box: any) => box.box_name)
 })
 
-// Filtered data for each section using composables
+// Source location display options (for disabled dropdowns)
+const sourceFreezersForDisplay = computed(() => {
+  if (!movementForm.value.source_freezer) return []
+  return [movementForm.value.source_freezer]
+})
+
+const sourceRacksForDisplay = computed(() => {
+  if (!movementForm.value.source_rack) return []
+  return [movementForm.value.source_rack]
+})
+
+const sourceBoxesForDisplay = computed(() => {
+  if (!movementForm.value.source_box) return []
+  return [movementForm.value.source_box]
+})
+
+// Hierarchical filtering for destination location - FETCHES FROM API
+const filteredDestinationFreezers = computed(() => {
+  if (!movementForm.value.destination_site || !freezers.value) return []
+  return freezers.value.map((freezer: any) => freezer.freezer_name)
+    // .filter((f: any) => f.site_name === movementForm.value.destination_site)
+    // .map((f: any) => f.freezer_name)
+})
+
+const filteredDestinationRacks = computed(() => {
+  if (!movementForm.value.destination_freezer || !racks.value) return []
+  return racks.value.map((rack: any) => rack.rack_name)
+    // .filter((r: any) => r.freezer_name === movementForm.value.destination_freezer)
+    // .map((r: any) => r.rack_name)
+})
+
+const filteredDestinationBoxes = computed(() => {
+  if (!movementForm.value.destination_rack || !boxes.value) return []
+  return boxes.value.map((box: any) => box.box_name)
+    // .filter((b: any) => b.rack_name === movementForm.value.destination_rack)
+    // .map((b: any) => b.box_name)
+})
+
 const pendingMovementData = computed(() => {
   if (!pendingTrackingRequests.value || pendingTrackingRequests.value.length === 0) return []
   return pendingTrackingRequests.value.map(transformTrackingRequest)
@@ -1277,18 +1451,74 @@ const completeDisposalData = computed(() => {
   return completedDisposalRequests.value.map(transformDisposalRequest)
 })
 
-// Computed property to get request type based on selected type
+
+const checkUtilization = async () => {  
+  // Find the actual freezer_id from the freezers array
+  const selectedFreezer = freezers.value?.find((freezer: any) => freezer.freezer_name === movementForm)
+  if (selectedFreezer) {
+    await getUtilizationLevel(selectedFreezer.freezer_id)
+  }
+}
+
+
+// Pagination
+const {
+  currentPage: pendingMovementPage,
+  pageSize: pendingMovementPageSize,
+  totalItems: pendingMovementTotal,
+  paginatedItems: paginatedPendingMovement,
+  resetPagination: resetPendingMovement
+} = usePagination(pendingMovementData, {
+  initialPage: 1,
+  initialPageSize: 10,
+  pageSizeOptions: [10, 25, 50, 100]
+})
+
+const {
+  currentPage: pendingDisposalPage,
+  pageSize: pendingDisposalPageSize,
+  totalItems: pendingDisposalTotal,
+  paginatedItems: paginatedPendingDisposal,
+  resetPagination: resetPendingDisposal
+} = usePagination(pendingDisposalData, {
+  initialPage: 1,
+  initialPageSize: 10,
+  pageSizeOptions: [10, 25, 50, 100]
+})
+
+const {
+  currentPage: completeMovementPage,
+  pageSize: completeMovementPageSize,
+  totalItems: completeMovementTotal,
+  paginatedItems: paginatedCompleteMovement,
+  resetPagination: resetCompleteMovement
+} = usePagination(completeMovementData, {
+  initialPage: 1,
+  initialPageSize: 10,
+  pageSizeOptions: [10, 25, 50, 100]
+})
+
+const {
+  currentPage: completeDisposalPage,
+  pageSize: completeDisposalPageSize,
+  totalItems: completeDisposalTotal,
+  paginatedItems: paginatedCompleteDisposal,
+  resetPagination: resetCompleteDisposal
+} = usePagination(completeDisposalData, {
+  initialPage: 1,
+  initialPageSize: 10,
+  pageSizeOptions: [10, 25, 50, 100]
+})
+
 const getRequestType = computed(() => {
   return selectedType.value === 'tracking' ? 'movement' : 'disposal'
 })
 
-// Loading state
 const isLoadingAnyData = computed(() => {
   return loadingPendingTracking.value || loadingCompletedTracking.value ||
       loadingPendingDisposal.value || loadingCompletedDisposal.value
 })
 
-// Modals
 const showRequestMovementModal = ref(false)
 const showRequestDisposalModal = ref(false)
 const showViewDetailsModal = ref(false)
@@ -1313,19 +1543,176 @@ const movementForm = ref({
   reservation_time: '',
   start_date_time: '',
   end_date_time: '',
-  request_by: '',
-  approved_by: [] as string[]
+  request_by: currentUser.value
 }) as any
 
 const disposalForm = ref({
   sample_uuid: '',
-  request_by: '',
-  approved_by: '',
+  request_by: currentUser.value,
   reason_for_disposal: '',
   mark_as_disposed: true
 }) as any
 
-// Load initial data
+// Sample selection handler
+const onSampleSelect = (sample: any) => {
+  if (sample && sample.storage_location) {
+    movementForm.value.source_site = sample.storage_location.site || ''
+    movementForm.value.source_freezer = sample.storage_location.freezer || ''
+    movementForm.value.source_rack = sample.storage_location.rack || ''
+    movementForm.value.source_box = sample.storage_location.box || ''
+    movementForm.value.source_position = sample.storage_location.position || ''
+  }
+}
+
+// Destination location handlers
+const onDestinationSiteChange = async () => {
+    console.log('Destination site changed to:', movementForm.value, sites.value)
+  const selectedSite = sites.value?.find((site: any) => site.site_name === movementForm.value.destination_site)
+  console.log('Selected site:', selectedSite)
+  if (selectedSite) {
+    await getFreezers({site_id: selectedSite.site_id})
+  }
+  movementForm.value.destination_freezer = ''
+  movementForm.value.destination_rack = ''
+  movementForm.value.destination_box = ''
+  movementForm.value.destination_position = ''
+}
+
+const onDestinationFreezerChange = async () => {
+  const selectedFreezer = freezers.value?.find((f: any) => f.freezer_name === movementForm.value.destination_freezer)
+  if (selectedFreezer) {
+    await getRacks({site_id: selectedFreezer.site_id, freezer_id: selectedFreezer.freezer_id})
+  }
+  movementForm.value.destination_rack = ''
+  movementForm.value.destination_box = ''
+  movementForm.value.destination_position = ''
+}
+
+const onDestinationRackChange = async () => {
+  const selectedRack = racks.value?.find((r: any) => r.rack_name === movementForm.value.destination_rack)
+  if (selectedRack) {
+    await getBoxes({site_id: selectedRack.site_id, freezer_id: selectedRack.freezer_id, rack_id: selectedRack.rack_id})
+  }
+  movementForm.value.destination_box = ''
+  movementForm.value.destination_position = ''
+}
+
+
+const onDestinationBoxChange = async (boxName: string) => {
+  movementForm.value.destination_position = ''
+  boxOccupancyData.value = null
+
+  if (!boxName) return
+
+  // Find the selected box to get its ID
+  const selectedBox = boxes.value?.find((b: any) => b.box_name === boxName)
+  if (!selectedBox) return
+
+  const selectedSite = sites.value?.find((s: any) => s.site_name === movementForm.value.destination_site)
+  const selectedFreezer = freezers.value?.find((f: any) => f.freezer_name === movementForm.value.destination_freezer)
+  const selectedRack = racks.value?.find((r: any) => r.rack_name === movementForm.value.destination_rack)
+
+  if (selectedSite && selectedFreezer && selectedRack && selectedBox) {
+    const result = await getBoxOccupancy({
+      site_id: selectedSite.site_id,
+      freezer_id: selectedFreezer.freezer_id,
+      rack_id: selectedRack.rack_id,
+      box_id: selectedBox.box_id
+    })
+
+    if (result) {
+      boxOccupancyData.value = result
+    }
+  }
+}
+
+
+// Add these helper methods
+const getRowLabel = (rowIndex: number): string => {
+  return String.fromCharCode(64 + rowIndex) // 1=A, 2=B, etc.
+}
+
+const getPositionNumber = (row: number, col: number): number => {
+  return (row - 1) * (boxTemplate.value?.columns || 10) + col
+}
+
+const getPositionLabel = (position: number): string => {
+  if (!position || !boxTemplate.value) return 'Select Position'
+  
+  const cols = boxTemplate.value.columns
+  const row = Math.floor((position - 1) / cols) + 1
+  const col = ((position - 1) % cols) + 1
+  
+  return `${getRowLabel(row)}${col}`
+}
+
+const isPositionOccupied = (row: number, col: number): boolean => {
+  if (!boxOccupancyData.value) return false
+  
+  const position = getPositionNumber(row, col)
+  const positionIndex = position - 1
+  
+  return boxOccupancyData.value.occupancy[positionIndex] === 1
+}
+
+const selectPosition = (row: number, col: number) => {
+  if (isPositionOccupied(row, col)) return
+  movementForm.value.destination_position = getPositionNumber(row, col)
+}
+
+// Watch for destination site changes to fetch freezers
+watch(() => movementForm.value.destination_site, async (newSite) => {
+  if (newSite) {
+    const selectedSite = sites.value?.find((site: any) => site.site_name === newSite)
+    if (selectedSite) {
+      await getFreezers({site_id: selectedSite.site_id})
+    }
+  }
+  // Reset dependent fields
+  movementForm.value.destination_freezer = ''
+  movementForm.value.destination_rack = ''
+  movementForm.value.destination_box = ''
+  movementForm.value.destination_position = ''
+})
+
+// Watch for destination freezer changes to fetch racks
+watch(() => movementForm.value.destination_freezer, async (newFreezer) => {
+  if (newFreezer) {
+    const selectedFreezer = freezers.value?.find((f: any) => f.freezer_name === newFreezer)
+    if (selectedFreezer) {
+      await getRacks({site_id: selectedFreezer.site_id, freezer_id: selectedFreezer.freezer_id} )
+    }
+  }
+  // Reset dependent fields
+  movementForm.value.destination_rack = ''
+  movementForm.value.destination_box = ''
+  movementForm.value.destination_position = ''
+})
+
+// Watch for destination rack changes to fetch boxes
+watch(() => movementForm.value.destination_rack, async (newRack) => {
+  if (newRack) {
+    const selectedRack = racks.value?.find((r: any) => r.rack_name === newRack)
+    if (selectedRack) {
+      await getBoxes({site_id: selectedRack.site_id, freezer_id: selectedRack.freezer_id, rack_id: selectedRack.rack_id})
+    }
+  }
+  // Reset dependent fields
+  movementForm.value.destination_box = ''
+  movementForm.value.destination_position = ''
+})
+
+
+watch(() => movementForm.value.destination_box, async (newBox) => {
+  if (newBox) {
+    await onDestinationBoxChange(newBox)
+  } else {
+    boxOccupancyData.value = null
+    movementForm.value.destination_position = ''
+  }
+})
+
+
 onMounted(async () => {
   await Promise.all([
     getSites(),
@@ -1339,20 +1726,9 @@ onMounted(async () => {
   ])
 })
 
-// Approver management
-const approverInput = ref('')
-const addApprover = () => {
-  if (approverInput.value.trim() && !movementForm.value.approved_by.includes(approverInput.value.trim())) {
-    movementForm.value.approved_by.push(approverInput.value.trim())
-    approverInput.value = ''
-  }
-}
-const removeApprover = (index: number) => {
-  movementForm.value.approved_by.splice(index, 1)
-}
-
 const openRequestMovementModal = () => {
   showRequestMovementModal.value = true
+  movementForm.value.request_by = currentUser.value
 }
 
 const closeRequestMovementModal = () => {
@@ -1373,28 +1749,26 @@ const closeRequestMovementModal = () => {
     reservation_time: '',
     start_date_time: '',
     end_date_time: '',
-    request_by: '',
-    approved_by: []
+    request_by: currentUser.value
   }
 }
 
 const openRequestDisposalModal = () => {
   showRequestDisposalModal.value = true
+  disposalForm.value.request_by = currentUser.value
 }
 
 const closeRequestDisposalModal = () => {
   showRequestDisposalModal.value = false
   disposalForm.value = {
     sample_uuid: '',
-    request_by: '',
-    approved_by: '',
+    request_by: currentUser.value,
     reason_for_disposal: '',
     mark_as_disposed: true
   }
 }
 
 const openViewDetailsModal = (item: BioSpecimen, type: 'tracking' | 'disposal') => {
-  console.log('Opening details for item:', item)
   selectedItem.value = item
   selectedType.value = type
   showViewDetailsModal.value = true
@@ -1477,14 +1851,11 @@ const confirmReject = async () => {
 }
 
 const submitMovementRequest = async () => {
-  // Helper function to convert date to ISO format
   const toISOString = (dateValue: any) => {
     if (!dateValue) return null
-    // If it's already a Date object, convert it
     if (dateValue instanceof Date) {
       return dateValue.toISOString()
     }
-    // If it's a string, create a Date object first
     return new Date(dateValue).toISOString()
   }
 
@@ -1505,11 +1876,11 @@ const submitMovementRequest = async () => {
       position: parseInt(movementForm.value.destination_position)
     },
     request_type: movementForm.value.movement_type,
+    approved_by: [user.value?.user_id],
     reservation_time: toISOString(movementForm.value.reservation_time),
     start_date_time: toISOString(movementForm.value.start_date_time),
     end_date_time: toISOString(movementForm.value.end_date_time),
-    request_by: movementForm.value.request_by,
-    approved_by: movementForm.value.approved_by
+    request_by: user.value?.user_id
   }
 
   const result = await trackSample(payload)
@@ -1526,7 +1897,6 @@ const submitDisposalRequest = async () => {
   const payload = {
     sample_uuid: disposalForm.value.sample_uuid.uuid,
     request_by: disposalForm.value.request_by,
-    approved_by: disposalForm.value.approved_by,
     reason_for_disposal: disposalForm.value.reason_for_disposal,
     mark_as_disposed: disposalForm.value.mark_as_disposed
   }
@@ -1558,6 +1928,11 @@ const applyFilters = async () => {
     getPendingDisposalRequests(params),
     getCompletedDisposalRequests(params)
   ])
+  
+  resetPendingMovement()
+  resetPendingDisposal()
+  resetCompleteMovement()
+  resetCompleteDisposal()
 }
 
 const clearFilters = async () => {
@@ -1572,17 +1947,43 @@ const clearFilters = async () => {
     getPendingDisposalRequests(),
     getCompletedDisposalRequests()
   ])
-}
 
-const getInitials = (name: string) => {
-  return name
-      .split(' ')
-      .map(n => n[0])
-      .join('')
-      .toUpperCase()
+  resetPendingMovement()
+  resetPendingDisposal()
+  resetCompleteMovement()
+  resetCompleteDisposal()
 }
 
 definePageMeta({
   layout: 'dashboard'
 })
 </script>
+
+<style scoped>
+.custom-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.custom-input:focus {
+  outline: none;
+  border-color: #005B8F;
+  ring: 2px;
+  ring-color: #005B8F;
+}
+
+.custom-checkbox {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 0.25rem;
+  border: 1px solid #d1d5db;
+}
+
+.custom-checkbox:checked {
+  background-color: #005B8F;
+  border-color: #005B8F;
+}
+</style>

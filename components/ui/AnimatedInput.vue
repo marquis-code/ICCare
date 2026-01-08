@@ -309,86 +309,121 @@
     </Transition>
     
     <!-- Custom Time Picker -->
+<!-- Custom Time Picker -->
     <Transition name="slide-fade">
       <div 
         v-if="showTimePicker && type === 'time'"
         ref="timePickerRef"
-        class="absolute z-50 mt-2 bg-white rounded-xl shadow-lg border-[0.5px] border-gray-50 p-4 w-64"
+        class="absolute z-50 mt-2 bg-white rounded-xl shadow-lg border border-gray-200 p-5 w-72"
+        @mousedown.stop
       >
         <div class="text-center mb-4">
-          <h3 class="text-sm font-medium text-gray-700">Select Time</h3>
+          <h3 class="text-sm font-semibold text-gray-800">Select Time</h3>
         </div>
         
-        <!-- Time Display -->
-        <div class="flex items-center justify-center gap-2 mb-4">
-          <div class="flex items-center gap-1">
+        <!-- Time Display with Inline Controls -->
+        <div class="flex items-center justify-center gap-3 mb-5">
+          <!-- Hour Section -->
+          <div class="flex flex-col items-center">
             <button
               type="button"
               @click="incrementHour"
-              class="p-1 hover:bg-gray-100 rounded transition-colors"
+              @mousedown.prevent
+              class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors mb-1"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="18 15 12 9 6 15"></polyline>
               </svg>
             </button>
-          </div>
-          
-          <div class="flex items-baseline gap-1">
             <input
               type="text"
               v-model="selectedHour"
               @blur="validateHour"
+              @focus="$event.target.select()"
               @keydown.up.prevent="incrementHour"
               @keydown.down.prevent="decrementHour"
+              @mousedown.stop
               maxlength="2"
-              class="w-12 text-center text-2xl font-semibold border-[0.5px] border-gray-200 rounded-lg py-2 focus:outline-none focus:ring-1 focus:ring-[#033958] focus:border-[#033958]"
+              class="w-14 text-center text-3xl font-bold border-2 border-gray-200 rounded-lg py-2 focus:outline-none focus:ring-2 focus:ring-[#033958] focus:border-transparent transition-all"
             />
-            <span class="text-2xl font-semibold text-gray-400">:</span>
+            <button
+              type="button"
+              @click="decrementHour"
+              @mousedown.prevent
+              class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors mt-1"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+          </div>
+          
+          <span class="text-3xl font-bold text-gray-400 mb-6">:</span>
+          
+          <!-- Minute Section -->
+          <div class="flex flex-col items-center">
+            <button
+              type="button"
+              @click="incrementMinute"
+              @mousedown.prevent
+              class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors mb-1"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="18 15 12 9 6 15"></polyline>
+              </svg>
+            </button>
             <input
               type="text"
               v-model="selectedMinute"
               @blur="validateMinute"
+              @focus="$event.target.select()"
               @keydown.up.prevent="incrementMinute"
               @keydown.down.prevent="decrementMinute"
+              @mousedown.stop
               maxlength="2"
-              class="w-12 text-center text-2xl font-semibold border-[0.5px] border-gray-200 rounded-lg py-2 focus:outline-none focus:ring-1 focus:ring-[#033958] focus:border-[#033958]"
+              class="w-14 text-center text-3xl font-bold border-2 border-gray-200 rounded-lg py-2 focus:outline-none focus:ring-2 focus:ring-[#033958] focus:border-transparent transition-all"
             />
-          </div>
-          
-          <div class="flex flex-col gap-1">
             <button
               type="button"
-              @click="togglePeriod"
-              class="px-3 py-1 text-sm font-medium bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+              @click="decrementMinute"
+              @mousedown.prevent
+              class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors mt-1"
             >
-              {{ selectedPeriod }}
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
             </button>
           </div>
-        </div>
-        
-        <!-- Decrement Buttons -->
-        <div class="flex items-center justify-center gap-2 mb-4">
-          <button
-            type="button"
-            @click="decrementHour"
-            class="p-1 hover:bg-gray-100 rounded transition-colors"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </button>
-          <div class="w-12"></div>
-          <span class="text-2xl font-semibold text-transparent">:</span>
-          <button
-            type="button"
-            @click="decrementMinute"
-            class="p-1 hover:bg-gray-100 rounded transition-colors"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </button>
-          <div class="w-[52px]"></div>
+          
+          <!-- AM/PM Section -->
+          <div class="flex flex-col gap-1 ml-2">
+            <button
+              type="button"
+              @click="setPeriod('AM')"
+              @mousedown.prevent
+              :class="[
+                'px-3 py-1.5 text-xs font-semibold rounded-md transition-all',
+                selectedPeriod === 'AM' 
+                  ? 'bg-[#033958] text-white' 
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              ]"
+            >
+              AM
+            </button>
+            <button
+              type="button"
+              @click="setPeriod('PM')"
+              @mousedown.prevent
+              :class="[
+                'px-3 py-1.5 text-xs font-semibold rounded-md transition-all',
+                selectedPeriod === 'PM' 
+                  ? 'bg-[#033958] text-white' 
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              ]"
+            >
+              PM
+            </button>
+          </div>
         </div>
         
         <!-- Quick Time Selections -->
@@ -398,18 +433,20 @@
             :key="quickTime.label"
             type="button"
             @click="selectQuickTime(quickTime)"
-            class="px-3 py-2 text-xs font-medium text-gray-600 hover:text-[#033958] hover:bg-gray-50 rounded-lg transition-all"
+            @mousedown.prevent
+            class="px-3 py-2 text-xs font-medium text-gray-600 hover:text-[#033958] hover:bg-gray-50 border border-gray-200 rounded-lg transition-all"
           >
             {{ quickTime.label }}
           </button>
         </div>
         
         <!-- Action Buttons -->
-        <div class="pt-4 border-t-[0.5px] border-gray-50 flex justify-between items-center">
+        <div class="pt-4 border-t border-gray-200 flex justify-between items-center">
           <button 
             type="button"
             @click="setCurrentTime" 
-            class="text-sm text-[#033958] hover:text-[#2d8a1a] font-medium transition-colors"
+            @mousedown.prevent
+            class="text-sm text-[#033958] hover:text-[#2d8a1a] font-semibold transition-colors"
           >
             Now
           </button>
@@ -417,14 +454,16 @@
             <button 
               type="button"
               @click="clearTime" 
-              class="text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors"
+              @mousedown.prevent
+              class="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-800 font-medium border border-gray-200 rounded-lg transition-colors"
             >
               Clear
             </button>
             <button 
               type="button"
               @click="confirmTime" 
-              class="px-4 py-1.5 text-sm text-white bg-[#033958] hover:bg-[#2d8a1a] rounded-lg font-medium transition-colors"
+              @mousedown.prevent
+              class="px-4 py-1.5 text-sm text-white bg-[#033958] hover:bg-[#2d8a1a] rounded-lg font-semibold transition-colors"
             >
               OK
             </button>

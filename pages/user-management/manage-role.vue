@@ -2,12 +2,12 @@
   <NuxtLayout name="dashboard">
     <div class="min-h-screen">
       <!-- Main Content -->
-      <div class="px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <div class="">
         <!-- Page Header -->
-        <div class="flex justify-between items-center rounded-xl bg-[#0FA36B] px-6 md:px-8 py-4 mb-6">
+        <div class="flex justify-between items-center rounded-xl bg-[#DCF1FF] text-[#005B8F] px-6 py-4 mb-6">
           <div class="mb-6 sm:mb-8">
-            <h1 class="text-2xl font-bold text-white">Role Management</h1>
-            <p class="mt-2 text-sm sm:text-base text-white">
+            <h1 class="text-xl font-bold bg-[#DCF1FF] text-[#005B8F]">Role Management</h1>
+            <p class="mt-2 text-sm sm:text-base bg-[#DCF1FF] text-[#005B8F]">
               Define and manage access roles across iCCaREPO sites and modules.
             </p>
           </div>
@@ -16,7 +16,7 @@
           <div class="mb-6">
             <button
                 @click="openAddRoleModal"
-                class="flex items-center gap-2 px-4 py-3 text-[#005B8F] bg-[#D8F1FE] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+                class="flex items-center gap-2 px-4 py-3 bg-[#005B8F] text-[#DCF1FF] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
             >
              <svg width="18" height="16" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_2023_384)">

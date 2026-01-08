@@ -12,6 +12,7 @@ export const useGetFreezers = () => {
   const freezers = ref<any[]>([])
   const { showToast } = useCustomToast()
 
+
   const getFreezers = async ({
     site_id,
     active_only = false

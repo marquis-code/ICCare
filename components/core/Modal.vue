@@ -11,7 +11,7 @@
     >
       <div
         v-if="open"
-        class="fixed inset-0 z-[9999] backdrop-blur-lg flex items-center justify-center p-4"
+        class="fixed inset-0 z-[9999] bg-black/50 backdrop-blur-lg flex items-center justify-center p-4"
       >
         <!-- Backdrop -->
         <div

@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div v-if="modelValue" class="fixed inset-0  flex items-center justify-center z-[9999] backdrop-blur-lg p-2 sm:p-4"
+      <div v-if="modelValue" class="fixed inset-0  flex items-center justify-center z-[9999] bg-black/50 bg-black/50 backdrop-blur-lg p-2 sm:p-4"
         @click.self="close">
         <div
           class="bg-white rounded-xl w-full max-w-2xl shadow-2xl transform transition-all flex flex-col max-h-[95vh] sm:max-h-[90vh]">
@@ -125,7 +125,7 @@
                     </div>
 
                     <div>
-                      <UiSelectInput label="Sample Type" :options="sampleTypeOptions" position="standalone"
+                      <UiSelectInput label="Sample Category" :options="sampleTypeOptions" position="standalone"
                         v-model="formData.sample_category_id" :disabled="loading || fetchingCategories" />
                     </div>
 
@@ -312,7 +312,7 @@
                   <div>
                     <h3
                       class="text-xs sm:text-sm font-medium text-[#033958] border-b-[0.5px] pb-2 sm:pb-3 mb-3 sm:mb-5">
-                      Clinical Data</h3>
+                      Clinical Data <span class="text-red-500">*</span></h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-5">
                       <div>
@@ -336,7 +336,7 @@
                   <div>
                     <h3
                       class="text-xs sm:text-sm font-medium text-[#033958] border-b-[0.5px] pb-2 sm:pb-3 mb-3 sm:mb-5">
-                      Demographic Data</h3>
+                      Demographic Data <span class="text-red-500">*</span></h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-5">
                       <div>
@@ -370,7 +370,7 @@
                   <div>
                     <h3
                       class="text-xs sm:text-sm font-medium text-[#033958] border-b-[0.5px] pb-2 sm:pb-3 mb-3 sm:mb-5">
-                      Epidemiological Data</h3>
+                      Epidemiological Data <span class="text-red-500">*</span></h3>
 
                     <div class="grid grid-cols-1 gap-3 sm:gap-5">
                       <div>
@@ -427,7 +427,7 @@
               <Transition name="fade" mode="out-in">
                 <div v-if="currentStep === 4" key="step4" class="space-y-4 sm:space-y-6">
                   <h3 class="text-base sm:text-lg font-medium text-[#033958] border-b-[0.5px] pb-2 sm:pb-3">Sample Files
-                    & Documents</h3>
+                    & Documents (Optional)</h3>
 
                   <div class="space-y-3 sm:space-y-4">
                     <p class="text-xs sm:text-sm text-gray-600">
@@ -607,6 +607,7 @@
     </Transition>
   </Teleport>
 </template>
+
 <script setup lang="ts">
 import { useRegisterSample } from "@/composables/modules/biosample/useRegisterSample"
 import { useGetSites } from "@/composables/modules/sites/useGetSites"
@@ -708,6 +709,9 @@ const uploadedFiles = ref<Array<{
 
 const boxOccupancyData = ref<BoxOccupancy | null>(null);
 const boxTemplate = computed(() => boxOccupancyData.value?.template);
+
+// Track the original position when editing to allow it to be selectable
+// const originalEditPosition = ref<number | null>(null);
 
 // Computed property to check if we're in edit mode
 const isEditMode = computed(() => !!props.editData);
@@ -813,6 +817,9 @@ const lagosLGAs = [
   'Shomolu', 'Surulere'
 ]
 
+// Track the original position when editing to allow it to be selectable
+const originalEditPosition = ref<number | null>(null);
+
 // Helper functions to get IDs from names
 const getSiteIdByName = (siteName: string): string => {
   const site = sites.value?.find((s: any) =>
@@ -861,12 +868,14 @@ const getSelectedBoxName = (): string => {
 
 // Storage location change handlers
 const onSiteChange = async (siteName: string) => {
-  // Reset dependent fields
-  formData.value.storage_location.freezer = '';
-  formData.value.storage_location.rack = '';
-  formData.value.storage_location.box = '';
-  formData.value.storage_location.position = 0;
-  boxOccupancyData.value = null;
+  // Reset dependent fields only if not in edit mode or if site actually changed
+  if (!isEditMode.value || formData.value.storage_location.freezer === '') {
+    formData.value.storage_location.freezer = '';
+    formData.value.storage_location.rack = '';
+    formData.value.storage_location.box = '';
+    formData.value.storage_location.position = 0;
+    boxOccupancyData.value = null;
+  }
 
   if (!siteName) return;
 
@@ -878,11 +887,13 @@ const onSiteChange = async (siteName: string) => {
 };
 
 const onFreezerChange = async (freezerName: string) => {
-  // Reset dependent fields
-  formData.value.storage_location.rack = '';
-  formData.value.storage_location.box = '';
-  formData.value.storage_location.position = 0;
-  boxOccupancyData.value = null;
+  // Reset dependent fields only if not in edit mode or if freezer actually changed
+  if (!isEditMode.value || formData.value.storage_location.rack === '') {
+    formData.value.storage_location.rack = '';
+    formData.value.storage_location.box = '';
+    formData.value.storage_location.position = 0;
+    boxOccupancyData.value = null;
+  }
 
   if (!freezerName) return;
 
@@ -896,10 +907,12 @@ const onFreezerChange = async (freezerName: string) => {
 };
 
 const onRackChange = async (rackName: string) => {
-  // Reset dependent fields
-  formData.value.storage_location.box = '';
-  formData.value.storage_location.position = 0;
-  boxOccupancyData.value = null;
+  // Reset dependent fields only if not in edit mode or if rack actually changed
+  if (!isEditMode.value || formData.value.storage_location.box === '') {
+    formData.value.storage_location.box = '';
+    formData.value.storage_location.position = 0;
+    boxOccupancyData.value = null;
+  }
 
   if (!rackName) return;
 
@@ -914,8 +927,10 @@ const onRackChange = async (rackName: string) => {
 };
 
 const onBoxChange = async (boxName: string) => {
-  // Reset position
-  formData.value.storage_location.position = 0;
+  // Reset position only if not in edit mode
+  if (!isEditMode.value) {
+    formData.value.storage_location.position = 0;
+  }
   boxOccupancyData.value = null;
 
   if (!boxName) return;
@@ -964,11 +979,9 @@ const isPositionOccupied = (row: number, col: number): boolean => {
 
   const position = getPositionNumber(row, col);
 
-  // If we're editing and this is the current position, it should not be marked as occupied
-  if (isEditMode.value && props.editData?.storage_location) {
-    if (position === props.editData.storage_location.position) {
-      return false;
-    }
+  // If we're editing and this is the current/original position, it should not be marked as occupied
+  if (isEditMode.value && originalEditPosition.value === position) {
+    return false;
   }
 
   // Check if position is in the occupancy array with value 1 (occupied)
@@ -981,7 +994,68 @@ const selectPosition = (row: number, col: number) => {
   formData.value.storage_location.position = getPositionNumber(row, col);
 };
 
-const populateFormWithEditData = (data: BioSpecimen) => {
+// Function to load storage data when editing
+const loadStorageDataForEdit = async (data: BioSpecimen) => {
+  if (!data.storage_location) return;
+
+  // First, get the site ID and load freezers
+  const siteId = data.site_id || data.storage_location.site;
+  if (siteId) {
+    formData.value.site_id = siteId;
+    await getFreezers({ site_id: getSiteIdByName(siteId) });
+  }
+
+  // Then load racks for the freezer
+  if (data.storage_location.freezer) {
+    formData.value.storage_location.freezer = data.storage_location.freezer;
+    const freezerId = getFreezerIdByName(data.storage_location.freezer);
+    if (freezerId) {
+      await getRacks({ 
+        site_id: getSiteIdByName(siteId), 
+        freezer_id: freezerId 
+      });
+    }
+  }
+
+  // Then load boxes for the rack
+  if (data.storage_location.rack) {
+    formData.value.storage_location.rack = data.storage_location.rack;
+    const rackId = getRackIdByName(data.storage_location.rack);
+    if (rackId) {
+      await getBoxes({ 
+        site_id: getSiteIdByName(siteId),
+        freezer_id: getFreezerIdByName(data.storage_location.freezer),
+        rack_id: rackId 
+      });
+    }
+  }
+
+  // Finally load box occupancy
+  if (data.storage_location.box) {
+    formData.value.storage_location.box = data.storage_location.box;
+    const boxId = getBoxIdByName(data.storage_location.box);
+    if (boxId) {
+      const result = await getBoxOccupancy({
+        site_id: getSiteIdByName(siteId),
+        freezer_id: getFreezerIdByName(data.storage_location.freezer),
+        rack_id: getRackIdByName(data.storage_location.rack),
+        box_id: boxId
+      });
+
+      if (result) {
+        boxOccupancyData.value = result as BoxOccupancy;
+      }
+    }
+  }
+
+  // Set the position and store original
+  if (data.storage_location.position) {
+    formData.value.storage_location.position = data.storage_location.position;
+    originalEditPosition.value = data.storage_location.position;
+  }
+};
+
+const populateFormWithEditData = async (data: BioSpecimen) => {
   formData.value = {
     site_id: data.site_id || '',
     sample_category_id: data.sample_category_id || '',
@@ -1027,10 +1101,8 @@ const populateFormWithEditData = (data: BioSpecimen) => {
     lgaList.value = lagosLGAs;
   }
 
-  // Load dependent storage data
-  if (formData.value.site_id) {
-    onSiteChange(formData.value.site_id);
-  }
+  // Load storage location data in sequence
+  await loadStorageDataForEdit(data);
 };
 
 watch(() => props.editData, (newData) => {
@@ -1047,6 +1119,14 @@ watch(() => props.modelValue, async (isOpen) => {
       getSites(),
       getCategories()
     ]);
+
+    // If editing, populate form
+    if (props.editData) {
+      await populateFormWithEditData(props.editData);
+    }
+  } else {
+    // Reset original position when closing
+    originalEditPosition.value = null;
   }
 });
 
@@ -1113,13 +1193,14 @@ const processFiles = async (files: File[]) => {
   for (const file of files) {
     if (file.size > 10 * 1024 * 1024) {
       showToast({
-          title: "Warning",
-          message: `File ${file.name} exceeds the 10MB size limit.`,
-          toastType: "warning",
-          duration: 3000,
+        title: "Warning",
+        message: `File ${file.name} exceeds the 10MB size limit.`,
+        toastType: "warning",
+        duration: 3000,
       })
       continue;
     }
+
     const fileData: any = {
       file: file,
       name: file.name,
@@ -1146,8 +1227,10 @@ const readFileAsDataURL = (file: File): Promise<string> => {
     reader.readAsDataURL(file);
   });
 };
+
 const addImageFromUrl = async () => {
   if (!imageUrl.value) return;
+
   try {
     const url = new URL(imageUrl.value);
     uploadedFiles.value.push({
@@ -1161,17 +1244,19 @@ const addImageFromUrl = async () => {
     });
     imageUrl.value = '';
   } catch (error) {
-          showToast({
-          title: "Warning",
-          message: 'Please enter a valid URL',
-          toastType: "warning",
-          duration: 3000,
-      })
+    showToast({
+      title: "Warning",
+      message: 'Please enter a valid URL',
+      toastType: "warning",
+      duration: 3000,
+    })
   }
 };
+
 const removeFile = (index: number) => {
   uploadedFiles.value.splice(index, 1);
 };
+
 const formatFileSize = (bytes: number): string => {
   if (bytes === 0) return '0 Bytes';
   const k = 1024;
@@ -1179,6 +1264,7 @@ const formatFileSize = (bytes: number): string => {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
 };
+
 const getFileIcon = (type: string): string => {
   if (type.startsWith('image/') || type === 'image/url') return 'heroicons:photo';
   if (type === 'application/pdf') return 'heroicons:document-text';
@@ -1186,6 +1272,7 @@ const getFileIcon = (type: string): string => {
   if (type.includes('word') || type.includes('document')) return 'heroicons:document';
   return 'heroicons:document';
 };
+
 const getFileTypeLabel = (type: string): string => {
   if (type.startsWith('image/') || type === 'image/url') return 'Image';
   if (type === 'application/pdf') return 'PDF';
@@ -1194,6 +1281,7 @@ const getFileTypeLabel = (type: string): string => {
   if (type.includes('word')) return 'Word Document';
   return 'Document';
 };
+
 const openPreview = (file: any) => {
   if (file.file) {
     const blob = new Blob([file.file], { type: file.type });
@@ -1201,6 +1289,7 @@ const openPreview = (file: any) => {
     window.open(url, '_blank');
   }
 };
+
 const validateStep = (step: number): boolean => {
   if (step === 1) {
     if (!formData.value.sample_serial_no ||
@@ -1211,11 +1300,11 @@ const validateStep = (step: number): boolean => {
       !formData.value.researcher_info ||
       !formData.value.field_collector_info) {
       showToast({
-          title: "Warning",
-          message: 'Please fill in all required fields',
-          toastType: "warning",
-          duration: 3000,
-        })
+        title: "Warning",
+        message: 'Please fill in all required fields',
+        toastType: "warning",
+        duration: 3000,
+      })
       return false;
     }
   } else if (step === 2) {
@@ -1224,29 +1313,77 @@ const validateStep = (step: number): boolean => {
       !formData.value.storage_location.rack ||
       !formData.value.storage_location.box ||
       !formData.value.storage_location.position) {
-              showToast({
-          title: "Warning",
-          message: 'Please complete all storage location fields and select a position',
-          toastType: "warning",
-          duration: 3000,
-        })
+      showToast({
+        title: "Warning",
+        message: 'Please complete all storage location fields and select a position',
+        toastType: "warning",
+        duration: 3000,
+      })
+      return false;
+    }
+  } else if (step === 3) {
+    // Validate that at least one field from each section is filled
+    const hasClinicalData = formData.value.free_fields.diagnosis || 
+                           formData.value.free_fields.treatmentStatus || 
+                           formData.value.free_fields.outcomes;
+    
+    const hasDemographicData = formData.value.free_fields.dateOfBirth || 
+                              formData.value.free_fields.sex || 
+                              formData.value.free_fields.ethnicity || 
+                              formData.value.free_fields.nationality;
+    
+    const hasEpidemiologicalData = formData.value.free_fields.history || 
+                                  formData.value.free_fields.riskFactors ||
+                                  formData.value.free_fields.geolocation.country;
+
+    if (!hasClinicalData) {
+      showToast({
+        title: "Warning",
+        message: 'Please fill in at least one Clinical Data field (Diagnosis, Treatment Status, or Outcomes)',
+        toastType: "warning",
+        duration: 3000,
+      })
+      return false;
+    }
+
+    if (!hasDemographicData) {
+      showToast({
+        title: "Warning",
+        message: 'Please fill in at least one Demographic Data field (Date of Birth, Gender, Ethnicity, or Nationality)',
+        toastType: "warning",
+        duration: 3000,
+      })
+      return false;
+    }
+
+    if (!hasEpidemiologicalData) {
+      showToast({
+        title: "Warning",
+        message: 'Please fill in at least one Epidemiological Data field (History, Risk Factors, or Geolocation)',
+        toastType: "warning",
+        duration: 3000,
+      })
       return false;
     }
   }
+  // Step 4 (file upload) is optional - no validation needed
   return true;
 };
+
 const nextStep = () => {
   if (validateStep(currentStep.value) && currentStep.value < 4) {
     currentStep.value++;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 };
+
 const previousStep = () => {
   if (currentStep.value > 1) {
     currentStep.value--;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 };
+
 const resetForm = () => {
   formData.value = {
     site_id: '',
@@ -1290,7 +1427,9 @@ const resetForm = () => {
   stateList.value = [];
   lgaList.value = [];
   boxOccupancyData.value = null;
+  originalEditPosition.value = null;
 };
+
 const close = () => {
   if (!loading.value) {
     currentStep.value = 1;
@@ -1303,10 +1442,11 @@ const save = async () => {
   if (!validateStep(currentStep.value)) {
     return;
   }
+
   formData.value.storage_location.site = formData.value.site_id;
   
   // Convert 12-hour format time to 24-hour format (HH:mm:ss)
-  const convertTo24Hour = (time12h) => {
+  const convertTo24Hour = (time12h: string | null) => {
     if (!time12h) return null;
     
     const [time, modifier] = time12h.split(' ');
@@ -1317,7 +1457,7 @@ const save = async () => {
     }
     
     if (modifier === 'PM') {
-      hours = parseInt(hours, 10) + 12;
+      hours = (parseInt(hours, 10) + 12).toString();
     }
     
     return `${hours.toString().padStart(2, '0')}:${minutes}:00`;
@@ -1350,7 +1490,9 @@ const save = async () => {
     })),
     ...(isEditMode.value && props.editData?.uuid ? { uuid: props.editData.uuid } : {})
   };
+
   const result = await registerSample(payload);
+  
   if (result) {
     emit('saved', { ...result, isEdit: isEditMode.value });
     currentStep.value = 1;
@@ -1358,47 +1500,8 @@ const save = async () => {
     emit('update:modelValue', false);
   }
 };
-// const save = async () => {
-//   if (!validateStep(currentStep.value)) {
-//     return;
-//   }
-//   formData.value.storage_location.site = formData.value.site_id;
-//   const payload = {
-//     site_id: formData.value.site_id,
-//     sample_category_id: formData.value.sample_category_id,
-//     sample_serial_no: formData.value.sample_serial_no,
-//     sample_label: formData.value.sample_label,
-//     collection_date: formData.value.collection_date,
-//     collection_time: formData.value.collection_time,
-//     researcher_info: formData.value.researcher_info,
-//     field_collector_info: formData.value.field_collector_info,
-//     storage_location: {
-//       site: formData.value.storage_location.site,
-//       freezer: formData.value.storage_location.freezer,
-//       rack: formData.value.storage_location.rack,
-//       box: formData.value.storage_location.box,
-//       position: formData.value.storage_location.position
-//     },
-//     free_fields: formData.value.free_fields,
-//     files: uploadedFiles.value.map(f => ({
-//       name: f.name,
-//       size: f.size,
-//       type: f.type,
-//       data: f.file,
-//       url: f.url,
-//       isUrl: f.isUrl
-//     })),
-//     ...(isEditMode.value && props.editData?.uuid ? { uuid: props.editData.uuid } : {})
-//   };
-//   const result = await registerSample(payload);
-//   if (result) {
-//     emit('saved', { ...result, isEdit: isEditMode.value });
-//     currentStep.value = 1;
-//     resetForm();
-//     emit('update:modelValue', false);
-//   }
-// };
 </script>
+
 <style scoped>
 /* Modal animations */
 .modal-enter-active,

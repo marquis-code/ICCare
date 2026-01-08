@@ -2,7 +2,7 @@
   <Transition name="modal">
     <div 
       v-if="isOpen" 
-      class="fixed backdrop-blur-lg inset-0 z-50 overflow-y-auto"
+      class="fixed bg-black/50 backdrop-blur-lg inset-0 z-50 overflow-y-auto"
       @click.self="handleClose">
       <!-- Backdrop -->
       <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>

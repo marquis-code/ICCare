@@ -2,16 +2,16 @@
   <NuxtLayout name="dashboard">
     <div class="min-h-screen">
       <!-- Main Content -->
-      <div class="px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <div class="">
         <!-- Page Header -->
-        <div class="sm:mb-8 rounded-xl bg-[#005B8F] px-6 md:px-8 py-4 mb-6">
-          <h1 class="text-2xl font-semibold text-white">Reports & Analytics</h1>
-          <p class="mt-2 text-base text-white">
+        <div class="sm:mb-8 rounded-xl bg-[#DCF1FF] text-[#005B8F] px-6 md:px-8 py-4 mb-6">
+          <h1 class="text-xl font-semibold  bg-[#DCF1FF] text-[#005B8F]">Reports & Analytics</h1>
+          <p class="mt-2 text-base bg-[#DCF1FF] text-[#005B8F]">
             Generate, export, and schedule biosample reports. Monitor dashboard metrics and set up automated alerts.
           </p>
         </div>
 
-        <!-- Dashboard Metrics Card -->
+          <!-- Dashboard Metrics Card -->
        <!-- Dashboard Metrics Card -->
 <div v-if="dashboardData" class="mb-6 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
   <h2 class="text-lg font-medium text-gray-900 mb-4">Dashboard Overview</h2>
@@ -234,7 +234,7 @@
 
       <!-- Export Modal -->
       <Teleport to="body">
-        <div v-if="isExportModalOpen" class="fixed backdrop-blur-lg inset-0 z-[9999] overflow-y-auto">
+        <div v-if="isExportModalOpen" class="fixed bg-black/50 backdrop-blur-lg inset-0 z-[9999] overflow-y-auto">
           <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" @click="closeExportModal"></div>
 
@@ -282,7 +282,7 @@
 
       <!-- Schedule Report Modal -->
       <Teleport to="body">
-        <div v-if="isScheduleModalOpen" class="fixed backdrop-blur-lg inset-0 z-[9999] overflow-y-auto">
+        <div v-if="isScheduleModalOpen" class="fixed bg-black/50 backdrop-blur-lg inset-0 z-[9999] overflow-y-auto">
           <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" @click="closeScheduleModal"></div>
 
@@ -356,7 +356,7 @@
 
       <!-- Check & Notify Alerts Modal -->
       <Teleport to="body">
-        <div v-if="isAlertsModalOpen" class="fixed backdrop-blur-lg inset-0 z-[9999] overflow-y-auto">
+        <div v-if="isAlertsModalOpen" class="fixed bg-black/50 backdrop-blur-lg inset-0 z-[9999] overflow-y-auto">
           <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" @click="closeAlertsModal"></div>
 
