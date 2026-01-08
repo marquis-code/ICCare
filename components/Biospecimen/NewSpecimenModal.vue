@@ -126,7 +126,9 @@
 
                     <div>
                       <UiSelectInput label="Sample Category" :options="sampleTypeOptions" position="standalone"
-                        v-model="formData.sample_category_id" :disabled="loading || fetchingCategories" />
+  v-model="formData.sample_category_name" :disabled="loading || fetchingCategories" />
+                      <!-- <UiSelectInput label="Sample Category" :options="sampleTypeOptions" position="standalone"
+                        v-model="formData.sample_category_id" :disabled="loading || fetchingCategories" /> -->
                     </div>
 
                     <div>
@@ -166,34 +168,49 @@
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-5">
                     <div>
                       <UiSelectInput label="Site" :options="siteOptions" position="standalone"
+  v-model="formData.site_name" :disabled="loading || loadingSites"
+  @update:modelValue="onSiteChange" />
+                      <!-- <UiSelectInput label="Site" :options="siteOptions" position="standalone"
                         v-model="formData.site_id" :disabled="loading || loadingSites"
-                        @update:modelValue="onSiteChange" />
+                        @update:modelValue="onSiteChange" /> -->
                     </div>
 
                     <div>
                       <UiSelectInput label="Freezer" :options="freezerOptions" position="standalone"
+  v-model="formData.storage_location.freezer_name"
+  :disabled="loading || fetchingFreezers || !formData.site_name"
+  @update:modelValue="onFreezerChange" />
+                      <!-- <UiSelectInput label="Freezer" :options="freezerOptions" position="standalone"
                         v-model="formData.storage_location.freezer"
                         :disabled="loading || fetchingFreezers || !formData.site_id"
-                        @update:modelValue="onFreezerChange" />
+                        @update:modelValue="onFreezerChange" /> -->
                     </div>
 
                     <div>
                       <UiSelectInput label="Rack" :options="rackOptions" position="standalone"
+  v-model="formData.storage_location.rack_name"
+  :disabled="loading || fetchingRacks || !formData.storage_location.freezer_name"
+  @update:modelValue="onRackChange" />
+                      <!-- <UiSelectInput label="Rack" :options="rackOptions" position="standalone"
                         v-model="formData.storage_location.rack"
                         :disabled="loading || fetchingRacks || !formData.storage_location.freezer"
-                        @update:modelValue="onRackChange" />
+                        @update:modelValue="onRackChange" /> -->
                     </div>
 
                     <div>
                       <UiSelectInput label="Box" :options="boxOptions" position="standalone"
+  v-model="formData.storage_location.box_name"
+  :disabled="loading || fetchingBoxes || !formData.storage_location.rack_name"
+  @update:modelValue="onBoxChange" />
+                      <!-- <UiSelectInput label="Box" :options="boxOptions" position="standalone"
                         v-model="formData.storage_location.box"
                         :disabled="loading || fetchingBoxes || !formData.storage_location.rack"
-                        @update:modelValue="onBoxChange" />
+                        @update:modelValue="onBoxChange" /> -->
                     </div>
                   </div>
 
                   <!-- Storage Grid -->
-                  <div v-if="formData.storage_location.box">
+                  <div v-if="formData.storage_location.box_name">
                     <label class="block text-xs sm:text-sm font-semibold text-gray-700 mb-2 sm:mb-3">
                       Select Position <span class="text-red-500">*</span>
                     </label>
@@ -722,8 +739,12 @@ const boxTemplate = computed(() => boxOccupancyData.value?.template);
 const isEditMode = computed(() => !!props.editData);
 
 const formData = ref({
-  site_id: '',
+  // site_id: '',
+  // sample_category_id: '',
+    site_id: '',
+  site_name: '',
   sample_category_id: '',
+  sample_category_name: '',
   sample_serial_no: '',
   sample_label: '',
   collection_date: '',
@@ -731,11 +752,23 @@ const formData = ref({
   researcher_info: '',
   field_collector_info: '',
   storage_location: {
-    site: '',
+      site: '',
+    site_id: '',
     freezer: '',
+    freezer_id: '',
+    freezer_name: '',
     rack: '',
+    rack_id: '',
+    rack_name: '',
     box: '',
+    box_id: '',
+    box_name: '',
     position: 0
+    // site: '',
+    // freezer: '',
+    // rack: '',
+    // box: '',
+    // position: 0
   },
   free_fields: {
     diagnosis: '',
@@ -759,9 +792,14 @@ const formData = ref({
 });
 
 // Computed options for dropdowns
+// const sampleTypeOptions = computed(() => {
+//   if (!categories.value || categories.value.length === 0) return [];
+//   return categories.value.map((cat: any) => cat.cat_name);
+// });
+
 const sampleTypeOptions = computed(() => {
   if (!categories.value || categories.value.length === 0) return [];
-  return categories.value.map((cat: any) => cat.cat_name);
+  return categories.value.map((cat: any) => cat.cat_name || cat.name || cat.category_name);
 });
 
 const siteOptions = computed(() => {
@@ -783,6 +821,13 @@ const boxOptions = computed(() => {
   if (!boxes.value || boxes.value.length === 0) return [];
   return boxes.value.map((box: any) => box.box_name);
 });
+
+const getCategoryIdByName = (categoryName: string): string => {
+  const category = categories.value?.find((c: any) =>
+    (c.cat_name || c.name || c.category_name) === categoryName
+  );
+  return category?.cat_id || category?.id || category?.category_id || '';
+};
 
 // Static options
 const genderList = ref(['Male', 'Female', 'Other'])
@@ -826,58 +871,164 @@ const lagosLGAs = [
 const originalEditPosition = ref<number | null>(null);
 
 // Helper functions to get IDs from names
-const getSiteIdByName = (siteName: string): string => {
-  const site = sites.value?.find((s: any) =>
-    (s.site_name || s.name) === siteName
-  );
-  return site?.site_id || site?.id || '';
-};
+// const getSiteIdByName = (siteName: string): string => {
+//   const site = sites.value?.find((s: any) =>
+//     (s.site_name || s.name) === siteName
+//   );
+//   return site?.site_id || site?.id || '';
+// };
 
-const getFreezerIdByName = (freezerName: string): string => {
-  const freezer = freezers.value?.find((f: any) =>
-    (f.freezer_name || f.name) === freezerName
-  );
-  return freezer?.freezer_id || freezer?.id || '';
-};
+// const getFreezerIdByName = (freezerName: string): string => {
+//   const freezer = freezers.value?.find((f: any) =>
+//     (f.freezer_name || f.name) === freezerName
+//   );
+//   return freezer?.freezer_id || freezer?.id || '';
+// };
 
-const getRackIdByName = (rackName: string): string => {
-  const rack = racks.value?.find((r: any) =>
-    (r.rack_name || r.name) === rackName
-  );
-  return rack?.rack_id || rack?.id || '';
-};
+// const getRackIdByName = (rackName: string): string => {
+//   const rack = racks.value?.find((r: any) =>
+//     (r.rack_name || r.name) === rackName
+//   );
+//   return rack?.rack_id || rack?.id || '';
+// };
 
-const getBoxIdByName = (boxName: string): string => {
-  const box = boxes.value?.find((b: any) =>
-    (b.box_name || b.name) === boxName
-  );
-  return box?.box_id || box?.id || '';
-};
+// const getBoxIdByName = (boxName: string): string => {
+//   const box = boxes.value?.find((b: any) =>
+//     (b.box_name || b.name) === boxName
+//   );
+//   return box?.box_id || box?.id || '';
+// };
 
 // Helper functions to get names for display
+// const getSelectedSiteName = (): string => {
+//   return formData.value.site_id;
+// };
+
+// const getSelectedFreezerName = (): string => {
+//   return formData.value.storage_location.freezer;
+// };
+
+// const getSelectedRackName = (): string => {
+//   return formData.value.storage_location.rack;
+// };
+
+// const getSelectedBoxName = (): string => {
+//   return formData.value.storage_location.box;
+// };
+
 const getSelectedSiteName = (): string => {
-  return formData.value.site_id;
+  return formData.value.site_name;
 };
 
 const getSelectedFreezerName = (): string => {
-  return formData.value.storage_location.freezer;
+  return formData.value.storage_location.freezer_name;
 };
 
 const getSelectedRackName = (): string => {
-  return formData.value.storage_location.rack;
+  return formData.value.storage_location.rack_name;
 };
 
 const getSelectedBoxName = (): string => {
-  return formData.value.storage_location.box;
+  return formData.value.storage_location.box_name;
 };
 
 // Storage location change handlers
+// const onSiteChange = async (siteName: string) => {
+//   // Reset dependent fields only if not in edit mode or if site actually changed
+//   if (!isEditMode.value || formData.value.storage_location.freezer === '') {
+//     formData.value.storage_location.freezer = '';
+//     formData.value.storage_location.rack = '';
+//     formData.value.storage_location.box = '';
+//     formData.value.storage_location.position = 0;
+//     boxOccupancyData.value = null;
+//   }
+
+//   if (!siteName) return;
+
+//   const siteId = getSiteIdByName(siteName);
+//   if (siteId) {
+//     // Fetch freezers for this site
+//     await getFreezers({ site_id: siteId });
+//   }
+// };
+
+// const onFreezerChange = async (freezerName: string) => {
+//   // Reset dependent fields only if not in edit mode or if freezer actually changed
+//   if (!isEditMode.value || formData.value.storage_location.rack === '') {
+//     formData.value.storage_location.rack = '';
+//     formData.value.storage_location.box = '';
+//     formData.value.storage_location.position = 0;
+//     boxOccupancyData.value = null;
+//   }
+
+//   if (!freezerName) return;
+
+//   const siteId = getSiteIdByName(formData.value.site_id);
+//   const freezerId = getFreezerIdByName(freezerName);
+
+//   if (siteId && freezerId) {
+//     // Fetch racks for this site and freezer
+//     await getRacks({ site_id: siteId, freezer_id: freezerId });
+//   }
+// };
+
+// const onRackChange = async (rackName: string) => {
+//   // Reset dependent fields only if not in edit mode or if rack actually changed
+//   if (!isEditMode.value || formData.value.storage_location.box === '') {
+//     formData.value.storage_location.box = '';
+//     formData.value.storage_location.position = 0;
+//     boxOccupancyData.value = null;
+//   }
+
+//   if (!rackName) return;
+
+//   const siteId = getSiteIdByName(formData.value.site_id);
+//   const freezerId = getFreezerIdByName(formData.value.storage_location.freezer);
+//   const rackId = getRackIdByName(rackName);
+
+//   if (siteId && freezerId && rackId) {
+//     // Fetch boxes for this site, freezer, and rack
+//     await getBoxes({ site_id: siteId, freezer_id: freezerId, rack_id: rackId });
+//   }
+// };
+
+// const onBoxChange = async (boxName: string) => {
+//   // Reset position only if not in edit mode
+//   if (!isEditMode.value) {
+//     formData.value.storage_location.position = 0;
+//   }
+//   boxOccupancyData.value = null;
+
+//   if (!boxName) return;
+
+//   const siteId = getSiteIdByName(formData.value.site_id);
+//   const freezerId = getFreezerIdByName(formData.value.storage_location.freezer);
+//   const rackId = getRackIdByName(formData.value.storage_location.rack);
+//   const boxId = getBoxIdByName(boxName);
+
+//   if (siteId && freezerId && rackId && boxId) {
+//     // Fetch box occupancy
+//     const result = await getBoxOccupancy({
+//       site_id: siteId,
+//       freezer_id: freezerId,
+//       rack_id: rackId,
+//       box_id: boxId
+//     });
+
+//     if (result) {
+//       boxOccupancyData.value = result as BoxOccupancy;
+//     }
+//   }
+// };
+
 const onSiteChange = async (siteName: string) => {
-  // Reset dependent fields only if not in edit mode or if site actually changed
-  if (!isEditMode.value || formData.value.storage_location.freezer === '') {
-    formData.value.storage_location.freezer = '';
-    formData.value.storage_location.rack = '';
-    formData.value.storage_location.box = '';
+  if (!isEditMode.value || formData.value.storage_location.freezer_name === '') {
+    formData.value.storage_location.freezer_name = '';
+    formData.value.storage_location.freezer_id = '';
+    formData.value.storage_location.rack_name = '';
+    formData.value.storage_location.rack_id = '';
+    formData.value.storage_location.box_name = '';
+    formData.value.storage_location.box_id = '';
     formData.value.storage_location.position = 0;
     boxOccupancyData.value = null;
   }
@@ -885,54 +1036,56 @@ const onSiteChange = async (siteName: string) => {
   if (!siteName) return;
 
   const siteId = getSiteIdByName(siteName);
+  formData.value.site_id = siteId;
+  
   if (siteId) {
-    // Fetch freezers for this site
     await getFreezers({ site_id: siteId });
   }
 };
 
 const onFreezerChange = async (freezerName: string) => {
-  // Reset dependent fields only if not in edit mode or if freezer actually changed
-  if (!isEditMode.value || formData.value.storage_location.rack === '') {
-    formData.value.storage_location.rack = '';
-    formData.value.storage_location.box = '';
+  if (!isEditMode.value || formData.value.storage_location.rack_name === '') {
+    formData.value.storage_location.rack_name = '';
+    formData.value.storage_location.rack_id = '';
+    formData.value.storage_location.box_name = '';
+    formData.value.storage_location.box_id = '';
     formData.value.storage_location.position = 0;
     boxOccupancyData.value = null;
   }
 
   if (!freezerName) return;
 
-  const siteId = getSiteIdByName(formData.value.site_id);
   const freezerId = getFreezerIdByName(freezerName);
+  formData.value.storage_location.freezer_id = freezerId;
 
-  if (siteId && freezerId) {
-    // Fetch racks for this site and freezer
-    await getRacks({ site_id: siteId, freezer_id: freezerId });
+  if (formData.value.site_id && freezerId) {
+    await getRacks({ site_id: formData.value.site_id, freezer_id: freezerId });
   }
 };
 
 const onRackChange = async (rackName: string) => {
-  // Reset dependent fields only if not in edit mode or if rack actually changed
-  if (!isEditMode.value || formData.value.storage_location.box === '') {
-    formData.value.storage_location.box = '';
+  if (!isEditMode.value || formData.value.storage_location.box_name === '') {
+    formData.value.storage_location.box_name = '';
+    formData.value.storage_location.box_id = '';
     formData.value.storage_location.position = 0;
     boxOccupancyData.value = null;
   }
 
   if (!rackName) return;
 
-  const siteId = getSiteIdByName(formData.value.site_id);
-  const freezerId = getFreezerIdByName(formData.value.storage_location.freezer);
   const rackId = getRackIdByName(rackName);
+  formData.value.storage_location.rack_id = rackId;
 
-  if (siteId && freezerId && rackId) {
-    // Fetch boxes for this site, freezer, and rack
-    await getBoxes({ site_id: siteId, freezer_id: freezerId, rack_id: rackId });
+  if (formData.value.site_id && formData.value.storage_location.freezer_id && rackId) {
+    await getBoxes({ 
+      site_id: formData.value.site_id, 
+      freezer_id: formData.value.storage_location.freezer_id, 
+      rack_id: rackId 
+    });
   }
 };
 
 const onBoxChange = async (boxName: string) => {
-  // Reset position only if not in edit mode
   if (!isEditMode.value) {
     formData.value.storage_location.position = 0;
   }
@@ -940,17 +1093,15 @@ const onBoxChange = async (boxName: string) => {
 
   if (!boxName) return;
 
-  const siteId = getSiteIdByName(formData.value.site_id);
-  const freezerId = getFreezerIdByName(formData.value.storage_location.freezer);
-  const rackId = getRackIdByName(formData.value.storage_location.rack);
   const boxId = getBoxIdByName(boxName);
+  formData.value.storage_location.box_id = boxId;
 
-  if (siteId && freezerId && rackId && boxId) {
-    // Fetch box occupancy
+  if (formData.value.site_id && formData.value.storage_location.freezer_id && 
+      formData.value.storage_location.rack_id && boxId) {
     const result = await getBoxOccupancy({
-      site_id: siteId,
-      freezer_id: freezerId,
-      rack_id: rackId,
+      site_id: formData.value.site_id,
+      freezer_id: formData.value.storage_location.freezer_id,
+      rack_id: formData.value.storage_location.rack_id,
       box_id: boxId
     });
 
@@ -1000,6 +1151,66 @@ const selectPosition = (row: number, col: number) => {
 };
 
 // Function to load storage data when editing
+// const loadStorageDataForEdit = async (data: BioSpecimen) => {
+//   if (!data.storage_location) return;
+
+//   // First, get the site ID and load freezers
+//   const siteId = data.site_id || data.storage_location.site;
+//   if (siteId) {
+//     formData.value.site_id = siteId;
+//     await getFreezers({ site_id: getSiteIdByName(siteId) });
+//   }
+
+//   // Then load racks for the freezer
+//   if (data.storage_location.freezer) {
+//     formData.value.storage_location.freezer = data.storage_location.freezer;
+//     const freezerId = getFreezerIdByName(data.storage_location.freezer);
+//     if (freezerId) {
+//       await getRacks({ 
+//         site_id: getSiteIdByName(siteId), 
+//         freezer_id: freezerId 
+//       });
+//     }
+//   }
+
+//   // Then load boxes for the rack
+//   if (data.storage_location.rack) {
+//     formData.value.storage_location.rack = data.storage_location.rack;
+//     const rackId = getRackIdByName(data.storage_location.rack);
+//     if (rackId) {
+//       await getBoxes({ 
+//         site_id: getSiteIdByName(siteId),
+//         freezer_id: getFreezerIdByName(data.storage_location.freezer),
+//         rack_id: rackId 
+//       });
+//     }
+//   }
+
+//   // Finally load box occupancy
+//   if (data.storage_location.box) {
+//     formData.value.storage_location.box = data.storage_location.box;
+//     const boxId = getBoxIdByName(data.storage_location.box);
+//     if (boxId) {
+//       const result = await getBoxOccupancy({
+//         site_id: getSiteIdByName(siteId),
+//         freezer_id: getFreezerIdByName(data.storage_location.freezer),
+//         rack_id: getRackIdByName(data.storage_location.rack),
+//         box_id: boxId
+//       });
+
+//       if (result) {
+//         boxOccupancyData.value = result as BoxOccupancy;
+//       }
+//     }
+//   }
+
+//   // Set the position and store original
+//   if (data.storage_location.position) {
+//     formData.value.storage_location.position = data.storage_location.position;
+//     originalEditPosition.value = data.storage_location.position;
+//   }
+// };
+
 const loadStorageDataForEdit = async (data: BioSpecimen) => {
   if (!data.storage_location) return;
 
@@ -1007,29 +1218,36 @@ const loadStorageDataForEdit = async (data: BioSpecimen) => {
   const siteId = data.site_id || data.storage_location.site;
   if (siteId) {
     formData.value.site_id = siteId;
-    await getFreezers({ site_id: getSiteIdByName(siteId) });
+    await getFreezers({ site_id: siteId });
   }
 
   // Then load racks for the freezer
   if (data.storage_location.freezer) {
-    formData.value.storage_location.freezer = data.storage_location.freezer;
-    const freezerId = getFreezerIdByName(data.storage_location.freezer);
-    if (freezerId) {
-      await getRacks({ 
-        site_id: getSiteIdByName(siteId), 
-        freezer_id: freezerId 
-      });
+    const freezerId = data.storage_location.freezer;
+    formData.value.storage_location.freezer_id = freezerId;
+    
+    // Find freezer name
+    const freezer = freezers.value?.find((f: any) => f.freezer_id === freezerId);
+    formData.value.storage_location.freezer_name = freezer?.freezer_name || '';
+    
+    if (freezerId && siteId) {
+      await getRacks({ site_id: siteId, freezer_id: freezerId });
     }
   }
 
   // Then load boxes for the rack
   if (data.storage_location.rack) {
-    formData.value.storage_location.rack = data.storage_location.rack;
-    const rackId = getRackIdByName(data.storage_location.rack);
-    if (rackId) {
+    const rackId = data.storage_location.rack;
+    formData.value.storage_location.rack_id = rackId;
+    
+    // Find rack name
+    const rack = racks.value?.find((r: any) => r.rack_id === rackId);
+    formData.value.storage_location.rack_name = rack?.rack_name || '';
+    
+    if (rackId && formData.value.storage_location.freezer_id && siteId) {
       await getBoxes({ 
-        site_id: getSiteIdByName(siteId),
-        freezer_id: getFreezerIdByName(data.storage_location.freezer),
+        site_id: siteId,
+        freezer_id: formData.value.storage_location.freezer_id,
         rack_id: rackId 
       });
     }
@@ -1037,13 +1255,19 @@ const loadStorageDataForEdit = async (data: BioSpecimen) => {
 
   // Finally load box occupancy
   if (data.storage_location.box) {
-    formData.value.storage_location.box = data.storage_location.box;
-    const boxId = getBoxIdByName(data.storage_location.box);
-    if (boxId) {
+    const boxId = data.storage_location.box;
+    formData.value.storage_location.box_id = boxId;
+    
+    // Find box name
+    const box = boxes.value?.find((b: any) => b.box_id === boxId);
+    formData.value.storage_location.box_name = box?.box_name || '';
+    
+    if (boxId && formData.value.storage_location.rack_id && 
+        formData.value.storage_location.freezer_id && siteId) {
       const result = await getBoxOccupancy({
-        site_id: getSiteIdByName(siteId),
-        freezer_id: getFreezerIdByName(data.storage_location.freezer),
-        rack_id: getRackIdByName(data.storage_location.rack),
+        site_id: siteId,
+        freezer_id: formData.value.storage_location.freezer_id,
+        rack_id: formData.value.storage_location.rack_id,
         box_id: boxId
       });
 
@@ -1060,10 +1284,105 @@ const loadStorageDataForEdit = async (data: BioSpecimen) => {
   }
 };
 
+// const getCategoryIdByName = (categoryName: string): string => {
+//   const category = categories.value?.find((c: any) =>
+//     (c.cat_name || c.name) === categoryName
+//   );
+//   return category?.cat_id || category?.id || '';
+// };
+
+const getSiteIdByName = (siteName: string): string => {
+  const site = sites.value?.find((s: any) =>
+    (s.site_name || s.name) === siteName
+  );
+  return site?.site_id || site?.id || '';
+};
+
+const getFreezerIdByName = (freezerName: string): string => {
+  const freezer = freezers.value?.find((f: any) =>
+    (f.freezer_name || f.name) === freezerName
+  );
+  return freezer?.freezer_id || freezer?.id || '';
+};
+
+const getRackIdByName = (rackName: string): string => {
+  const rack = racks.value?.find((r: any) =>
+    (r.rack_name || r.name) === rackName
+  );
+  return rack?.rack_id || rack?.id || '';
+};
+
+const getBoxIdByName = (boxName: string): string => {
+  const box = boxes.value?.find((b: any) =>
+    (b.box_name || b.name) === boxName
+  );
+  return box?.box_id || box?.id || '';
+};
+
+// const populateFormWithEditData = async (data: BioSpecimen) => {
+//   formData.value = {
+//     site_id: data.site_id || '',
+//     sample_category_id: data.sample_category_id || '',
+//     sample_serial_no: data.sample_serial_no || '',
+//     sample_label: data.sample_label || '',
+//     collection_date: data.collection_date || '',
+//     collection_time: data.collection_time || '',
+//     researcher_info: data.researcher_info || '',
+//     field_collector_info: data.field_collector_info || '',
+//     storage_location: {
+//       site: data.storage_location?.site || data.site_id || '',
+//       freezer: data.storage_location?.freezer || '',
+//       rack: data.storage_location?.rack || '',
+//       box: data.storage_location?.box || '',
+//       position: data.storage_location?.position || 0
+//     },
+//     free_fields: {
+//       diagnosis: data.free_fields?.diagnosis || '',
+//       treatmentStatus: data.free_fields?.treatmentStatus || '',
+//       outcomes: data.free_fields?.outcomes || '',
+//       dateOfBirth: data.free_fields?.dateOfBirth || '',
+//       age: data.free_fields?.age || '',
+//       sex: data.free_fields?.sex || '',
+//       ethnicity: data.free_fields?.ethnicity || '',
+//       nationality: data.free_fields?.nationality || '',
+//       history: data.free_fields?.history || '',
+//       riskFactors: data.free_fields?.riskFactors || '',
+//       geolocation: {
+//         country: data.free_fields?.geolocation?.country || '',
+//         state: data.free_fields?.geolocation?.state || '',
+//         lga: data.free_fields?.geolocation?.lga || '',
+//         city: data.free_fields?.geolocation?.city || '',
+//         address: data.free_fields?.geolocation?.address || ''
+//       }
+//     }
+//   };
+
+//   // Update dependent dropdowns for geolocation
+//   if (formData.value.free_fields.geolocation.country === 'Nigeria') {
+//     stateList.value = nigerianStates;
+//   }
+//   if (formData.value.free_fields.geolocation.state === 'Lagos') {
+//     lgaList.value = lagosLGAs;
+//   }
+
+//   // Load storage location data in sequence
+//   await loadStorageDataForEdit(data);
+// };
+
 const populateFormWithEditData = async (data: BioSpecimen) => {
+  // Find and set the site name from site_id
+  const site = sites.value?.find((s: any) => s.site_id === data.site_id);
+  const siteName = site?.site_name || '';
+
+  // Find and set the category name from category_id
+  const category = categories.value?.find((c: any) => c.cat_id === data.sample_category_id);
+  const categoryName = category?.cat_name || '';
+
   formData.value = {
     site_id: data.site_id || '',
+    site_name: siteName,
     sample_category_id: data.sample_category_id || '',
+    sample_category_name: categoryName,
     sample_serial_no: data.sample_serial_no || '',
     sample_label: data.sample_label || '',
     collection_date: data.collection_date || '',
@@ -1072,9 +1391,16 @@ const populateFormWithEditData = async (data: BioSpecimen) => {
     field_collector_info: data.field_collector_info || '',
     storage_location: {
       site: data.storage_location?.site || data.site_id || '',
+      site_id: data.site_id || '',
       freezer: data.storage_location?.freezer || '',
+      freezer_id: data.storage_location?.freezer || '',
+      freezer_name: '', // Will be set when freezers load
       rack: data.storage_location?.rack || '',
+      rack_id: data.storage_location?.rack || '',
+      rack_name: '', // Will be set when racks load
       box: data.storage_location?.box || '',
+      box_id: data.storage_location?.box || '',
+      box_name: '', // Will be set when boxes load
       position: data.storage_location?.position || 0
     },
     free_fields: {
@@ -1295,10 +1621,90 @@ const openPreview = (file: any) => {
   }
 };
 
+// const validateStep = (step: number): boolean => {
+//   if (step === 1) {
+//     if (!formData.value.sample_serial_no ||
+//       !formData.value.sample_category_id ||
+//       !formData.value.sample_label ||
+//       !formData.value.collection_date ||
+//       !formData.value.collection_time ||
+//       !formData.value.researcher_info ||
+//       !formData.value.field_collector_info) {
+//       showToast({
+//         title: "Warning",
+//         message: 'Please fill in all required fields',
+//         toastType: "warning",
+//         duration: 3000,
+//       })
+//       return false;
+//     }
+//   } else if (step === 2) {
+//     if (!formData.value.site_id ||
+//       !formData.value.storage_location.freezer ||
+//       !formData.value.storage_location.rack ||
+//       !formData.value.storage_location.box ||
+//       !formData.value.storage_location.position) {
+//       showToast({
+//         title: "Warning",
+//         message: 'Please complete all storage location fields and select a position',
+//         toastType: "warning",
+//         duration: 3000,
+//       })
+//       return false;
+//     }
+//   } else if (step === 3) {
+//     // Validate that at least one field from each section is filled
+//     const hasClinicalData = formData.value.free_fields.diagnosis || 
+//                            formData.value.free_fields.treatmentStatus || 
+//                            formData.value.free_fields.outcomes;
+    
+//     const hasDemographicData = formData.value.free_fields.dateOfBirth || 
+//                               formData.value.free_fields.sex || 
+//                               formData.value.free_fields.ethnicity || 
+//                               formData.value.free_fields.nationality;
+    
+//     const hasEpidemiologicalData = formData.value.free_fields.history || 
+//                                   formData.value.free_fields.riskFactors ||
+//                                   formData.value.free_fields.geolocation.country;
+
+//     if (!hasClinicalData) {
+//       showToast({
+//         title: "Warning",
+//         message: 'Please fill in at least one Clinical Data field (Diagnosis, Treatment Status, or Outcomes)',
+//         toastType: "warning",
+//         duration: 3000,
+//       })
+//       return false;
+//     }
+
+//     if (!hasDemographicData) {
+//       showToast({
+//         title: "Warning",
+//         message: 'Please fill in at least one Demographic Data field (Date of Birth, Gender, Ethnicity, or Nationality)',
+//         toastType: "warning",
+//         duration: 3000,
+//       })
+//       return false;
+//     }
+
+//     if (!hasEpidemiologicalData) {
+//       showToast({
+//         title: "Warning",
+//         message: 'Please fill in at least one Epidemiological Data field (History, Risk Factors, or Geolocation)',
+//         toastType: "warning",
+//         duration: 3000,
+//       })
+//       return false;
+//     }
+//   }
+//   // Step 4 (file upload) is optional - no validation needed
+//   return true;
+// };
+
 const validateStep = (step: number): boolean => {
   if (step === 1) {
     if (!formData.value.sample_serial_no ||
-      !formData.value.sample_category_id ||
+      !formData.value.sample_category_name ||
       !formData.value.sample_label ||
       !formData.value.collection_date ||
       !formData.value.collection_time ||
@@ -1313,10 +1719,10 @@ const validateStep = (step: number): boolean => {
       return false;
     }
   } else if (step === 2) {
-    if (!formData.value.site_id ||
-      !formData.value.storage_location.freezer ||
-      !formData.value.storage_location.rack ||
-      !formData.value.storage_location.box ||
+    if (!formData.value.site_name ||
+      !formData.value.storage_location.freezer_name ||
+      !formData.value.storage_location.rack_name ||
+      !formData.value.storage_location.box_name ||
       !formData.value.storage_location.position) {
       showToast({
         title: "Warning",
@@ -1327,7 +1733,6 @@ const validateStep = (step: number): boolean => {
       return false;
     }
   } else if (step === 3) {
-    // Validate that at least one field from each section is filled
     const hasClinicalData = formData.value.free_fields.diagnosis || 
                            formData.value.free_fields.treatmentStatus || 
                            formData.value.free_fields.outcomes;
@@ -1371,7 +1776,6 @@ const validateStep = (step: number): boolean => {
       return false;
     }
   }
-  // Step 4 (file upload) is optional - no validation needed
   return true;
 };
 
@@ -1392,7 +1796,9 @@ const previousStep = () => {
 const resetForm = () => {
   formData.value = {
     site_id: '',
+    site_name: '',
     sample_category_id: '',
+    sample_category_name: '',
     sample_serial_no: '',
     sample_label: '',
     collection_date: '',
@@ -1401,9 +1807,16 @@ const resetForm = () => {
     field_collector_info: '',
     storage_location: {
       site: '',
+      site_id: '',
       freezer: '',
+      freezer_id: '',
+      freezer_name: '',
       rack: '',
+      rack_id: '',
+      rack_name: '',
       box: '',
+      box_id: '',
+      box_name: '',
       position: 0
     },
     free_fields: {
@@ -1434,6 +1847,51 @@ const resetForm = () => {
   boxOccupancyData.value = null;
   originalEditPosition.value = null;
 };
+// const resetForm = () => {
+//   formData.value = {
+//     site_id: '',
+//     sample_category_id: '',
+//     sample_serial_no: '',
+//     sample_label: '',
+//     collection_date: '',
+//     collection_time: '',
+//     researcher_info: '',
+//     field_collector_info: '',
+//     storage_location: {
+//       site: '',
+//       freezer: '',
+//       rack: '',
+//       box: '',
+//       position: 0
+//     },
+//     free_fields: {
+//       diagnosis: '',
+//       treatmentStatus: '',
+//       outcomes: '',
+//       dateOfBirth: '',
+//       age: '',
+//       sex: '',
+//       ethnicity: '',
+//       nationality: '',
+//       history: '',
+//       riskFactors: '',
+//       geolocation: {
+//         country: '',
+//         state: '',
+//         lga: '',
+//         city: '',
+//         address: ''
+//       }
+//     }
+//   };
+//   uploadedFiles.value = [];
+//   uploadMethod.value = 'file';
+//   imageUrl.value = '';
+//   stateList.value = [];
+//   lgaList.value = [];
+//   boxOccupancyData.value = null;
+//   originalEditPosition.value = null;
+// };
 
 const close = () => {
   if (!loading.value) {
@@ -1448,9 +1906,9 @@ const save = async () => {
     return;
   }
 
-  formData.value.storage_location.site = formData.value.site_id;
+  // Get the category ID from the selected name
+  const categoryId = getCategoryIdByName(formData.value.sample_category_name);
   
-  // Convert 12-hour format time to 24-hour format (HH:mm:ss)
   const convertTo24Hour = (time12h: string | null) => {
     if (!time12h) return null;
     
@@ -1470,7 +1928,7 @@ const save = async () => {
   
   const payload = {
     site_id: formData.value.site_id,
-    sample_category_id: formData.value.sample_category_id,
+    sample_category_id: categoryId,
     sample_serial_no: formData.value.sample_serial_no,
     sample_label: formData.value.sample_label,
     collection_date: formData.value.collection_date,
@@ -1478,10 +1936,10 @@ const save = async () => {
     researcher_info: formData.value.researcher_info,
     field_collector_info: formData.value.field_collector_info,
     storage_location: {
-      site: formData.value.storage_location.site,
-      freezer: formData.value.storage_location.freezer,
-      rack: formData.value.storage_location.rack,
-      box: formData.value.storage_location.box,
+      site: formData.value.site_id,
+      freezer: formData.value.storage_location.freezer_id,
+      rack: formData.value.storage_location.rack_id,
+      box: formData.value.storage_location.box_id,
       position: formData.value.storage_location.position
     },
     free_fields: formData.value.free_fields,
@@ -1519,6 +1977,83 @@ const save = async () => {
     emit('update:modelValue', false);
   }
 };
+
+// const save = async () => {
+//   if (!validateStep(currentStep.value)) {
+//     return;
+//   }
+
+//   formData.value.storage_location.site = formData.value.site_id;
+  
+//   // Convert 12-hour format time to 24-hour format (HH:mm:ss)
+//   const convertTo24Hour = (time12h: string | null) => {
+//     if (!time12h) return null;
+    
+//     const [time, modifier] = time12h.split(' ');
+//     let [hours, minutes] = time.split(':');
+    
+//     if (hours === '12') {
+//       hours = '00';
+//     }
+    
+//     if (modifier === 'PM') {
+//       hours = (parseInt(hours, 10) + 12).toString();
+//     }
+    
+//     return `${hours.toString().padStart(2, '0')}:${minutes}:00`;
+//   };
+  
+//   const payload = {
+//     site_id: formData.value.site_id,
+//     sample_category_id: formData.value.sample_category_id,
+//     sample_serial_no: formData.value.sample_serial_no,
+//     sample_label: formData.value.sample_label,
+//     collection_date: formData.value.collection_date,
+//     collection_time: convertTo24Hour(formData.value.collection_time),
+//     researcher_info: formData.value.researcher_info,
+//     field_collector_info: formData.value.field_collector_info,
+//     storage_location: {
+//       site: formData.value.storage_location.site,
+//       freezer: formData.value.storage_location.freezer,
+//       rack: formData.value.storage_location.rack,
+//       box: formData.value.storage_location.box,
+//       position: formData.value.storage_location.position
+//     },
+//     free_fields: formData.value.free_fields,
+//     files: uploadedFiles.value.map(f => ({
+//       name: f.name,
+//       size: f.size,
+//       type: f.type,
+//       data: f.file,
+//       url: f.url,
+//       isUrl: f.isUrl
+//     })),
+//     ...(isEditMode.value && props.editData?.uuid ? { uuid: props.editData.uuid } : {})
+//   };
+
+//   if(isEditMode.value) {
+//     updating.value = true;
+//     const result = await updateSample(props?.editData?.uuid, payload);
+//     updating.value = false;
+
+//     if (result) {
+//       emit('saved', { ...result, isEdit: true });
+//       currentStep.value = 1;
+//       resetForm();
+//       emit('update:modelValue', false);
+//     }
+//     return;
+//   }
+
+//   const result = await registerSample(payload);a
+  
+//   if (result) {
+//     emit('saved', { ...result, isEdit: isEditMode.value });
+//     currentStep.value = 1;
+//     resetForm();
+//     emit('update:modelValue', false);
+//   }
+// };
 </script>
 
 <style scoped>

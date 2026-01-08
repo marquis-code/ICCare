@@ -1460,6 +1460,27 @@ const checkUtilization = async () => {
   }
 }
 
+// Helper functions to get IDs from names
+const getSiteIdByName = (siteName: string): string => {
+  const site = sites.value?.find((s: any) => s.site_name === siteName)
+  return site?.site_id || ''
+}
+
+const getFreezerIdByName = (freezerName: string): string => {
+  const freezer = freezers.value?.find((f: any) => f.freezer_name === freezerName)
+  return freezer?.freezer_id || ''
+}
+
+const getRackIdByName = (rackName: string): string => {
+  const rack = racks.value?.find((r: any) => r.rack_name === rackName)
+  return rack?.rack_id || ''
+}
+
+const getBoxIdByName = (boxName: string): string => {
+  const box = boxes.value?.find((b: any) => b.box_name === boxName)
+  return box?.box_id || ''
+}
+
 
 // Pagination
 const {
@@ -1527,17 +1548,44 @@ const showRejectModal = ref(false)
 const selectedItem = ref<BioSpecimen | null>(null)
 const rejectionReason = ref('')
 
+// const movementForm = ref({
+//   sample_uuid: '',
+//   source_site: '',
+//   source_freezer: '',
+//   source_rack: '',
+//   source_box: '',
+//   source_position: '',
+//   destination_site: '',
+//   destination_freezer: '',
+//   destination_rack: '',
+//   destination_box: '',
+//   destination_position: '',
+//   movement_type: 'transfer',
+//   reservation_time: '',
+//   start_date_time: '',
+//   end_date_time: '',
+//   request_by: currentUser.value
+// }) as any
+
 const movementForm = ref({
   sample_uuid: '',
   source_site: '',
+  source_site_id: '',
   source_freezer: '',
+  source_freezer_id: '',
   source_rack: '',
+  source_rack_id: '',
   source_box: '',
+  source_box_id: '',
   source_position: '',
   destination_site: '',
+  destination_site_id: '',
   destination_freezer: '',
+  destination_freezer_id: '',
   destination_rack: '',
+  destination_rack_id: '',
   destination_box: '',
+  destination_box_id: '',
   destination_position: '',
   movement_type: 'transfer',
   reservation_time: '',
@@ -1554,49 +1602,198 @@ const disposalForm = ref({
 }) as any
 
 // Sample selection handler
-const onSampleSelect = (sample: any) => {
+// const onSampleSelect = (sample: any) => {
+//   if (sample && sample.storage_location) {
+//     movementForm.value.source_site = sample.storage_location.site || ''
+//     movementForm.value.source_freezer = sample.storage_location.freezer || ''
+//     movementForm.value.source_rack = sample.storage_location.rack || ''
+//     movementForm.value.source_box = sample.storage_location.box || ''
+//     movementForm.value.source_position = sample.storage_location.position || ''
+//   }
+// }
+
+// const onSampleSelect = (sample: any) => {
+//   if (sample && sample.storage_location) {
+//     // Store both names and IDs for source location
+//     movementForm.value.source_site = sample.storage_location.site || ''
+//     movementForm.value.source_site_id = getSiteIdByName(sample.storage_location.site || '')
+//     movementForm.value.source_freezer = sample.storage_location.freezer || ''
+//     movementForm.value.source_freezer_id = getFreezerIdByName(sample.storage_location.freezer || '')
+//     movementForm.value.source_rack = sample.storage_location.rack || ''
+//     movementForm.value.source_rack_id = getRackIdByName(sample.storage_location.rack || '')
+//     movementForm.value.source_box = sample.storage_location.box || ''
+//     movementForm.value.source_box_id = getBoxIdByName(sample.storage_location.box || '')
+//     movementForm.value.source_position = sample.storage_location.position || ''
+//   }
+// }
+
+const onSampleSelect = async (sample: any) => {
+  console.log('Selected sample:', sample) // Debug log to see the structure
+  
   if (sample && sample.storage_location) {
-    movementForm.value.source_site = sample.storage_location.site || ''
-    movementForm.value.source_freezer = sample.storage_location.freezer || ''
-    movementForm.value.source_rack = sample.storage_location.rack || ''
-    movementForm.value.source_box = sample.storage_location.box || ''
-    movementForm.value.source_position = sample.storage_location.position || ''
+    // The storage_location contains IDs, not names
+    // Store the IDs directly
+    const sourceLocation = sample.storage_location
+    
+    movementForm.value.source_site_id = sourceLocation.site || ''
+    movementForm.value.source_freezer_id = sourceLocation.freezer || ''
+    movementForm.value.source_rack_id = sourceLocation.rack || ''
+    movementForm.value.source_box_id = sourceLocation.box || ''
+    movementForm.value.source_position = sourceLocation.position || ''
+    
+    // Now find the display names from the IDs
+    const site = sites.value?.find((s: any) => s.site_id === sourceLocation.site)
+    const freezer = freezers.value?.find((f: any) => f.freezer_id === sourceLocation.freezer)
+    const rack = racks.value?.find((r: any) => r.rack_id === sourceLocation.rack)
+    const box = boxes.value?.find((b: any) => b.box_id === sourceLocation.box)
+    
+    movementForm.value.source_site = site?.site_name || sourceLocation.site || ''
+    movementForm.value.source_freezer = freezer?.freezer_name || sourceLocation.freezer || ''
+    movementForm.value.source_rack = rack?.rack_name || sourceLocation.rack || ''
+    movementForm.value.source_box = box?.box_name || sourceLocation.box || ''
+    
+    // Load the necessary data if not already loaded
+    if (sourceLocation.site && !freezers.value?.some((f: any) => f.site_id === sourceLocation.site)) {
+      await getFreezers({ site_id: sourceLocation.site })
+    }
+    if (sourceLocation.freezer && !racks.value?.some((r: any) => r.freezer_id === sourceLocation.freezer)) {
+      const selectedFreezer = freezers.value?.find((f: any) => f.freezer_id === sourceLocation.freezer)
+      if (selectedFreezer) {
+        await getRacks({ site_id: selectedFreezer.site_id, freezer_id: sourceLocation.freezer })
+      }
+    }
+    if (sourceLocation.rack && !boxes.value?.some((b: any) => b.rack_id === sourceLocation.rack)) {
+      const selectedRack = racks.value?.find((r: any) => r.rack_id === sourceLocation.rack)
+      if (selectedRack) {
+        await getBoxes({ 
+          site_id: selectedRack.site_id, 
+          freezer_id: selectedRack.freezer_id, 
+          rack_id: sourceLocation.rack 
+        })
+      }
+    }
   }
 }
 
 // Destination location handlers
-const onDestinationSiteChange = async () => {
-    console.log('Destination site changed to:', movementForm.value, sites.value)
-  const selectedSite = sites.value?.find((site: any) => site.site_name === movementForm.value.destination_site)
-  console.log('Selected site:', selectedSite)
-  if (selectedSite) {
-    await getFreezers({site_id: selectedSite.site_id})
+// const onDestinationSiteChange = async () => {
+//     console.log('Destination site changed to:', movementForm.value, sites.value)
+//   const selectedSite = sites.value?.find((site: any) => site.site_name === movementForm.value.destination_site)
+//   console.log('Selected site:', selectedSite)
+//   if (selectedSite) {
+//     await getFreezers({site_id: selectedSite.site_id})
+//   }
+//   movementForm.value.destination_freezer = ''
+//   movementForm.value.destination_rack = ''
+//   movementForm.value.destination_box = ''
+//   movementForm.value.destination_position = ''
+// }
+
+
+// const onDestinationFreezerChange = async () => {
+//   const selectedFreezer = freezers.value?.find((f: any) => f.freezer_name === movementForm.value.destination_freezer)
+//   if (selectedFreezer) {
+//     await getRacks({site_id: selectedFreezer.site_id, freezer_id: selectedFreezer.freezer_id})
+//   }
+//   movementForm.value.destination_rack = ''
+//   movementForm.value.destination_box = ''
+//   movementForm.value.destination_position = ''
+// }
+
+// const onDestinationRackChange = async () => {
+//   const selectedRack = racks.value?.find((r: any) => r.rack_name === movementForm.value.destination_rack)
+//   if (selectedRack) {
+//     await getBoxes({site_id: selectedRack.site_id, freezer_id: selectedRack.freezer_id, rack_id: selectedRack.rack_id})
+//   }
+//   movementForm.value.destination_box = ''
+//   movementForm.value.destination_position = ''
+// }
+
+
+// const onDestinationBoxChange = async (boxName: string) => {
+//   movementForm.value.destination_position = ''
+//   boxOccupancyData.value = null
+
+//   if (!boxName) return
+
+//   // Find the selected box to get its ID
+//   const selectedBox = boxes.value?.find((b: any) => b.box_name === boxName)
+//   if (!selectedBox) return
+
+//   const selectedSite = sites.value?.find((s: any) => s.site_name === movementForm.value.destination_site)
+//   const selectedFreezer = freezers.value?.find((f: any) => f.freezer_name === movementForm.value.destination_freezer)
+//   const selectedRack = racks.value?.find((r: any) => r.rack_name === movementForm.value.destination_rack)
+
+//   if (selectedSite && selectedFreezer && selectedRack && selectedBox) {
+//     const result = await getBoxOccupancy({
+//       site_id: selectedSite.site_id,
+//       freezer_id: selectedFreezer.freezer_id,
+//       rack_id: selectedRack.rack_id,
+//       box_id: selectedBox.box_id
+//     })
+
+//     if (result) {
+//       boxOccupancyData.value = result
+//     }
+//   }
+// }
+
+const onDestinationSiteChange = async (siteName: string) => {
+  const siteId = getSiteIdByName(siteName)
+  movementForm.value.destination_site_id = siteId
+  
+  if (siteId) {
+    await getFreezers({ site_id: siteId })
   }
+  
   movementForm.value.destination_freezer = ''
+  movementForm.value.destination_freezer_id = ''
   movementForm.value.destination_rack = ''
+  movementForm.value.destination_rack_id = ''
   movementForm.value.destination_box = ''
+  movementForm.value.destination_box_id = ''
   movementForm.value.destination_position = ''
+  boxOccupancyData.value = null
 }
 
-const onDestinationFreezerChange = async () => {
-  const selectedFreezer = freezers.value?.find((f: any) => f.freezer_name === movementForm.value.destination_freezer)
-  if (selectedFreezer) {
-    await getRacks({site_id: selectedFreezer.site_id, freezer_id: selectedFreezer.freezer_id})
+const onDestinationFreezerChange = async (freezerName: string) => {
+  const freezerId = getFreezerIdByName(freezerName)
+  movementForm.value.destination_freezer_id = freezerId
+  
+  if (movementForm.value.destination_site_id && freezerId) {
+    await getRacks({ 
+      site_id: movementForm.value.destination_site_id, 
+      freezer_id: freezerId 
+    })
   }
+  
   movementForm.value.destination_rack = ''
+  movementForm.value.destination_rack_id = ''
   movementForm.value.destination_box = ''
+  movementForm.value.destination_box_id = ''
   movementForm.value.destination_position = ''
+  boxOccupancyData.value = null
 }
 
-const onDestinationRackChange = async () => {
-  const selectedRack = racks.value?.find((r: any) => r.rack_name === movementForm.value.destination_rack)
-  if (selectedRack) {
-    await getBoxes({site_id: selectedRack.site_id, freezer_id: selectedRack.freezer_id, rack_id: selectedRack.rack_id})
+const onDestinationRackChange = async (rackName: string) => {
+  const rackId = getRackIdByName(rackName)
+  movementForm.value.destination_rack_id = rackId
+  
+  if (movementForm.value.destination_site_id && 
+      movementForm.value.destination_freezer_id && 
+      rackId) {
+    await getBoxes({ 
+      site_id: movementForm.value.destination_site_id, 
+      freezer_id: movementForm.value.destination_freezer_id, 
+      rack_id: rackId 
+    })
   }
+  
   movementForm.value.destination_box = ''
+  movementForm.value.destination_box_id = ''
   movementForm.value.destination_position = ''
+  boxOccupancyData.value = null
 }
-
 
 const onDestinationBoxChange = async (boxName: string) => {
   movementForm.value.destination_position = ''
@@ -1604,20 +1801,18 @@ const onDestinationBoxChange = async (boxName: string) => {
 
   if (!boxName) return
 
-  // Find the selected box to get its ID
-  const selectedBox = boxes.value?.find((b: any) => b.box_name === boxName)
-  if (!selectedBox) return
+  const boxId = getBoxIdByName(boxName)
+  movementForm.value.destination_box_id = boxId
 
-  const selectedSite = sites.value?.find((s: any) => s.site_name === movementForm.value.destination_site)
-  const selectedFreezer = freezers.value?.find((f: any) => f.freezer_name === movementForm.value.destination_freezer)
-  const selectedRack = racks.value?.find((r: any) => r.rack_name === movementForm.value.destination_rack)
-
-  if (selectedSite && selectedFreezer && selectedRack && selectedBox) {
+  if (movementForm.value.destination_site_id && 
+      movementForm.value.destination_freezer_id && 
+      movementForm.value.destination_rack_id && 
+      boxId) {
     const result = await getBoxOccupancy({
-      site_id: selectedSite.site_id,
-      freezer_id: selectedFreezer.freezer_id,
-      rack_id: selectedRack.rack_id,
-      box_id: selectedBox.box_id
+      site_id: movementForm.value.destination_site_id,
+      freezer_id: movementForm.value.destination_freezer_id,
+      rack_id: movementForm.value.destination_rack_id,
+      box_id: boxId
     })
 
     if (result) {
@@ -1731,19 +1926,49 @@ const openRequestMovementModal = () => {
   movementForm.value.request_by = currentUser.value
 }
 
+// const closeRequestMovementModal = () => {
+//   showRequestMovementModal.value = false
+//   movementForm.value = {
+//     sample_uuid: '',
+//     source_site: '',
+//     source_freezer: '',
+//     source_rack: '',
+//     source_box: '',
+//     source_position: '',
+//     destination_site: '',
+//     destination_freezer: '',
+//     destination_rack: '',
+//     destination_box: '',
+//     destination_position: '',
+//     movement_type: 'transfer',
+//     reservation_time: '',
+//     start_date_time: '',
+//     end_date_time: '',
+//     request_by: currentUser.value
+//   }
+// }
+
 const closeRequestMovementModal = () => {
   showRequestMovementModal.value = false
   movementForm.value = {
     sample_uuid: '',
     source_site: '',
+    source_site_id: '',
     source_freezer: '',
+    source_freezer_id: '',
     source_rack: '',
+    source_rack_id: '',
     source_box: '',
+    source_box_id: '',
     source_position: '',
     destination_site: '',
+    destination_site_id: '',
     destination_freezer: '',
+    destination_freezer_id: '',
     destination_rack: '',
+    destination_rack_id: '',
     destination_box: '',
+    destination_box_id: '',
     destination_position: '',
     movement_type: 'transfer',
     reservation_time: '',
@@ -1751,6 +1976,7 @@ const closeRequestMovementModal = () => {
     end_date_time: '',
     request_by: currentUser.value
   }
+  boxOccupancyData.value = null
 }
 
 const openRequestDisposalModal = () => {
@@ -1862,17 +2088,17 @@ const submitMovementRequest = async () => {
   const payload = {
     sample_uuid: movementForm.value.sample_uuid.uuid,
     source_attributes: {
-      site: movementForm.value.source_site,
-      freezer: movementForm.value.source_freezer,
-      rack: movementForm.value.source_rack,
-      box: movementForm.value.source_box,
+      site: movementForm.value.source_site_id,
+      freezer: movementForm.value.source_freezer_id,
+      rack: movementForm.value.source_rack_id,
+      box: movementForm.value.source_box_id,
       position: parseInt(movementForm.value.source_position)
     },
     destination_attributes: {
-      site: movementForm.value.destination_site,
-      freezer: movementForm.value.destination_freezer,
-      rack: movementForm.value.destination_rack,
-      box: movementForm.value.destination_box,
+      site: movementForm.value.destination_site_id,
+      freezer: movementForm.value.destination_freezer_id,
+      rack: movementForm.value.destination_rack_id,
+      box: movementForm.value.destination_box_id,
       position: parseInt(movementForm.value.destination_position)
     },
     request_type: movementForm.value.movement_type,
@@ -1883,6 +2109,8 @@ const submitMovementRequest = async () => {
     request_by: user.value?.user_id
   }
 
+  console.log('Movement request payload:', payload) // Debug log
+
   const result = await trackSample(payload)
   if (result) {
     await Promise.all([
@@ -1892,6 +2120,98 @@ const submitMovementRequest = async () => {
     closeRequestMovementModal()
   }
 }
+
+// const submitMovementRequest = async () => {
+//   const toISOString = (dateValue: any) => {
+//     if (!dateValue) return null
+//     if (dateValue instanceof Date) {
+//       return dateValue.toISOString()
+//     }
+//     return new Date(dateValue).toISOString()
+//   }
+
+//   const payload = {
+//     sample_uuid: movementForm.value.sample_uuid.uuid,
+//     source_attributes: {
+//       site: movementForm.value.source_site,
+//       freezer: movementForm.value.source_freezer,
+//       rack: movementForm.value.source_rack,
+//       box: movementForm.value.source_box,
+//       position: parseInt(movementForm.value.source_position)
+//     },
+//     destination_attributes: {
+//       site: movementForm.value.destination_site,
+//       freezer: movementForm.value.destination_freezer,
+//       rack: movementForm.value.destination_rack,
+//       box: movementForm.value.destination_box,
+//       position: parseInt(movementForm.value.destination_position)
+//     },
+//     request_type: movementForm.value.movement_type,
+//     approved_by: [user.value?.user_id],
+//     reservation_time: toISOString(movementForm.value.reservation_time),
+//     start_date_time: toISOString(movementForm.value.start_date_time),
+//     end_date_time: toISOString(movementForm.value.end_date_time),
+//     request_by: user.value?.user_id
+//   }
+
+//   const result = await trackSample(payload)
+//   if (result) {
+//     await Promise.all([
+//       getPendingTrackingRequests(),
+//       getCompletedTrackingRequests()
+//     ])
+//     closeRequestMovementModal()
+//   }
+// }
+
+// const submitMovementRequest = async () => {
+//   const toISOString = (dateValue: any) => {
+//     if (!dateValue) return null
+//     if (dateValue instanceof Date) {
+//       return dateValue.toISOString()
+//     }
+//     return new Date(dateValue).toISOString()
+//   }
+
+//   // Get IDs for source location (in case they're not already set)
+//   const sourceSiteId = getSiteIdByName(movementForm.value.source_site)
+//   const sourceFreezerId = getFreezerIdByName(movementForm.value.source_freezer)
+//   const sourceRackId = getRackIdByName(movementForm.value.source_rack)
+//   const sourceBoxId = getBoxIdByName(movementForm.value.source_box)
+
+//   const payload = {
+//     sample_uuid: movementForm.value.sample_uuid.uuid,
+//     source_attributes: {
+//       site: sourceSiteId,
+//       freezer: sourceFreezerId,
+//       rack: sourceRackId,
+//       box: sourceBoxId,
+//       position: parseInt(movementForm.value.source_position)
+//     },
+//     destination_attributes: {
+//       site: movementForm.value.destination_site_id,
+//       freezer: movementForm.value.destination_freezer_id,
+//       rack: movementForm.value.destination_rack_id,
+//       box: movementForm.value.destination_box_id,
+//       position: parseInt(movementForm.value.destination_position)
+//     },
+//     request_type: movementForm.value.movement_type,
+//     approved_by: [user.value?.user_id],
+//     reservation_time: toISOString(movementForm.value.reservation_time),
+//     start_date_time: toISOString(movementForm.value.start_date_time),
+//     end_date_time: toISOString(movementForm.value.end_date_time),
+//     request_by: user.value?.user_id
+//   }
+
+//   const result = await trackSample(payload)
+//   if (result) {
+//     await Promise.all([
+//       getPendingTrackingRequests(),
+//       getCompletedTrackingRequests()
+//     ])
+//     closeRequestMovementModal()
+//   }
+// }
 
 const submitDisposalRequest = async () => {
   const payload = {
