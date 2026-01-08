@@ -4,7 +4,7 @@
       <div v-if="modelValue" class="fixed inset-0  flex items-center justify-center z-[9999] bg-black/50 bg-black/50 backdrop-blur-lg p-2 sm:p-4"
         @click.self="close">
         <div
-          class="bg-white rounded-xl w-full max-w-2xl shadow-2xl transform transition-all flex flex-col max-h-[95vh] sm:max-h-[90vh]">
+          class="bg-white rounded-xl w-full max-w-3xl shadow-2xl transform transition-all flex flex-col max-h-[95vh] sm:max-h-[90vh]">
           <!-- Fixed Header -->
           <div class="flex-shrink-0 p-4 sm:p-6 border-b border-gray-200">
             <div class="flex items-center justify-between">
@@ -617,7 +617,12 @@ import { useGetFreezers } from "@/composables/modules/freezer/useGetFreezers"
 import { useGetRacks } from "@/composables/modules/racks/useGetRacks"
 import { useGetTemplates } from "@/composables/modules/template/useGetTemplates"
 import { useGetBoxOccupancy } from "@/composables/modules/box/useGetBoxOccupancy"
+import { useUpdateSample } from "@/composables/modules/biosample/useUpdateSample"
+import { ref, computed, watch, onMounted } from "vue"
 import { useCustomToast } from "@/composables/core/useCustomToast"
+
+const { loading: updating,
+    updateSample } = useUpdateSample()
 
 interface StorageLocation {
   site: string;
@@ -1490,6 +1495,20 @@ const save = async () => {
     })),
     ...(isEditMode.value && props.editData?.uuid ? { uuid: props.editData.uuid } : {})
   };
+
+  if(isEditMode.value) {
+    updating.value = true;
+    const result = await updateSample(props?.editData?.uuid, payload);
+    updating.value = false;
+
+    if (result) {
+      emit('saved', { ...result, isEdit: true });
+      currentStep.value = 1;
+      resetForm();
+      emit('update:modelValue', false);
+    }
+    return;
+  }
 
   const result = await registerSample(payload);
   

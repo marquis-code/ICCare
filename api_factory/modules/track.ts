@@ -1,34 +1,4 @@
-// import { GATEWAY_ENDPOINT } from '../axios.config'
 
-// export const track_api = {
-
-//   // Track biosample movement
-//   $_track_sample: (payload: {
-//     sample_uuid: string
-//     source_attributes: {
-//       site: string
-//       freezer: string
-//       rack: string
-//       box: string
-//       position: number
-//     }
-//     destination_attributes: {
-//       site: string
-//       freezer: string
-//       rack: string
-//       box: string
-//       position: number
-//     }
-//     movement_type: string
-//     reservation_time: string
-//     start_date_time: string
-//     end_date_time: string
-//     request_by: string
-//     approved_by: string[]
-//   }) => {
-//     return GATEWAY_ENDPOINT.post('/biospecimen/samples/track', payload)
-//   }
-// }
 
 import { GATEWAY_ENDPOINT } from '../axios.config'
 

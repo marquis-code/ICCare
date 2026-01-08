@@ -120,7 +120,7 @@
 
 <script setup lang="ts">
 import { useCurrentUser } from "@/composables/modules/auth/useCurrentUser"
-
+       
 const activeTab = ref<'personal' | 'security' | 'settings'>('personal');
 const editMode = ref(false);
 

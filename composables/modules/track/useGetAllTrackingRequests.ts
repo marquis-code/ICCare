@@ -47,6 +47,10 @@ export const useGetAllTrackingRequests = () => {
     }
   }
 
+  onMounted(async() => {
+    await getAllTrackingRequests()
+  })
+
   return {
     loading,
     allRequests,

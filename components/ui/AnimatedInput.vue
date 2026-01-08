@@ -90,30 +90,85 @@
       </button>
       
       <!-- Calendar icon for date input -->
-      <button 
-        v-if="type === 'date'"
-        type="button" 
-        @click="toggleDatePicker" 
-        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#033958] transition-colors z-20"
-        :tabindex="-1"
-      >
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          width="18" 
-          height="18" 
-          viewBox="0 0 24 24" 
-          fill="none" 
-          stroke="currentColor" 
-          stroke-width="2" 
-          stroke-linecap="round" 
-          stroke-linejoin="round"
-        >
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-          <line x1="16" y1="2" x2="16" y2="6"></line>
-          <line x1="8" y1="2" x2="8" y2="6"></line>
-          <line x1="3" y1="10" x2="21" y2="10"></line>
-        </svg>
-      </button>
+   <!-- Calendar icon for date input -->
+<button 
+  v-if="type === 'date'"
+  type="button" 
+  @click.stop.prevent="toggleDatePicker" 
+  @mousedown.stop.prevent
+  class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#033958] transition-colors z-20"
+  :tabindex="-1"
+>
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width="18" 
+    height="18" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    stroke-width="2" 
+    stroke-linecap="round" 
+    stroke-linejoin="round"
+  >
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+    <line x1="16" y1="2" x2="16" y2="6"></line>
+    <line x1="8" y1="2" x2="8" y2="6"></line>
+    <line x1="3" y1="10" x2="21" y2="10"></line>
+  </svg>
+</button>
+
+<!-- Clock icon for time input -->
+<button 
+  v-if="type === 'time'"
+  type="button" 
+  @click.stop.prevent="toggleTimePicker" 
+  @mousedown.stop.prevent
+  class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#033958] transition-colors z-20"
+  :tabindex="-1"
+>
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width="18" 
+    height="18" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    stroke-width="2" 
+    stroke-linecap="round" 
+    stroke-linejoin="round"
+  >
+    <circle cx="12" cy="12" r="10"></circle>
+    <polyline points="12 6 12 12 16 14"></polyline>
+  </svg>
+</button>
+
+<!-- DateTime icon for datetime-local input -->
+<button 
+  v-if="type === 'datetime-local'"
+  type="button" 
+  @click.stop.prevent="toggleDateTimePicker" 
+  @mousedown.stop.prevent
+  class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-[#033958] transition-colors z-20"
+  :tabindex="-1"
+>
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width="18" 
+    height="18" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    stroke-width="2" 
+    stroke-linecap="round" 
+    stroke-linejoin="round"
+  >
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+    <line x1="16" y1="2" x2="16" y2="6"></line>
+    <line x1="8" y1="2" x2="8" y2="6"></line>
+    <line x1="3" y1="10" x2="21" y2="10"></line>
+    <circle cx="12" cy="15" r="2"></circle>
+  </svg>
+</button>
       
       <!-- Clock icon for time input -->
       <button 
@@ -176,20 +231,339 @@
     </div>
     
     <!-- Custom Date Picker -->
-    <Transition name="slide-fade">
-      <div 
-        v-if="showDatePicker && type === 'date'"
-        ref="datePickerRef"
-        class="absolute z-50 mt-2 bg-white rounded-xl shadow-lg border-[0.5px] border-gray-50 p-4 w-80"
+  <!-- Custom Date Picker - REVAMPED -->
+<Transition name="slide-fade">
+  <div 
+    v-if="showDatePicker && type === 'date'"
+    ref="datePickerRef"
+    class="absolute z-50 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 w-[340px]"
+    @mousedown.stop
+    @click.stop
+  >
+    <!-- Date Picker Header -->
+    <div class="flex items-center justify-between mb-6">
+      <button 
+        type="button"
+        @click.stop.prevent="previousMonth" 
+        class="p-2.5 hover:bg-gray-50 rounded-xl transition-all hover:scale-105"
       >
-        <!-- Date Picker Header -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+      
+      <div class="flex items-center gap-3">
+        <div class="relative">
+          <button
+            type="button"
+            @click.stop.prevent="toggleMonthDropdown"
+            class="px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#033958] transition-all flex items-center gap-2"
+          >
+            {{ months[currentMonth] }}
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="{ 'rotate-180': showMonthDropdown }">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div v-if="showMonthDropdown" class="absolute top-full mt-2 left-0 bg-white border border-gray-100 rounded-xl shadow-xl z-50 max-h-64 overflow-y-auto w-40">
+            <button
+              v-for="(month, idx) in months"
+              :key="idx"
+              type="button"
+              @click.stop.prevent="selectMonth(idx)"
+              class="w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 transition-colors font-medium"
+              :class="{ 'bg-[#033958] text-white hover:bg-[#033958]': idx === currentMonth }"
+            >
+              {{ month }}
+            </button>
+          </div>
+        </div>
+        
+        <div class="relative">
+          <button
+            type="button"
+            @click.stop.prevent="toggleYearDropdown"
+            class="px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#033958] transition-all flex items-center gap-2"
+          >
+            {{ currentYear }}
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="{ 'rotate-180': showYearDropdown }">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div v-if="showYearDropdown" class="absolute top-full mt-2 right-0 bg-white border border-gray-100 rounded-xl shadow-xl z-50 max-h-64 overflow-y-auto w-28">
+            <button
+              v-for="year in yearRange"
+              :key="year"
+              type="button"
+              @click.stop.prevent="selectYear(year)"
+              class="w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 transition-colors font-medium"
+              :class="{ 'bg-[#033958] text-white hover:bg-[#033958]': year === currentYear }"
+            >
+              {{ year }}
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <button 
+        type="button"
+        @click.stop.prevent="nextMonth" 
+        class="p-2.5 hover:bg-gray-50 rounded-xl transition-all hover:scale-105"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </div>
+    
+    <!-- Week Days -->
+    <div class="grid grid-cols-7 gap-2 mb-3">
+      <div 
+        v-for="day in weekDays" 
+        :key="day" 
+        class="text-center text-xs font-bold text-gray-400 py-2"
+      >
+        {{ day }}
+      </div>
+    </div>
+    
+    <!-- Calendar Days -->
+    <div class="grid grid-cols-7 gap-2 mb-4">
+      <button
+        v-for="(day, idx) in calendarDays"
+        :key="idx"
+        type="button"
+        :disabled="!day.isCurrentMonth"
+        :class="[
+          'p-3 text-sm font-medium rounded-xl transition-all duration-200',
+          day.isCurrentMonth ? 'hover:bg-gray-50 hover:scale-105' : 'text-gray-300 cursor-not-allowed opacity-30',
+          day.isToday && !day.isSelected ? 'border-2 border-[#033958] text-[#033958] font-bold' : '',
+          day.isSelected ? 'bg-[#033958] text-white hover:bg-[#022f42] shadow-lg scale-105' : '',
+        ]"
+        @click.stop.prevent="selectDate(day)"
+      >
+        {{ day.date }}
+      </button>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="pt-4 border-t-2 border-gray-100 flex justify-between items-center">
+      <button 
+        type="button"
+        @click.stop.prevent="selectToday" 
+        class="text-sm text-[#033958] hover:text-[#022f42] font-bold transition-colors px-4 py-2 hover:bg-gray-50 rounded-lg"
+      >
+        Today
+      </button>
+      <button 
+        type="button"
+        @click.stop.prevent="clearDate" 
+        class="text-sm text-gray-500 hover:text-gray-700 font-semibold transition-colors px-4 py-2 hover:bg-gray-50 rounded-lg"
+      >
+        Clear
+      </button>
+    </div>
+  </div>
+</Transition>
+    
+    <!-- Custom Time Picker -->
+<!-- Custom Time Picker -->
+<!-- Custom Time Picker - REVAMPED -->
+<Transition name="slide-fade">
+  <div 
+    v-if="showTimePicker && type === 'time'"
+    ref="timePickerRef"
+    class="absolute z-50 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 w-80"
+    @mousedown.stop
+    @click.stop
+  >
+    <div class="text-center mb-6">
+      <h3 class="text-lg font-bold text-gray-800">Select Time</h3>
+    </div>
+    
+    <!-- Time Display with Inline Controls -->
+    <div class="flex items-center justify-center gap-4 mb-6 bg-gray-25 rounded-2xl p-6">
+      <!-- Hour Section -->
+      <div class="flex flex-col items-center">
+        <button
+          type="button"
+          @click.stop.prevent="incrementHour"
+          @mousedown.stop.prevent
+          class="p-2 hover:bg-white rounded-xl transition-all mb-2 hover:shadow-md"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+          </svg>
+        </button>
+        <input
+          type="text"
+          v-model="selectedHour"
+          @blur="validateHour"
+          @focus="$event.target.select()"
+          @keydown.up.prevent="incrementHour"
+          @keydown.down.prevent="decrementHour"
+          @mousedown.stop
+          @click.stop
+          maxlength="2"
+          class="w-16 text-center text-4xl font-bold border border-gray-50 rounded-2xl py-3 focus:outline-none focus:ring-2 focus:ring-[#033958] focus:border-[#033958] transition-all bg-white"
+        />
+        <button
+          type="button"
+          @click.stop.prevent="decrementHour"
+          @mousedown.stop.prevent
+          class="p-2 hover:bg-white rounded-xl transition-all mt-2 hover:shadow-md"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+      </div>
+      
+      <span class="text-4xl font-bold text-gray-400 mb-6">:</span>
+      
+      <!-- Minute Section -->
+      <div class="flex flex-col items-center">
+        <button
+          type="button"
+          @click.stop.prevent="incrementMinute"
+          @mousedown.stop.prevent
+          class="p-2 hover:bg-white rounded-xl transition-all mb-2 hover:shadow-md"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+          </svg>
+        </button>
+        <input
+          type="text"
+          v-model="selectedMinute"
+          @blur="validateMinute"
+          @focus="$event.target.select()"
+          @keydown.up.prevent="incrementMinute"
+          @keydown.down.prevent="decrementMinute"
+          @mousedown.stop
+          @click.stop
+          maxlength="2"
+          class="w-16 text-center text-4xl font-bold border border-gray-50 rounded-2xl py-3 focus:outline-none focus:ring-2 focus:ring-[#033958] focus:border-[#033958] transition-all bg-white"
+        />
+        <button
+          type="button"
+          @click.stop.prevent="decrementMinute"
+          @mousedown.stop.prevent
+          class="p-2 hover:bg-white rounded-xl transition-all mt-2 hover:shadow-md"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+      </div>
+      
+      <!-- AM/PM Section - FIXED -->
+      <div class="flex flex-col gap-2 ml-2">
+        <button
+          type="button"
+          @click.stop.prevent="setPeriod('AM')"
+          @mousedown.stop.prevent
+          :class="[
+            'px-4 py-2.5 text-sm font-bold rounded-xl transition-all',
+            selectedPeriod === 'AM' 
+              ? 'bg-[#033958] text-white shadow-lg scale-105' 
+              : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-50'
+          ]"
+        >
+          AM
+        </button>
+        <button
+          type="button"
+          @click.stop.prevent="setPeriod('PM')"
+          @mousedown.stop.prevent
+          :class="[
+            'px-4 py-2.5 text-sm font-bold rounded-xl transition-all',
+            selectedPeriod === 'PM' 
+              ? 'bg-[#033958] text-white shadow-lg scale-105' 
+              : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-50'
+          ]"
+        >
+          PM
+        </button>
+      </div>
+    </div>
+    
+    <!-- Quick Time Selections -->
+    <div class="grid grid-cols-3 gap-2 mb-5">
+      <button
+        v-for="quickTime in quickTimes"
+        :key="quickTime.label"
+        type="button"
+        @click.stop.prevent="selectQuickTime(quickTime)"
+        @mousedown.stop.prevent
+        class="px-3 py-2.5 text-xs font-semibold text-gray-600 hover:text-[#033958] hover:bg-gray-50 border border-gray-50 rounded-xl transition-all hover:border-[#033958]"
+      >
+        {{ quickTime.label }}
+      </button>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="pt-5 border-t-2 border-gray-100 flex justify-between items-center">
+      <button 
+        type="button"
+        @click.stop.prevent="setCurrentTime" 
+        @mousedown.stop.prevent
+        class="text-sm text-[#033958] hover:text-[#022f42] font-bold transition-colors px-4 py-2 hover:bg-gray-50 rounded-lg"
+      >
+        Now
+      </button>
+      <div class="flex gap-2">
+        <button 
+          type="button"
+          @click.stop.prevent="clearTime" 
+          @mousedown.stop.prevent
+          class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 font-semibold border border-gray-50 rounded-xl transition-all hover:border-gray-300"
+        >
+          Clear
+        </button>
+        <button 
+          type="button"
+          @click.stop.prevent="confirmTime" 
+          @mousedown.stop.prevent
+          class="px-6 py-2 text-sm text-white bg-[#033958] hover:bg-[#022f42] rounded-xl font-bold transition-all shadow-lg hover:shadow-xl"
+        >
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+</Transition>
+    
+    <!-- Custom DateTime Picker -->
+<!-- Custom DateTime Picker - REVAMPED SIDE-BY-SIDE -->
+<Transition name="slide-fade">
+  <div 
+    v-if="showDateTimePicker && type === 'datetime-local'"
+    ref="dateTimePickerRef"
+    class="absolute z-50 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 w-[680px]"
+    @mousedown.stop
+    @click.stop
+  >
+    <!-- Header -->
+    <div class="text-center mb-6 pb-4 border-b-2 border-gray-100">
+      <h3 class="text-lg font-bold text-gray-800">Select Date & Time</h3>
+    </div>
+    
+    <!-- Side-by-Side Layout -->
+    <div class="flex gap-6">
+      <!-- DATE SECTION (LEFT) -->
+      <div class="flex-1">
+        <div class="text-center mb-4">
+          <p class="text-sm font-bold text-gray-500 uppercase tracking-wide">Date</p>
+        </div>
+        
+        <!-- Month/Year Navigation -->
         <div class="flex items-center justify-between mb-4">
           <button 
             type="button"
-            @click="previousMonth" 
-            class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            @click.stop.prevent="previousMonth" 
+            class="p-2 hover:bg-gray-50 rounded-xl transition-all hover:scale-105"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="15 18 9 12 15 6"></polyline>
             </svg>
           </button>
@@ -198,22 +572,22 @@
             <div class="relative">
               <button
                 type="button"
-                @click="toggleMonthDropdown"
-                class="px-3 py-1 border-[0.5px] border-gray-100 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#033958] hover:bg-gray-50 transition-colors flex items-center gap-1"
+                @click.stop.prevent="toggleMonthDropdown"
+                class="px-3 py-1.5 bg-gray-50 hover:bg-gray-100 rounded-lg text-xs font-bold focus:outline-none focus:ring-2 focus:ring-[#033958] transition-all flex items-center gap-1"
               >
-                {{ months[currentMonth] }}
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                {{ months[currentMonth].slice(0, 3) }}
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="{ 'rotate-180': showMonthDropdown }">
                   <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
               </button>
-              <div v-if="showMonthDropdown" class="absolute top-full mt-1 left-0 bg-white border border-gray-100 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto w-32">
+              <div v-if="showMonthDropdown" class="absolute top-full mt-1 left-0 bg-white border border-gray-100 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto w-32">
                 <button
                   v-for="(month, idx) in months"
                   :key="idx"
                   type="button"
-                  @click="selectMonth(idx)"
-                  class="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 transition-colors"
-                  :class="{ 'bg-gray-100 font-medium': idx === currentMonth }"
+                  @click.stop.prevent="selectMonth(idx)"
+                  class="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 transition-colors font-medium"
+                  :class="{ 'bg-[#033958] text-white hover:bg-[#033958]': idx === currentMonth }"
                 >
                   {{ month }}
                 </button>
@@ -223,22 +597,22 @@
             <div class="relative">
               <button
                 type="button"
-                @click="toggleYearDropdown"
-                class="px-3 py-1 border-[0.5px] border-gray-100 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#033958] hover:bg-gray-50 transition-colors flex items-center gap-1"
+                @click.stop.prevent="toggleYearDropdown"
+                class="px-3 py-1.5 bg-gray-50 hover:bg-gray-100 rounded-lg text-xs font-bold focus:outline-none focus:ring-2 focus:ring-[#033958] transition-all flex items-center gap-1"
               >
                 {{ currentYear }}
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="{ 'rotate-180': showYearDropdown }">
                   <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
               </button>
-              <div v-if="showYearDropdown" class="absolute top-full mt-1 left-0 bg-white border border-gray-100 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto w-24">
+              <div v-if="showYearDropdown" class="absolute top-full mt-1 right-0 bg-white border border-gray-100 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto w-24">
                 <button
                   v-for="year in yearRange"
                   :key="year"
                   type="button"
-                  @click="selectYear(year)"
-                  class="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 transition-colors"
-                  :class="{ 'bg-gray-100 font-medium': year === currentYear }"
+                  @click.stop.prevent="selectYear(year)"
+                  class="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 transition-colors font-medium"
+                  :class="{ 'bg-[#033958] text-white hover:bg-[#033958]': year === currentYear }"
                 >
                   {{ year }}
                 </button>
@@ -248,10 +622,10 @@
           
           <button 
             type="button"
-            @click="nextMonth" 
-            class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            @click.stop.prevent="nextMonth" 
+            class="p-2 hover:bg-gray-50 rounded-xl transition-all hover:scale-105"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="9 18 15 12 9 6"></polyline>
             </svg>
           </button>
@@ -262,7 +636,7 @@
           <div 
             v-for="day in weekDays" 
             :key="day" 
-            class="text-center text-xs font-medium text-gray-500 py-2"
+            class="text-center text-xs font-bold text-gray-400 py-1"
           >
             {{ day }}
           </div>
@@ -276,62 +650,37 @@
             type="button"
             :disabled="!day.isCurrentMonth"
             :class="[
-              'p-2 text-sm rounded-lg transition-all duration-200',
-              day.isCurrentMonth ? 'hover:bg-gray-100' : 'text-gray-300 cursor-not-allowed',
-              day.isToday ? 'border border-[#033958]' : '',
-              day.isSelected ? 'bg-[#033958] text-white hover:bg-[#2d8a1a]' : '',
-              !day.isCurrentMonth ? 'opacity-40' : ''
+              'p-2 text-xs font-medium rounded-lg transition-all duration-200',
+              day.isCurrentMonth ? 'hover:bg-gray-50' : 'text-gray-300 cursor-not-allowed opacity-30',
+              day.isToday && !day.isSelected ? 'border-2 border-[#033958] text-[#033958] font-bold' : '',
+              day.isSelected ? 'bg-[#033958] text-white hover:bg-[#022f42] shadow-md' : '',
             ]"
-            @click="selectDate(day)"
+            @click.stop.prevent="selectDateTimeDate(day)"
           >
             {{ day.date }}
           </button>
         </div>
-        
-        <!-- Quick Actions -->
-        <div class="mt-4 pt-4 border-t-[0.5px] border-gray-50 flex justify-between items-center">
-          <button 
-            type="button"
-            @click="selectToday" 
-            class="text-sm text-[#033958] hover:text-[#2d8a1a] font-medium transition-colors"
-          >
-            Today
-          </button>
-          <button 
-            type="button"
-            @click="clearDate" 
-            class="text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors"
-          >
-            Clear
-          </button>
-        </div>
       </div>
-    </Transition>
-    
-    <!-- Custom Time Picker -->
-<!-- Custom Time Picker -->
-    <Transition name="slide-fade">
-      <div 
-        v-if="showTimePicker && type === 'time'"
-        ref="timePickerRef"
-        class="absolute z-50 mt-2 bg-white rounded-xl shadow-lg border border-gray-200 p-5 w-72"
-        @mousedown.stop
-      >
+      
+      <!-- VERTICAL DIVIDER -->
+      <div class="w-px bg-gray-200"></div>
+      
+      <!-- TIME SECTION (RIGHT) -->
+      <div class="w-64">
         <div class="text-center mb-4">
-          <h3 class="text-sm font-semibold text-gray-800">Select Time</h3>
+          <p class="text-sm font-bold text-gray-500 uppercase tracking-wide">Time</p>
         </div>
         
-        <!-- Time Display with Inline Controls -->
-        <div class="flex items-center justify-center gap-3 mb-5">
-          <!-- Hour Section -->
+        <!-- Time Display -->
+        <div class="flex items-center justify-center gap-3 mb-6 bg-gray-50 rounded-2xl p-4">
           <div class="flex flex-col items-center">
             <button
               type="button"
-              @click="incrementHour"
-              @mousedown.prevent
-              class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors mb-1"
+              @click.stop.prevent="incrementHour"
+              @mousedown.stop.prevent
+              class="p-1.5 hover:bg-white rounded-lg transition-all mb-1"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="18 15 12 9 6 15"></polyline>
               </svg>
             </button>
@@ -343,32 +692,32 @@
               @keydown.up.prevent="incrementHour"
               @keydown.down.prevent="decrementHour"
               @mousedown.stop
+              @click.stop
               maxlength="2"
-              class="w-14 text-center text-3xl font-bold border-2 border-gray-200 rounded-lg py-2 focus:outline-none focus:ring-2 focus:ring-[#033958] focus:border-transparent transition-all"
+              class="w-14 text-center text-3xl font-bold border border-gray-50 rounded-xl py-2 focus:outline-none focus:ring-2 focus:ring-[#033958] focus:border-[#033958] transition-all bg-white"
             />
             <button
               type="button"
-              @click="decrementHour"
-              @mousedown.prevent
-              class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors mt-1"
+              @click.stop.prevent="decrementHour"
+              @mousedown.stop.prevent
+              class="p-1.5 hover:bg-white rounded-lg transition-all mt-1"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="6 9 12 15 18 9"></polyline>
               </svg>
             </button>
           </div>
           
-          <span class="text-3xl font-bold text-gray-400 mb-6">:</span>
+          <span class="text-3xl font-bold text-gray-400 mb-4">:</span>
           
-          <!-- Minute Section -->
           <div class="flex flex-col items-center">
             <button
               type="button"
-              @click="incrementMinute"
-              @mousedown.prevent
-              class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors mb-1"
+              @click.stop.prevent="incrementMinute"
+              @mousedown.stop.prevent
+              class="p-1.5 hover:bg-white rounded-lg transition-all mb-1"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="18 15 12 9 6 15"></polyline>
               </svg>
             </button>
@@ -380,338 +729,100 @@
               @keydown.up.prevent="incrementMinute"
               @keydown.down.prevent="decrementMinute"
               @mousedown.stop
+              @click.stop
               maxlength="2"
-              class="w-14 text-center text-3xl font-bold border-2 border-gray-200 rounded-lg py-2 focus:outline-none focus:ring-2 focus:ring-[#033958] focus:border-transparent transition-all"
+              class="w-14 text-center text-3xl font-bold border border-gray-50 rounded-xl py-2 focus:outline-none focus:ring-2 focus:ring-[#033958] focus:border-[#033958] transition-all bg-white"
             />
             <button
               type="button"
-              @click="decrementMinute"
-              @mousedown.prevent
-              class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors mt-1"
+              @click.stop.prevent="decrementMinute"
+              @mousedown.stop.prevent
+              class="p-1.5 hover:bg-white rounded-lg transition-all mt-1"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="6 9 12 15 18 9"></polyline>
               </svg>
             </button>
           </div>
-          
-          <!-- AM/PM Section -->
-          <div class="flex flex-col gap-1 ml-2">
-            <button
-              type="button"
-              @click="setPeriod('AM')"
-              @mousedown.prevent
-              :class="[
-                'px-3 py-1.5 text-xs font-semibold rounded-md transition-all',
-                selectedPeriod === 'AM' 
-                  ? 'bg-[#033958] text-white' 
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              ]"
-            >
-              AM
-            </button>
-            <button
-              type="button"
-              @click="setPeriod('PM')"
-              @mousedown.prevent
-              :class="[
-                'px-3 py-1.5 text-xs font-semibold rounded-md transition-all',
-                selectedPeriod === 'PM' 
-                  ? 'bg-[#033958] text-white' 
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              ]"
-            >
-              PM
-            </button>
-          </div>
         </div>
         
-        <!-- Quick Time Selections -->
-        <div class="grid grid-cols-3 gap-2 mb-4">
+        <!-- AM/PM Toggle -->
+        <div class="flex gap-2 mb-4">
           <button
-            v-for="quickTime in quickTimes"
+            type="button"
+            @click.stop.prevent="setPeriod('AM')"
+            @mousedown.stop.prevent
+            :class="[
+              'flex-1 px-4 py-3 text-sm font-bold rounded-xl transition-all',
+              selectedPeriod === 'AM' 
+                ? 'bg-[#033958] text-white shadow-lg' 
+                : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+            ]"
+          >
+            AM
+          </button>
+          <button
+            type="button"
+            @click.stop.prevent="setPeriod('PM')"
+            @mousedown.stop.prevent
+            :class="[
+              'flex-1 px-4 py-3 text-sm font-bold rounded-xl transition-all',
+              selectedPeriod === 'PM' 
+                ? 'bg-[#033958] text-white shadow-lg' 
+                : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+            ]"
+          >
+            PM
+          </button>
+        </div>
+        
+        <!-- Quick Times -->
+        <div class="grid grid-cols-2 gap-2">
+          <button
+            v-for="quickTime in quickTimes.slice(0, 6)"
             :key="quickTime.label"
             type="button"
-            @click="selectQuickTime(quickTime)"
-            @mousedown.prevent
-            class="px-3 py-2 text-xs font-medium text-gray-600 hover:text-[#033958] hover:bg-gray-50 border border-gray-200 rounded-lg transition-all"
+            @click.stop.prevent="selectQuickTime(quickTime)"
+            @mousedown.stop.prevent
+            class="px-2 py-2 text-xs font-semibold text-gray-600 hover:text-[#033958] hover:bg-gray-50 border border-gray-200 rounded-lg transition-all hover:border-[#033958]"
           >
             {{ quickTime.label }}
           </button>
         </div>
-        
-        <!-- Action Buttons -->
-        <div class="pt-4 border-t border-gray-200 flex justify-between items-center">
-          <button 
-            type="button"
-            @click="setCurrentTime" 
-            @mousedown.prevent
-            class="text-sm text-[#033958] hover:text-[#2d8a1a] font-semibold transition-colors"
-          >
-            Now
-          </button>
-          <div class="flex gap-2">
-            <button 
-              type="button"
-              @click="clearTime" 
-              @mousedown.prevent
-              class="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-800 font-medium border border-gray-200 rounded-lg transition-colors"
-            >
-              Clear
-            </button>
-            <button 
-              type="button"
-              @click="confirmTime" 
-              @mousedown.prevent
-              class="px-4 py-1.5 text-sm text-white bg-[#033958] hover:bg-[#2d8a1a] rounded-lg font-semibold transition-colors"
-            >
-              OK
-            </button>
-          </div>
-        </div>
       </div>
-    </Transition>
+    </div>
     
-    <!-- Custom DateTime Picker -->
-    <Transition name="slide-fade">
-      <div 
-        v-if="showDateTimePicker && type === 'datetime-local'"
-        ref="dateTimePickerRef"
-        class="absolute z-50 mt-2 bg-white rounded-xl shadow-lg border-[0.5px] border-gray-50 p-4 w-80"
+    <!-- Action Buttons -->
+    <div class="pt-6 mt-6 border-t-2 border-gray-100 flex justify-between items-center">
+      <button 
+        type="button"
+        @click.stop.prevent="selectNow" 
+        @mousedown.stop.prevent
+        class="text-sm text-[#033958] hover:text-[#022f42] font-bold transition-colors px-4 py-2 hover:bg-gray-50 rounded-lg"
       >
-        <!-- DateTime Picker Header -->
-        <div class="text-center mb-4 pb-3 border-b border-gray-100">
-          <h3 class="text-sm font-semibold text-gray-800">Select Date & Time</h3>
-        </div>
-        
-        <!-- Month/Year Navigation -->
-        <div class="flex items-center justify-between mb-4">
-          <button 
-            type="button"
-            @click="previousMonth" 
-            class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-          </button>
-          
-          <div class="flex items-center gap-2">
-            <div class="relative">
-              <button
-                type="button"
-                @click="toggleMonthDropdown"
-                class="px-3 py-1 border-[0.5px] border-gray-100 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#033958] hover:bg-gray-50 transition-colors flex items-center gap-1"
-              >
-                {{ months[currentMonth] }}
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-              </button>
-              <div v-if="showMonthDropdown" class="absolute top-full mt-1 left-0 bg-white border border-gray-100 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto w-32">
-                <button
-                  v-for="(month, idx) in months"
-                  :key="idx"
-                  type="button"
-                  @click="selectMonth(idx)"
-                  class="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 transition-colors"
-                  :class="{ 'bg-gray-100 font-medium': idx === currentMonth }"
-                >
-                  {{ month }}
-                </button>
-              </div>
-            </div>
-            
-            <div class="relative">
-              <button
-                type="button"
-                @click="toggleYearDropdown"
-                class="px-3 py-1 border-[0.5px] border-gray-100 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#033958] hover:bg-gray-50 transition-colors flex items-center gap-1"
-              >
-                {{ currentYear }}
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-              </button>
-              <div v-if="showYearDropdown" class="absolute top-full mt-1 left-0 bg-white border border-gray-100 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto w-24">
-                <button
-                  v-for="year in yearRange"
-                  :key="year"
-                  type="button"
-                  @click="selectYear(year)"
-                  class="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 transition-colors"
-                  :class="{ 'bg-gray-100 font-medium': year === currentYear }"
-                >
-                  {{ year }}
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          <button 
-            type="button"
-            @click="nextMonth" 
-            class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-          </button>
-        </div>
-        
-        <!-- Week Days -->
-        <div class="grid grid-cols-7 gap-1 mb-2">
-          <div 
-            v-for="day in weekDays" 
-            :key="day" 
-            class="text-center text-xs font-medium text-gray-500 py-2"
-          >
-            {{ day }}
-          </div>
-        </div>
-        
-        <!-- Calendar Days -->
-        <div class="grid grid-cols-7 gap-1 mb-4">
-          <button
-            v-for="(day, idx) in calendarDays"
-            :key="idx"
-            type="button"
-            :disabled="!day.isCurrentMonth"
-            :class="[
-              'p-2 text-sm rounded-lg transition-all duration-200',
-              day.isCurrentMonth ? 'hover:bg-gray-100' : 'text-gray-300 cursor-not-allowed',
-              day.isToday ? 'border border-[#033958]' : '',
-              day.isSelected ? 'bg-[#033958] text-white hover:bg-[#2d8a1a]' : '',
-              !day.isCurrentMonth ? 'opacity-40' : ''
-            ]"
-            @click="selectDateTimeDate(day)"
-          >
-            {{ day.date }}
-          </button>
-        </div>
-        
-        <!-- Time Selection Section -->
-        <div class="pt-4 border-t border-gray-100">
-          <div class="text-center mb-3">
-            <p class="text-xs font-medium text-gray-600">Time</p>
-          </div>
-          
-          <!-- Time Controls -->
-          <div class="flex items-center justify-center gap-2 mb-3">
-            <div class="flex items-baseline gap-1">
-              <input
-                type="text"
-                v-model="selectedHour"
-                @blur="validateHour"
-                @keydown.up.prevent="incrementHour"
-                @keydown.down.prevent="decrementHour"
-                maxlength="2"
-                class="w-10 text-center text-xl font-semibold border-[0.5px] border-gray-200 rounded-lg py-1.5 focus:outline-none focus:ring-1 focus:ring-[#033958] focus:border-[#033958]"
-              />
-              <span class="text-xl font-semibold text-gray-400">:</span>
-              <input
-                type="text"
-                v-model="selectedMinute"
-                @blur="validateMinute"
-                @keydown.up.prevent="incrementMinute"
-                @keydown.down.prevent="decrementMinute"
-                maxlength="2"
-                class="w-10 text-center text-xl font-semibold border-[0.5px] border-gray-200 rounded-lg py-1.5 focus:outline-none focus:ring-1 focus:ring-[#033958] focus:border-[#033958]"
-              />
-            </div>
-            
-            <button
-              type="button"
-              @click="togglePeriod"
-              class="px-3 py-1.5 text-sm font-medium bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-            >
-              {{ selectedPeriod }}
-            </button>
-          </div>
-          
-          <!-- Time Increment/Decrement Buttons -->
-          <div class="flex items-center justify-center gap-2 mb-3">
-            <button
-              type="button"
-              @click="incrementHour"
-              class="p-1 hover:bg-gray-100 rounded transition-colors"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="18 15 12 9 6 15"></polyline>
-              </svg>
-            </button>
-            <button
-              type="button"
-              @click="decrementHour"
-              class="p-1 hover:bg-gray-100 rounded transition-colors"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-            <div class="w-2"></div>
-            <button
-              type="button"
-              @click="incrementMinute"
-              class="p-1 hover:bg-gray-100 rounded transition-colors"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="18 15 12 9 6 15"></polyline>
-              </svg>
-            </button>
-            <button
-              type="button"
-              @click="decrementMinute"
-              class="p-1 hover:bg-gray-100 rounded transition-colors"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-          </div>
-          
-          <!-- Quick Time Selections -->
-          <div class="grid grid-cols-3 gap-2 mb-3">
-            <button
-              v-for="quickTime in quickTimes"
-              :key="quickTime.label"
-              type="button"
-              @click="selectQuickTime(quickTime)"
-              class="px-2 py-1.5 text-xs font-medium text-gray-600 hover:text-[#033958] hover:bg-gray-50 rounded-lg transition-all"
-            >
-              {{ quickTime.label }}
-            </button>
-          </div>
-        </div>
-        
-        <!-- Action Buttons -->
-        <div class="pt-4 border-t-[0.5px] border-gray-50 flex justify-between items-center">
-          <button 
-            type="button"
-            @click="selectNow" 
-            class="text-sm text-[#033958] hover:text-[#2d8a1a] font-medium transition-colors"
-          >
-            Now
-          </button>
-          <div class="flex gap-2">
-            <button 
-              type="button"
-              @click="clearDateTime" 
-              class="text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors"
-            >
-              Clear
-            </button>
-            <button 
-              type="button"
-              @click="confirmDateTime" 
-              class="px-4 py-1.5 text-sm text-white bg-[#033958] hover:bg-[#2d8a1a] rounded-lg font-medium transition-colors"
-            >
-              Confirm
-            </button>
-          </div>
-        </div>
+        Now
+      </button>
+      <div class="flex gap-3">
+        <button 
+          type="button"
+          @click.stop.prevent="clearDateTime" 
+          @mousedown.stop.prevent
+          class="px-5 py-2.5 text-sm text-gray-600 hover:text-gray-800 font-semibold border border-gray-50 rounded-xl transition-all hover:border-gray-300"
+        >
+          Clear
+        </button>
+        <button 
+          type="button"
+          @click.stop.prevent="confirmDateTime" 
+          @mousedown.stop.prevent
+          class="px-8 py-2.5 text-sm text-white bg-[#033958] hover:bg-[#022f42] rounded-xl font-bold transition-all shadow-lg hover:shadow-xl"
+        >
+          Confirm
+        </button>
       </div>
-    </Transition>
+    </div>
+  </div>
+</Transition>
     
     <!-- Error Message -->
     <Transition name="slide-fade">
@@ -776,6 +887,8 @@ const inputId = useId()
 const datePickerRef = ref<HTMLElement | null>(null)
 const timePickerRef = ref<HTMLElement | null>(null)
 const dateTimePickerRef = ref<HTMLElement | null>(null)
+const selectedDate = ref<Date | null>(null)
+const tempSelectedDate = ref<Date | null>(null) 
 
 // Date picker state
 const currentMonth = ref(new Date().getMonth())
@@ -872,66 +985,148 @@ const calendarDays = computed<CalendarDay[]>(() => {
   
   const days: CalendarDay[] = []
   
+  // Determine selected date based on picker type
+  let compareDate: Date | null = null
+  
+  if (props.type === 'datetime-local') {
+    if (selectedDateForDateTime.value) {
+      compareDate = selectedDateForDateTime.value
+    } else if (props.modelValue) {
+      const parsed = parseDateTimeString(props.modelValue as string)
+      compareDate = parsed?.date || null
+    }
+  } else if (props.type === 'date') {
+    if (selectedDate.value) {
+      compareDate = selectedDate.value
+    } else if (props.modelValue) {
+      compareDate = new Date(props.modelValue as string)
+    }
+  }
+  
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  
   // Previous month days
   for (let i = firstDayOfWeek - 1; i >= 0; i--) {
     const date = prevLastDate - i
+    const fullDate = new Date(year, month - 1, date)
+    fullDate.setHours(0, 0, 0, 0)
+    
     days.push({
       date,
-      fullDate: new Date(year, month - 1, date),
+      fullDate,
       isCurrentMonth: false,
-      isToday: false,
-      isSelected: false
+      isToday: fullDate.getTime() === today.getTime(),
+      isSelected: compareDate ? fullDate.getTime() === compareDate.getTime() : false
     })
   }
   
   // Current month days
-  const today = new Date()
-  let selectedDate: Date | null = null
-  
-  if (props.type === 'datetime-local' && props.modelValue) {
-    selectedDate = parseDateTimeString(props.modelValue as string)?.date || null
-  } else if (props.type === 'date' && props.modelValue) {
-    selectedDate = new Date(props.modelValue as string)
-  } else if (props.type === 'datetime-local' && selectedDateForDateTime.value) {
-    selectedDate = selectedDateForDateTime.value
-  }
-  
   for (let i = 1; i <= lastDate; i++) {
     const fullDate = new Date(year, month, i)
-    const isToday = 
-      today.getDate() === i &&
-      today.getMonth() === month &&
-      today.getFullYear() === year
-    
-    const isSelected = selectedDate
-      ? selectedDate.getDate() === i &&
-        selectedDate.getMonth() === month &&
-        selectedDate.getFullYear() === year
-      : false
+    fullDate.setHours(0, 0, 0, 0)
     
     days.push({
       date: i,
       fullDate,
       isCurrentMonth: true,
-      isToday,
-      isSelected
+      isToday: fullDate.getTime() === today.getTime(),
+      isSelected: compareDate ? fullDate.getTime() === compareDate.getTime() : false
     })
   }
   
   // Next month days
   const remainingDays = 42 - days.length
   for (let i = 1; i <= remainingDays; i++) {
+    const fullDate = new Date(year, month + 1, i)
+    fullDate.setHours(0, 0, 0, 0)
+    
     days.push({
       date: i,
-      fullDate: new Date(year, month + 1, i),
+      fullDate,
       isCurrentMonth: false,
-      isToday: false,
-      isSelected: false
+      isToday: fullDate.getTime() === today.getTime(),
+      isSelected: compareDate ? fullDate.getTime() === compareDate.getTime() : false
     })
   }
   
   return days
 })
+
+// const calendarDays = computed<CalendarDay[]>(() => {
+//   const year = currentYear.value
+//   const month = currentMonth.value
+  
+//   const firstDay = new Date(year, month, 1)
+//   const lastDay = new Date(year, month + 1, 0)
+//   const prevLastDay = new Date(year, month, 0)
+  
+//   const firstDayOfWeek = firstDay.getDay()
+//   const lastDate = lastDay.getDate()
+//   const prevLastDate = prevLastDay.getDate()
+  
+//   const days: CalendarDay[] = []
+  
+//   // Previous month days
+//   for (let i = firstDayOfWeek - 1; i >= 0; i--) {
+//     const date = prevLastDate - i
+//     days.push({
+//       date,
+//       fullDate: new Date(year, month - 1, date),
+//       isCurrentMonth: false,
+//       isToday: false,
+//       isSelected: false
+//     })
+//   }
+  
+//   // Current month days
+//   const today = new Date()
+//   let selectedDate: Date | null = null
+  
+//   if (props.type === 'datetime-local' && props.modelValue) {
+//     selectedDate = parseDateTimeString(props.modelValue as string)?.date || null
+//   } else if (props.type === 'date' && props.modelValue) {
+//     selectedDate = new Date(props.modelValue as string)
+//   } else if (props.type === 'datetime-local' && selectedDateForDateTime.value) {
+//     selectedDate = selectedDateForDateTime.value
+//   }
+  
+//   for (let i = 1; i <= lastDate; i++) {
+//     const fullDate = new Date(year, month, i)
+//     const isToday = 
+//       today.getDate() === i &&
+//       today.getMonth() === month &&
+//       today.getFullYear() === year
+    
+//     const isSelected = selectedDate
+//       ? selectedDate.getDate() === i &&
+//         selectedDate.getMonth() === month &&
+//         selectedDate.getFullYear() === year
+//       : false
+    
+//     days.push({
+//       date: i,
+//       fullDate,
+//       isCurrentMonth: true,
+//       isToday,
+//       isSelected
+//     })
+//   }
+  
+//   // Next month days
+//   const remainingDays = 42 - days.length
+//   for (let i = 1; i <= remainingDays; i++) {
+//     days.push({
+//       date: i,
+//       fullDate: new Date(year, month + 1, i),
+//       isCurrentMonth: false,
+//       isToday: false,
+//       isSelected: false
+//     })
+//   }
+  
+//   return days
+// })
 
 // Methods
 const handleInput = (event: Event) => {
@@ -949,7 +1144,12 @@ const handleBlur = (event: FocusEvent) => {
   emit('blur', event)
 }
 
-const handleInputClick = () => {
+const setPeriod = (period: 'AM' | 'PM') => {
+  selectedPeriod.value = period
+}
+
+const handleInputClick = (e: MouseEvent) => {
+  e.stopPropagation()
   if (props.type === 'date') {
     toggleDatePicker()
   } else if (props.type === 'time') {
@@ -974,24 +1174,98 @@ const toggleYearDropdown = () => {
   showMonthDropdown.value = false
 }
 
+// const selectMonth = (monthIndex: number) => {
+//   currentMonth.value = monthIndex
+//   showMonthDropdown.value = false
+// }
+
 const selectMonth = (monthIndex: number) => {
   currentMonth.value = monthIndex
   showMonthDropdown.value = false
+  
+  // Update selected date to maintain the same day in new month
+  if (props.type === 'datetime-local' && selectedDateForDateTime.value) {
+    const day = selectedDateForDateTime.value.getDate()
+    const newDate = new Date(currentYear.value, monthIndex, day)
+    
+    // If day doesn't exist in new month, use last day of month
+    if (newDate.getMonth() !== monthIndex) {
+      selectedDateForDateTime.value = new Date(currentYear.value, monthIndex + 1, 0)
+    } else {
+      selectedDateForDateTime.value = newDate
+    }
+  } else if (props.type === 'date' && selectedDate.value) {
+    const day = selectedDate.value.getDate()
+    const newDate = new Date(currentYear.value, monthIndex, day)
+    
+    if (newDate.getMonth() !== monthIndex) {
+      selectedDate.value = new Date(currentYear.value, monthIndex + 1, 0)
+    } else {
+      selectedDate.value = newDate
+    }
+  }
 }
+
+// const selectYear = (year: number) => {
+//   currentYear.value = year
+//   showYearDropdown.value = false
+// }
 
 const selectYear = (year: number) => {
   currentYear.value = year
   showYearDropdown.value = false
+  
+  // Update selected date to maintain the same day/month in new year
+  if (props.type === 'datetime-local' && selectedDateForDateTime.value) {
+    const month = selectedDateForDateTime.value.getMonth()
+    const day = selectedDateForDateTime.value.getDate()
+    const newDate = new Date(year, month, day)
+    
+    // Handle leap year edge case
+    if (newDate.getMonth() !== month) {
+      selectedDateForDateTime.value = new Date(year, month + 1, 0)
+    } else {
+      selectedDateForDateTime.value = newDate
+    }
+  } else if (props.type === 'date' && selectedDate.value) {
+    const month = selectedDate.value.getMonth()
+    const day = selectedDate.value.getDate()
+    const newDate = new Date(year, month, day)
+    
+    if (newDate.getMonth() !== month) {
+      selectedDate.value = new Date(year, month + 1, 0)
+    } else {
+      selectedDate.value = newDate
+    }
+  }
 }
 
 // Date Picker Methods
+// const toggleDatePicker = () => {
+//   showDatePicker.value = !showDatePicker.value
+  
+//   if (showDatePicker.value && props.modelValue) {
+//     const date = new Date(props.modelValue as string)
+//     currentMonth.value = date.getMonth()
+//     currentYear.value = date.getFullYear()
+//   }
+// }
+
 const toggleDatePicker = () => {
   showDatePicker.value = !showDatePicker.value
   
-  if (showDatePicker.value && props.modelValue) {
-    const date = new Date(props.modelValue as string)
-    currentMonth.value = date.getMonth()
-    currentYear.value = date.getFullYear()
+  if (showDatePicker.value) {
+    if (props.modelValue) {
+      const date = new Date(props.modelValue as string)
+      selectedDate.value = date
+      currentMonth.value = date.getMonth()
+      currentYear.value = date.getFullYear()
+    } else {
+      selectedDate.value = null
+      const today = new Date()
+      currentMonth.value = today.getMonth()
+      currentYear.value = today.getFullYear()
+    }
   }
 }
 
@@ -1013,12 +1287,29 @@ const nextMonth = () => {
   }
 }
 
-const selectDate = (day: CalendarDay) => {
-  if (!day.isCurrentMonth) return
+// const selectDate = (day: CalendarDay) => {
+//   if (!day.isCurrentMonth) return
   
+//   const dateStr = formatDateForModel(day.fullDate)
+//   emit('update:modelValue', dateStr)
+//   showDatePicker.value = false
+// }
+
+const selectDate = (day: CalendarDay) => {
+  if (!day.isCurrentMonth) {
+    // Allow selecting dates from adjacent months
+    currentMonth.value = day.fullDate.getMonth()
+    currentYear.value = day.fullDate.getFullYear()
+  }
+  
+  selectedDate.value = day.fullDate
   const dateStr = formatDateForModel(day.fullDate)
   emit('update:modelValue', dateStr)
-  showDatePicker.value = false
+  
+  // Small delay before closing to prevent flicker
+  setTimeout(() => {
+    showDatePicker.value = false
+  }, 100)
 }
 
 const selectToday = () => {
@@ -1342,11 +1633,10 @@ defineExpose({
   }
 })
 </script>
-
 <style scoped>
 input:focus,
 textarea:focus {
-  border-color: #3BAB22;
+  border-color: #033958;
 }
 
 .input-container {
@@ -1365,17 +1655,31 @@ textarea:focus {
   z-index: 0;
 }
 
-/* Date/Time picker transitions */
+/* Improved transitions */
 .slide-fade-enter-active {
-  transition: all 0.2s ease-out;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .slide-fade-leave-active {
-  transition: all 0.15s ease-in;
+  transition: all 0.2s cubic-bezier(0.4, 0, 1, 1);
 }
 
 .slide-fade-enter-from {
-  transform: translateY(-10px);
+  transform: translateY(-8px) scale(0.96);
   opacity: 0;
+}
+
+.slide-fade-leave-to {
+  transform: translateY(-4px) scale(0.98);
+  opacity: 0;
+}
+
+/* Smooth dropdown arrow rotation */
+svg {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
 }
 </style>

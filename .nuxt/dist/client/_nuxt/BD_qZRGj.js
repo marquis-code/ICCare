@@ -1,1 +1,0 @@
-import{_ as c,c as o,o as s,a as t,b as n,U as a}from"./Dn5gIYSr.js";const _={},r={class:"min-h-screen bg-background flex flex-col"},l={class:"flex-1"};function d(f,i){const e=a;return s(),o("div",r,[t("main",l,[n(e)])])}const x=c(_,[["render",d]]);export{x as default};

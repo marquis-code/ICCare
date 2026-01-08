@@ -831,13 +831,13 @@
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Reason for Disposal</label>
-                <textarea
+                <UiAnimatedInput
                     v-model="disposalForm.reason_for_disposal"
-                    rows="4"
-                    placeholder="Enter the reason for disposal..."
-                    class="custom-input"
-                ></textarea>
+                   :cols="6"
+                   :rows="6"
+                    type="textarea"
+                    label="Reason for Disposal"
+                />
               </div>
 
               <div class="flex items-center gap-2">
@@ -1898,6 +1898,7 @@ const submitDisposalRequest = async () => {
     sample_uuid: disposalForm.value.sample_uuid.uuid,
     request_by: disposalForm.value.request_by,
     reason_for_disposal: disposalForm.value.reason_for_disposal,
+    approved_by: user.value?.user_id,
     mark_as_disposed: disposalForm.value.mark_as_disposed
   }
 
@@ -1958,7 +1959,7 @@ definePageMeta({
   layout: 'dashboard'
 })
 </script>
-
+<!-- 
 <style scoped>
 .custom-input {
   width: 100%;
@@ -1986,4 +1987,4 @@ definePageMeta({
   background-color: #005B8F;
   border-color: #005B8F;
 }
-</style>
+</style> -->

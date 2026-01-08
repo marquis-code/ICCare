@@ -238,7 +238,7 @@
     <BiospecimenDetailsModal v-model="showDetailsModal" :specimen="selectedSpecimen" />
 
     <!-- Toast -->
-    <Transition name="fade">
+    <!-- <Transition name="fade">
       <div v-if="showToast"
         class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 z-50">
         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -248,7 +248,7 @@
         </svg>
         <span>{{ toastMessage }}</span>
       </div>
-    </Transition>
+    </Transition> -->
   </div>
 </template>
 
