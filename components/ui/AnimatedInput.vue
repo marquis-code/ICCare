@@ -372,16 +372,16 @@
   <div 
     v-if="showTimePicker && type === 'time'"
     ref="timePickerRef"
-    class="absolute z-50 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 w-80"
+    class="absolute z-50 mt-2 bg-white rounded-2xl shadow-2xl border-[0.5px] border-gray-100 p-6 w-80"
     @mousedown.stop
     @click.stop
   >
     <div class="text-center mb-6">
-      <h3 class="text-lg font-bold text-gray-800">Select Time</h3>
+      <h3 class="text-sm font-bold text-gray-800">Select Time</h3>
     </div>
     
     <!-- Time Display with Inline Controls -->
-    <div class="flex items-center justify-center gap-4 mb-6 bg-gray-25 rounded-2xl p-6">
+    <div class="flex items-center justify-center gap-4 mb-6 bg-gray-25 rounded-2xl">
       <!-- Hour Section -->
       <div class="flex flex-col items-center">
         <button
@@ -404,7 +404,7 @@
           @mousedown.stop
           @click.stop
           maxlength="2"
-          class="w-16 text-center text-4xl font-bold border border-gray-50 rounded-2xl py-3 focus:outline-none focus:ring-2 focus:ring-[#033958] focus:border-[#033958] transition-all bg-white"
+          class="w-16 text-center text-xl font-bold border-[0.5px] border-gray-50 rounded-2xl py-3  transition-all bg-white"
         />
         <button
           type="button"
@@ -442,7 +442,7 @@
           @mousedown.stop
           @click.stop
           maxlength="2"
-          class="w-16 text-center text-4xl font-bold border border-gray-50 rounded-2xl py-3 focus:outline-none focus:ring-2 focus:ring-[#033958] focus:border-[#033958] transition-all bg-white"
+          class="w-16 text-center text-xl font-bold border-[0.5px] border-gray-50 rounded-2xl py-3  transition-all bg-white"
         />
         <button
           type="button"
@@ -463,7 +463,7 @@
           @click.stop.prevent="setPeriod('AM')"
           @mousedown.stop.prevent
           :class="[
-            'px-4 py-2.5 text-sm font-bold rounded-xl transition-all',
+            'px-4 py-2.5 text-xs font-bold rounded-xl transition-all',
             selectedPeriod === 'AM' 
               ? 'bg-[#033958] text-white shadow-lg scale-105' 
               : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-50'
@@ -476,7 +476,7 @@
           @click.stop.prevent="setPeriod('PM')"
           @mousedown.stop.prevent
           :class="[
-            'px-4 py-2.5 text-sm font-bold rounded-xl transition-all',
+            'px-4 py-2.5 text-xs font-bold rounded-xl transition-all',
             selectedPeriod === 'PM' 
               ? 'bg-[#033958] text-white shadow-lg scale-105' 
               : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-50'
@@ -488,7 +488,7 @@
     </div>
     
     <!-- Quick Time Selections -->
-    <div class="grid grid-cols-3 gap-2 mb-5">
+    <!-- <div class="grid grid-cols-3 gap-2 mb-5">
       <button
         v-for="quickTime in quickTimes"
         :key="quickTime.label"
@@ -499,15 +499,15 @@
       >
         {{ quickTime.label }}
       </button>
-    </div>
+    </div> -->
     
     <!-- Action Buttons -->
-    <div class="pt-5 border-t-2 border-gray-100 flex justify-between items-center">
+    <div class="pt-5 border-t-[0.5px] border-gray-100 flex justify-between items-center">
       <button 
         type="button"
         @click.stop.prevent="setCurrentTime" 
         @mousedown.stop.prevent
-        class="text-sm text-[#033958] hover:text-[#022f42] font-bold transition-colors px-4 py-2 hover:bg-gray-50 rounded-lg"
+        class="text-xs text-[#033958] hover:text-[#022f42] font-bold transition-colors px-4 py-2 hover:bg-gray-50 rounded-lg"
       >
         Now
       </button>
@@ -516,7 +516,7 @@
           type="button"
           @click.stop.prevent="clearTime" 
           @mousedown.stop.prevent
-          class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 font-semibold border border-gray-50 rounded-xl transition-all hover:border-gray-300"
+          class="px-4 py-2 text-xs text-gray-600 hover:text-gray-800 font-semibold border border-gray-50 rounded-xl transition-all hover:border-gray-300"
         >
           Clear
         </button>
@@ -524,7 +524,7 @@
           type="button"
           @click.stop.prevent="confirmTime" 
           @mousedown.stop.prevent
-          class="px-6 py-2 text-sm text-white bg-[#033958] hover:bg-[#022f42] rounded-xl font-bold transition-all shadow-lg hover:shadow-xl"
+          class="px-6 py-2 text-xs text-white bg-[#033958] hover:bg-[#022f42] rounded-xl font-bold transition-all shadow-lg hover:shadow-xl"
         >
           OK
         </button>

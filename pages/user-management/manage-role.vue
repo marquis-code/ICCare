@@ -5,9 +5,9 @@
       <div class="">
         <!-- Page Header -->
         <div class="flex justify-between items-center rounded-xl bg-[#DCF1FF] text-[#005B8F] px-6 py-4 mb-6">
-          <div class="mb-6 sm:mb-8">
+          <div class="">
             <h1 class="text-xl font-bold bg-[#DCF1FF] text-[#005B8F]">Role Management</h1>
-            <p class="mt-2 text-sm sm:text-base bg-[#DCF1FF] text-[#005B8F]">
+            <p class="mt-2 text-base bg-[#DCF1FF] text-[#005B8F]">
               Define and manage access roles across iCCaREPO sites and modules.
             </p>
           </div>
