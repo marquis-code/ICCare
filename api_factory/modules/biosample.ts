@@ -84,12 +84,12 @@ export const biosample_api = {
 
   // Use or dispose sample
   $_dispose_sample: (payload: {
-    sample_uuids: string
-    request_by: string
-    approved_by: string
+    sample_uuid: string
+    notes: string
+    disposal_method: string
     reason_for_disposal: string
     mark_as_disposed: boolean
   }) => {
-    return GATEWAY_ENDPOINT.post('/biospecimen/samples/dispose', payload)
+    return GATEWAY_ENDPOINT.post('/biospecimen/samples/dispose/request', payload)
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-3 bg-white border-t border-gray-200">
+  <div class="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-3 bg-white border-t-[0.5px] border-gray-50">
     <!-- Left side - Page size selector and info -->
     <div class="flex items-center gap-4">
       <div class="flex items-center gap-2">

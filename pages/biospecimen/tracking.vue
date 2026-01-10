@@ -4,7 +4,10 @@
       <main class="mx-auto container">
         <div class="mb-6 rounded-xl bg-[#DCF1FF] text-[#005B8F] py-4 px-6">
           <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <h1 class="text-xl font-bold bg-[#DCF1FF] text-[#005B8F]">BioSpecimen Tracking</h1>
+           <div>
+             <h1 class="text-xl font-bold bg-[#DCF1FF] text-[#005B8F]">BioSpecimen Tracking</h1>
+            <p class="text-base bg-[#DCF1FF] text-[#005B8F] mt-1">Monitor movement requests, approvals, and disposal workflows</p>
+           </div>
 
             <div class="flex flex-wrap gap-2">
               <button @click="openRequestMovementModal"
@@ -68,102 +71,107 @@
           </div>
 
           <!-- Tab Content -->
-          <div class="overflow-x-auto">
+          <div>
             <!-- Pending Movement Tab -->
             <div v-show="activeTab === 'pending-movement'">
-              <div v-if="loadingPendingTracking" class="flex items-center justify-center py-12">
-                <svg class="animate-spin h-8 w-8 text-[#005B8F]" xmlns="http://www.w3.org/2000/svg" fill="none"
-                     viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                  </path>
-                </svg>
-              </div>
-              <div v-else-if="paginatedPendingMovement.length === 0" class="px-6 py-12 text-center">
-                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                </svg>
-                <p class="mt-2 text-gray-500">No pending movement requests</p>
-              </div>
-              <table v-else class="w-full min-w-max">
-                <thead class="bg-gray-25">
-                <tr>
-                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Sample ID</th>
-                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Source Location</th>
-                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Destination Location</th>
-                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Requested Date</th>
-                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Approved Date</th>
-                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Requested By</th>
-                   <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Description</th>
-                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Action</th>
-                </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-100">
-                <tr v-for="item in paginatedPendingMovement" :key="item.id" class="hover:bg-gray-25">
-                  <td class="px-4 py-4 text-sm text-gray-900">{{ item.sampleId }}</td>
-                  <td class="px-4 py-4 text-sm text-gray-600">
-                    <div class="flex items-center gap-1">
-                      <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd"
-                              d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                              clip-rule="evenodd" />
-                      </svg>
-                      {{ item.sourceLocation }}
-                    </div>
-                  </td>
-                  <td class="px-4 py-4 text-sm text-gray-600">
-                    <div class="flex items-center gap-1">
-                      <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd"
-                              d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                              clip-rule="evenodd" />
-                      </svg>
-                      {{ item.destinationLocation }}
-                    </div>
-                  </td>
-                  <td class="px-4 py-4 text-sm text-gray-600">{{ item.requestedDate }}</td>
-                  <td class="px-4 py-4 text-sm text-gray-600">{{ item.approvedDate }}</td>
-                  <td class="px-4 py-4 text-sm text-gray-600">{{ item.requestedBy }}</td>
-                  <td class="px-4 py-4 text-sm text-gray-600">{{ item.description ?? 'N/a' }}</td>
-                  <!-- <td class="px-4 py-4 text-sm">
-                    <span :class="[
-                      'px-3 py-1 rounded-full text-xs font-medium',
-                      item.completionStatus === 'Confirmed' || item.completionStatus === 'confirmed' ? 'bg-green-100 text-green-700' :
-                        item.completionStatus === 'Moved' || item.completionStatus === 'moved' ? 'bg-blue-100 text-blue-700' :
-                          item.completionStatus === 'Approved' || item.completionStatus === 'approved' ? 'bg-orange-100 text-orange-700' :
-                            item.completionStatus === 'completed' ? 'bg-green-100 text-green-700' :
-                              'bg-gray-100 text-gray-700'
-                    ]">
-                      {{ item.completionStatus }}
-                    </span>
-                  </td> -->
-                  <td class="px-4 py-4 text-sm">
-                    <button @click="openViewDetailsModal(item, 'disposal')"
-                            class="p-2 hover:bg-gray-100 rounded transition">
-                      <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                        <path fill-rule="evenodd"
-                              d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                              clip-rule="evenodd" />
-                      </svg>
-                    </button>
-                  </td>
-                </tr>
-                </tbody>
-              </table>
+                <div v-if="loadingPendingTracking" class="flex items-center justify-center py-12">
+                  <svg class="animate-spin h-8 w-8 text-[#005B8F]" xmlns="http://www.w3.org/2000/svg" fill="none"
+                      viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                  </svg>
+                </div>
+                <div v-else-if="paginatedPendingMovement.length === 0" class="px-6 py-12 text-center">
+                  <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                  </svg>
+                  <p class="mt-2 text-gray-500">No pending movement requests</p>
+                </div>
+                <div v-else>
+                  <div class="overflow-x-auto">
+                <table class="w-full min-w-max">
+                  <thead class="bg-gray-25">
+                  <tr>
+                    <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Sample ID</th>
+                    <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Source Location</th>
+                    <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Destination Location</th>
+                    <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Requested Date</th>
+                    <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Approved Date</th>
+                    <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Requested By</th>
+                    <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Description</th>
+                    <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Action</th>
+                  </tr>
+                  </thead>
+                  <tbody class="bg-white divide-y divide-gray-100">
+                  <tr v-for="item in paginatedPendingMovement" :key="item.id" class="hover:bg-gray-25">
+                    <td class="px-4 py-4 text-sm text-gray-900">{{ item.sampleId }}</td>
+                    <td class="px-4 py-4 text-sm text-gray-600">
+                      <div class="flex items-center gap-1">
+                        <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd"
+                                d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        {{ item.sourceLocation }}
+                      </div>
+                    </td>
+                    <td class="px-4 py-4 text-sm text-gray-600">
+                      <div class="flex items-center gap-1">
+                        <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd"
+                                d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        {{ item.destinationLocation }}
+                      </div>
+                    </td>
+                    <td class="px-4 py-4 text-sm text-gray-600">{{ item.requestedDate }}</td>
+                    <td class="px-4 py-4 text-sm text-gray-600">{{ item.approvedDate }}</td>
+                    <td class="px-4 py-4 text-sm text-gray-600">{{ item.requestedBy }}</td>
+                    <td class="px-4 py-4 text-sm text-gray-600">{{ item.description ?? 'N/a' }}</td>
+                    <!-- <td class="px-4 py-4 text-sm">
+                      <span :class="[
+                        'px-3 py-1 rounded-full text-xs font-medium',
+                        item.completionStatus === 'Confirmed' || item.completionStatus === 'confirmed' ? 'bg-green-100 text-green-700' :
+                          item.completionStatus === 'Moved' || item.completionStatus === 'moved' ? 'bg-blue-100 text-blue-700' :
+                            item.completionStatus === 'Approved' || item.completionStatus === 'approved' ? 'bg-orange-100 text-orange-700' :
+                              item.completionStatus === 'completed' ? 'bg-green-100 text-green-700' :
+                                'bg-gray-100 text-gray-700'
+                      ]">
+                        {{ item.completionStatus }}
+                      </span>
+                    </td> -->
+                    <td class="px-4 py-4 text-sm">
+                      <button @click="openViewDetailsModal(item, 'disposal')"
+                              class="p-2 hover:bg-gray-100 rounded transition">
+                        <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                          <path fill-rule="evenodd"
+                                d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                clip-rule="evenodd" />
+                        </svg>
+                      </button>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+                  </div>
+                </div>
+                <div class="p-4 border-t-[0.5px]">
               <Pagination 
-                v-if="paginatedCompleteDisposal.length > 0"
-                v-model:currentPage="completeDisposalPage" 
-                v-model:pageSize="completeDisposalPageSize"
-                :totalItems="completeDisposalTotal" 
-                :pageSizeOptions="[10, 25, 50, 100]" 
-              />
+                  v-if="paginatedPendingMovement.length > 0"
+                  v-model:currentPage="pendingMovementPage" 
+                  v-model:pageSize="pendingMovementPageSize"
+                  :totalItems="pendingMovementTotal" 
+                  :pageSizeOptions="[10, 25, 50, 100]" 
+                />
+                </div>
             </div>
 
-
-                        <!-- Pending Disposal Tab -->
+            <!-- Pending Disposal Tab -->
             <div v-show="activeTab === 'pending-disposal'">
               <div v-if="loadingPendingDisposal" class="flex items-center justify-center py-12">
                 <svg class="animate-spin h-8 w-8 text-[#005B8F]" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -181,7 +189,9 @@
                 </svg>
                 <p class="mt-2 text-gray-500">No pending disposal requests</p>
               </div>
-              <table v-else class="w-full min-w-max">
+              <div v-else>
+                <div class="overflow-x-auto">
+                                  <table class="w-full min-w-max">
                 <thead class="bg-gray-50">
                 <tr>
                   <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Sample ID
@@ -244,17 +254,21 @@
                 </tr>
                 </tbody>
               </table>
-                              <Pagination 
+                </div>
+              </div>
+              <div class="p-4 border-t-[0.5px]">
+                                              <Pagination 
   v-if="pendingDisposalData.length > 0"
   v-model:currentPage="pendingDisposalPage" 
   v-model:pageSize="pendingDisposalPageSize"
   :totalItems="pendingDisposalTotal" 
   :pageSizeOptions="[10, 25, 50, 100]" 
 />
+              </div>
             </div>
 
             <!-- Complete Movement Tab -->
-            <div v-show="activeTab === 'complete-movement'">
+            <div  v-show="activeTab === 'complete-movement'">
               <div v-if="loadingCompletedTracking" class="flex items-center justify-center py-12">
                 <svg class="animate-spin h-8 w-8 text-[#005B8F]" xmlns="http://www.w3.org/2000/svg" fill="none"
                      viewBox="0 0 24 24">
@@ -271,7 +285,9 @@
                 </svg>
                 <p class="mt-2 text-gray-500">No completed movement requests</p>
               </div>
-              <table v-else class="w-full min-w-max">
+              <div v-else>
+                <div class="overflow-x-auto">
+              <table class="w-full min-w-maxo">
                 <thead class="bg-gray-50">
                 <tr>
                   <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Sample ID
@@ -347,6 +363,9 @@
                 </tr>
                 </tbody>
               </table>
+                </div>
+              </div>
+              <div class="p-4 border-t-[0.5px]">
                               <Pagination 
   v-if="completeMovementData.length > 0"
   v-model:currentPage="completeMovementPage" 
@@ -354,10 +373,11 @@
   :totalItems="completeMovementTotal" 
   :pageSizeOptions="[10, 25, 50, 100]" 
 />
+              </div>
             </div>
 
             <!-- Complete Disposal Tab -->
-            <div v-show="activeTab === 'complete-disposal'">
+            <div  v-show="activeTab === 'complete-disposal'">
               <div v-if="loadingCompletedDisposal" class="flex items-center justify-center py-12">
                 <svg class="animate-spin h-8 w-8 text-[#005B8F]" xmlns="http://www.w3.org/2000/svg" fill="none"
                      viewBox="0 0 24 24">
@@ -374,7 +394,9 @@
                 </svg>
                 <p class="mt-2 text-gray-500">No completed disposal requests</p>
               </div>
-              <table v-else class="w-full min-w-max">
+              <div v-else>
+                <div class="overflow-x-auto">
+                                  <table class="w-full min-w-max">
                 <thead class="bg-gray-50">
                 <tr>
                   <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Sample ID
@@ -450,13 +472,17 @@
                 </tr>
                 </tbody>
               </table>
-                              <Pagination 
+                </div>
+              </div>
+              <div class="p-4 border-t-[0.5px]">
+                <Pagination 
                     v-if="completeDisposalData.length > 0"
                     v-model:currentPage="completeDisposalPage" 
                     v-model:pageSize="completeDisposalPageSize"
                     :totalItems="completeDisposalTotal" 
                     :pageSizeOptions="[10, 25, 50, 100]" 
                   />
+              </div>
             </div>
           </div>
         </div>
@@ -781,106 +807,107 @@
     </Teleport>
 
     <!-- Request Disposal Modal -->
-    <Teleport to="body">
-      <div
-          v-if="showRequestDisposalModal"
-          class="fixed inset-0 bg-black/50 backdrop-blur-lg bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]"
-          @click.self="closeRequestDisposalModal"
-      >
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl">
-          <div class="p-6">
-            <div class="flex items-center gap-2 mb-6">
-              <svg class="w-6 h-6 text-[#005B8F]" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-              </svg>
-              <h2 class="text-xl font-bold text-gray-900">Dispose Biosample</h2>
-            </div>
+   <Teleport to="body">
+  <div
+      v-if="showRequestDisposalModal"
+      class="fixed inset-0 bg-black/50 backdrop-blur-lg bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]"
+      @click.self="closeRequestDisposalModal"
+  >
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl">
+      <div class="p-6">
+        <div class="flex items-center gap-2 mb-6">
+          <svg class="w-6 h-6 text-[#005B8F]" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+          </svg>
+          <h2 class="text-xl font-bold text-gray-900">Dispose Biosample</h2>
+        </div>
 
-            <div class="space-y-4">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <UiSelectInput
-                    :options="samples"
-                    label="Sample UUID"
-                    v-model="disposalForm.sample_uuid"
-                >
-                  <template #default="{ option }">
-                    <div class="flex flex-col">
-                      <span class="font-medium">{{ option.sample_label }}</span>
-                      <span class="text-xs text-gray-500">UUID: {{ option.uuid }}</span>
-                    </div>
-                  </template>
-                  <template #selected-label="{ option }">
-                    {{ option.sample_label }}
-                  </template>
-                </UiSelectInput>
-                <UiAnimatedInput
-                    label="Requested By"
-                    v-model="disposalForm.request_by"
-                    type="text"
-                    :readonly="true"
-                    class="bg-gray-25"
-                />
-              </div>
+        <div class="space-y-4">
+          <div>
+            <UiSelectInput
+                :options="samples"
+                label="Sample UUID"
+                v-model="disposalForm.sample_uuid"
+            >
+              <template #default="{ option }">
+                <div class="flex flex-col">
+                  <span class="font-medium">{{ option.sample_label }}</span>
+                  <span class="text-xs text-gray-500">UUID: {{ option.uuid }}</span>
+                </div>
+              </template>
+              <template #selected-label="{ option }">
+                {{ option.sample_label }}
+              </template>
+            </UiSelectInput>
+          </div>
 
-              <div>
-                <UiAnimatedInput
-                    label="Approved By"
-                    v-model="disposalForm.approved_by"
-                    type="text"
-                />
-              </div>
+          <div>
+            <UiAnimatedInput
+                label="Disposal Method"
+                v-model="disposalForm.disposal_method"
+                type="text"
+            />
+          </div>
 
-              <div>
-                <UiAnimatedInput
-                    v-model="disposalForm.reason_for_disposal"
-                   :cols="6"
-                   :rows="6"
-                    type="textarea"
-                    label="Reason for Disposal"
-                />
-              </div>
+          <div>
+            <UiAnimatedInput
+                v-model="disposalForm.reason_for_disposal"
+                :rows="4"
+                type="textarea"
+                label="Reason for Disposal"
+            />
+          </div>
 
-              <div class="flex items-center gap-2">
-                <input
-                    type="checkbox"
-                    id="mark-disposed"
-                    v-model="disposalForm.mark_as_disposed"
-                    class="custom-checkbox"
-                />
-                <label for="mark-disposed" class="text-sm font-medium text-gray-700">
-                  Mark as Disposed (uncheck to only record usage)
-                </label>
-              </div>
-            </div>
+          <div>
+            <UiAnimatedInput
+                v-model="disposalForm.notes"
+                :rows="4"
+                type="textarea"
+                label="Additional Notes (Optional)"
+            />
+          </div>
 
-            <div class="flex justify-end gap-3 mt-6">
-              <button
-                  @click="closeRequestDisposalModal"
-                  type="button"
-                  :disabled="loading"
-                  class="px-6 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-25 transition disabled:opacity-50"
-              >
-                Cancel
-              </button>
-              <button
-                  @click="submitDisposalRequest"
-                  type="button"
-                  :disabled="loading"
-                  class="px-6 py-2 bg-[#005B8F] text-white rounded hover:bg-[#004a73] transition disabled:opacity-50 flex items-center gap-2"
-              >
-                <span v-if="loading">
-                  <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                </span>
-                <span>{{ loading ? 'Processing...' : (disposalForm.mark_as_disposed ? 'Dispose BioSample' : 'Record Usage') }}</span>
-              </button>
-            </div>
+          <div class="flex items-center gap-2">
+            <input
+                type="checkbox"
+                id="mark-disposed"
+                v-model="disposalForm.mark_as_disposed"
+                class="custom-checkbox w-4 h-4 text-[#005B8F] border-gray-300 rounded focus:ring-[#005B8F]"
+            />
+            <label for="mark-disposed" class="text-sm font-medium text-gray-700">
+              Mark as Disposed (uncheck to only record usage)
+            </label>
           </div>
         </div>
+
+        <div class="flex justify-end gap-3 mt-6">
+          <button
+              @click="closeRequestDisposalModal"
+              type="button"
+              :disabled="loading"
+              class="px-6 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-25 transition disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+              @click="submitDisposalRequest"
+              type="button"
+              :disabled="loading"
+              class="px-6 py-2 bg-[#005B8F] text-white rounded hover:bg-[#004a73] transition disabled:opacity-50 flex items-center gap-2"
+          >
+            <span v-if="loading">
+              <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </span>
+            <span>{{ loading ? 'Processing...' : (disposalForm.mark_as_disposed ? 'Dispose BioSample' : 'Record Usage') }}</span>
+          </button>
+        </div>
       </div>
-    </Teleport>
+    </div>
+  </div>
+</Teleport>
 
     <!-- View Details Modal -->
     <Teleport to="body">
@@ -1596,7 +1623,9 @@ const movementForm = ref({
 
 const disposalForm = ref({
   sample_uuid: '',
-  request_by: currentUser.value,
+  notes: "",
+  disposal_method: "",
+  // request_by: currentUser.value,
   reason_for_disposal: '',
   mark_as_disposed: true
 }) as any
@@ -2216,9 +2245,9 @@ const submitMovementRequest = async () => {
 const submitDisposalRequest = async () => {
   const payload = {
     sample_uuid: disposalForm.value.sample_uuid.uuid,
-    request_by: disposalForm.value.request_by,
+    notes: disposalForm.value.notes,
+    disposal_method: disposalForm.value.disposal_method,
     reason_for_disposal: disposalForm.value.reason_for_disposal,
-    approved_by: user.value?.user_id,
     mark_as_disposed: disposalForm.value.mark_as_disposed
   }
 

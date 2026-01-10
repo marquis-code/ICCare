@@ -4,6 +4,7 @@
             <!-- Header -->
             <div class="mb-8 rounded-xl bg-[#DCF1FF] text-[#005B8F] py-4 px-6">
                 <h1 class="text-xl font-bold bg-[#DCF1FF] text-[#005B8F]">Biospecimen Bulk Upload</h1>
+                <p class="text-base bg-[#DCF1FF] text-[#005B8F] mt-1">Import multiple specimen records efficiently using CSV templates</p>
             </div>
 
             <!-- Stepper -->

@@ -3,7 +3,10 @@
     <div class="">
       <!-- Page Header -->
       <div class="flex flex-col px-6 md:flex-row md:items-center py-6 rounded-xl bg-[#DCF1FF] text-[#005B8F] justify-between gap-4 mb-6">
-        <h1 class="text-xl font-semibold bg-[#DCF1FF] text-[#005B8F]">BioSpecimen Registration</h1>
+       <div>
+         <h1 class="text-xl font-semibold bg-[#DCF1FF] text-[#005B8F]">BioSpecimen Registration</h1>
+        <p class="text-base bg-[#DCF1FF] text-[#005B8F] mt-1">Register, manage, and track all biospecimen records</p>
+       </div>
         <div class="flex gap-2">
           <!-- Download Dropdown -->
           <div class="relative" ref="downloadDropdownRef">
@@ -382,14 +385,63 @@ const closeDownloadMenu = () => {
 // });
 
 // Filter Options - From composables
+// const typeOptions = computed(() => {
+//   if (!categories.value || categories.value.length === 0) return ['All Types'];
+//   return ['All Types', ...categories.value.map((cat: any) => cat.cat_name)];
+// });
+
+// const siteOptions = computed(() => {
+//   if (!sites.value || sites.value.length === 0) return ['All Sites'];
+//   return ['All Sites', ...sites.value.map((site: any) => site.site_name)];
+// });
+
+// REPLACE typeOptions (around line 265)
 const typeOptions = computed(() => {
-  if (!categories.value || categories.value.length === 0) return ['All Types'];
-  return ['All Types', ...categories.value.map((cat: any) => cat.cat_name)];
+  const types = new Set(['All Types']);
+  
+  // Get unique types from actual sample data
+  if (samples.value && samples.value.length > 0) {
+    samples.value.forEach((sample: BioSpecimen) => {
+      if (sample.sample_category_id) {
+        types.add(sample.sample_category_id);
+      }
+    });
+  }
+  
+  return Array.from(types).sort();
 });
 
+// REPLACE siteOptions (around line 270)
 const siteOptions = computed(() => {
-  if (!sites.value || sites.value.length === 0) return ['All Sites'];
-  return ['All Sites', ...sites.value.map((site: any) => site.site_name)];
+  const sites = new Set(['All Sites']);
+  
+  // Get unique sites from actual sample data
+  if (samples.value && samples.value.length > 0) {
+    samples.value.forEach((sample: BioSpecimen) => {
+      if (sample.site_id) {
+        sites.add(sample.site_id);
+      }
+    });
+  }
+  
+  return Array.from(sites).sort();
+});
+
+// ADD THESE WATCHERS after the filteredSpecimens computed property
+watch(filterText, () => {
+  resetPagination();
+});
+
+watch(() => filters.value.type, () => {
+  resetPagination();
+});
+
+watch(() => filters.value.site, () => {
+  resetPagination();
+});
+
+watch(() => filters.value.status, () => {
+  resetPagination();
 });
 
 
@@ -407,37 +459,84 @@ const statusOptions = computed(() => {
 });
 
 // Computed filtered specimens
+// const filteredSpecimens = computed(() => {
+//   if (!samples.value) return [];
+
+//   let filtered = [...samples.value];
+
+//   // Filter by search text
+//   if (filterText.value) {
+//     const search = filterText.value.toLowerCase();
+//     filtered = filtered.filter((s: BioSpecimen) =>
+//       s.sample_serial_no?.toLowerCase().includes(search) ||
+//       s.sample_label?.toLowerCase().includes(search) ||
+//       s.field_collector_info?.toLowerCase().includes(search) ||
+//       s.researcher_info?.toLowerCase().includes(search) ||
+//       s.sample_category_id?.toLowerCase().includes(search) ||
+//       s.site_id?.toLowerCase().includes(search)
+//     );
+//   }
+
+//   // Filter by type
+//   if (filters.value.type && filters.value.type !== 'All Types') {
+//     filtered = filtered.filter((s: BioSpecimen) => s.sample_category_id === filters.value.type);
+//   }
+
+//   // Filter by site
+//   if (filters.value.site && filters.value.site !== 'All Sites') {
+//     filtered = filtered.filter((s: BioSpecimen) => s.site_id === filters.value.site);
+//   }
+
+//   // Filter by status
+//   if (filters.value.status && filters.value.status !== 'All Status') {
+//     filtered = filtered.filter((s: BioSpecimen) => s.status === filters.value.status);
+//   }
+
+//   return filtered;
+// });
+
+// REPLACE THIS ENTIRE SECTION (around line 280-315)
 const filteredSpecimens = computed(() => {
   if (!samples.value) return [];
 
   let filtered = [...samples.value];
 
-  // Filter by search text
-  if (filterText.value) {
-    const search = filterText.value.toLowerCase();
-    filtered = filtered.filter((s: BioSpecimen) =>
-      s.sample_serial_no?.toLowerCase().includes(search) ||
-      s.sample_label?.toLowerCase().includes(search) ||
-      s.field_collector_info?.toLowerCase().includes(search) ||
-      s.researcher_info?.toLowerCase().includes(search) ||
-      s.sample_category_id?.toLowerCase().includes(search) ||
-      s.site_id?.toLowerCase().includes(search)
-    );
+  // Apply text search filter
+  if (filterText.value && filterText.value.trim() !== '') {
+    const search = filterText.value.toLowerCase().trim();
+    filtered = filtered.filter((s: BioSpecimen) => {
+      const serialMatch = s.sample_serial_no?.toLowerCase().includes(search);
+      const labelMatch = s.sample_label?.toLowerCase().includes(search);
+      const collectorMatch = s.field_collector_info?.toLowerCase().includes(search);
+      const researcherMatch = s.researcher_info?.toLowerCase().includes(search);
+      const categoryMatch = s.sample_category_id?.toLowerCase().includes(search);
+      const siteMatch = s.site_id?.toLowerCase().includes(search);
+      const statusMatch = s.status?.toLowerCase().includes(search);
+      
+      return serialMatch || labelMatch || collectorMatch || researcherMatch || 
+             categoryMatch || siteMatch || statusMatch;
+    });
   }
 
-  // Filter by type
+  // Apply type filter - CRITICAL FIX: Match against actual data field
   if (filters.value.type && filters.value.type !== 'All Types') {
-    filtered = filtered.filter((s: BioSpecimen) => s.sample_category_id === filters.value.type);
+    filtered = filtered.filter((s: BioSpecimen) => {
+      return s.sample_category_id === filters.value.type;
+    });
   }
 
-  // Filter by site
+  // Apply site filter - CRITICAL FIX: Match against actual data field
   if (filters.value.site && filters.value.site !== 'All Sites') {
-    filtered = filtered.filter((s: BioSpecimen) => s.site_id === filters.value.site);
+    filtered = filtered.filter((s: BioSpecimen) => {
+      return s.site_id === filters.value.site;
+    });
   }
 
-  // Filter by status
+  // Apply status filter
   if (filters.value.status && filters.value.status !== 'All Status') {
-    filtered = filtered.filter((s: BioSpecimen) => s.status === filters.value.status);
+    filtered = filtered.filter((s: BioSpecimen) => {
+      return s.status === filters.value.status;
+    });
   }
 
   return filtered;

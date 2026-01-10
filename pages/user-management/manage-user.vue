@@ -3,7 +3,10 @@
     <div class="space-y-6">
       <!-- Header -->
       <div class="flex items-center justify-between rounded-xl bg-[#DCF1FF] text-[#005B8F] py-4 px-6 mb-6">
-        <h1 class="text-xl font-semibold bg-[#DCF1FF] text-[#005B8F]">User Management</h1>
+<div>
+          <h1 class="text-xl font-semibold bg-[#DCF1FF] text-[#005B8F]">User Management</h1>
+         <p class="text-base bg-[#DCF1FF] text-[#005B8F] mt-1">Create, manage, and monitor user accounts and permissions</p>
+</div>
         <button @click="openAddUserModal"
                 class="flex items-center gap-2 px-4 py-3 text-[#DCF1FF] bg-[#005B8F] rounded-lg transition-colors">
        <svg width="18" height="16" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg">

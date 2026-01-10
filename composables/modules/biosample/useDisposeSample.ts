@@ -7,9 +7,9 @@ export const useDisposeSample = () => {
   const { showToast } = useCustomToast()
 
   const disposeSample = async (payload: {
-    sample_uuids: string
-    request_by: string
-    approved_by: string
+    sample_uuid: string
+    notes: string
+    disposal_method: string
     reason_for_disposal: string
     mark_as_disposed: boolean
   }) => {

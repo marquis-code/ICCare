@@ -199,9 +199,9 @@
 
                     <div>
                       <UiSelectInput label="Box" :options="boxOptions" position="standalone"
-  v-model="formData.storage_location.box_name"
-  :disabled="loading || fetchingBoxes || !formData.storage_location.rack_name"
-  @update:modelValue="onBoxChange" />
+                          v-model="formData.storage_location.box_name"
+                          :disabled="loading || fetchingBoxes || !formData.storage_location.rack_name"
+                          @update:modelValue="onBoxChange" />
                       <!-- <UiSelectInput label="Box" :options="boxOptions" position="standalone"
                         v-model="formData.storage_location.box"
                         :disabled="loading || fetchingBoxes || !formData.storage_location.rack"
@@ -244,7 +244,32 @@
                     </div>
 
                     <!-- Box Grid -->
-                    <div v-else-if="boxTemplate" class="overflow-x-auto rounded-lg pb-2 sm:pb-4 bg-gray-25 p-2 sm:p-3">
+                     <div v-else-if="boxTemplate" class="overflow-x-auto rounded-lg pb-2 sm:pb-4 bg-gray-25 p-2 sm:p-3">
+  <div class="w-full">
+    <div class="grid gap-1 sm:gap-2 mb-4 sm:mb-6" 
+         :style="{ gridTemplateColumns: `repeat(${boxTemplate.columns}, minmax(0, 1fr))` }">
+      <template v-for="row in boxTemplate.rows" :key="row">
+        <button 
+          v-for="col in boxTemplate.columns" 
+          :key="`${row}-${col}`" 
+          type="button"
+          @click="selectPosition(row, col)" 
+          :class="[
+            'w-full aspect-square text-[10px] sm:text-xs font-semibold rounded-lg border-[0.5px] transition-all duration-200 transform hover:scale-105',
+            formData.storage_location.position === getPositionNumber(row, col)
+              ? 'bg-[#005B8F] text-white border-blue-700 shadow-lg scale-110'
+              : isPositionOccupied(row, col)
+                ? 'bg-gray-300 text-gray-500 border-gray-100 cursor-not-allowed opacity-60'
+                : 'bg-white text-gray-700 border-gray-100 hover:border-blue-400 hover:shadow-md'
+          ]" 
+          :disabled="isPositionOccupied(row, col) || loading">
+          {{ getRowLabel(row) }}{{ col }}
+        </button>
+      </template>
+    </div>
+  </div>
+</div>
+                    <!-- <div v-else-if="boxTemplate" class="overflow-x-auto rounded-lg pb-2 sm:pb-4 bg-gray-25 p-2 sm:p-3">
                       <div class="inline-block min-w-full">
                         <div class="grid gap-1 sm:gap-2 mb-4 sm:mb-6">
                           <div v-for="row in boxTemplate.rows" :key="row" class="flex gap-1 sm:gap-2">
@@ -262,7 +287,7 @@
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </div> -->
 
                     <!-- Box Statistics -->
                     <div v-if="boxOccupancyData?.statistics"
@@ -594,7 +619,7 @@
               </button>
 
               <button v-if="currentStep < 4" type="button" @click="nextStep"
-                class="px-3 py-2 sm:px-4 sm:py-2.5 md:px-6 md:py-3 bg-[#005B8F] text-white rounded-lg transition-all font-medium flex items-center gap-1 sm:gap-2 shadow-lg hover:shadow-xl text-xs sm:text-sm"
+                class="px-3 py-2 sm:px-4 sm:py-2.5 md:px-6 md:py-3 bg-[#005B8F] text-white rounded-lg transition-all font-medium flex items-center gap-1 sm:gap-2 shadow-lg text-xs sm:text-sm"
                 :disabled="loading">
                 <span>Next</span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
@@ -604,7 +629,7 @@
                 </svg>
               </button>
               <button v-else type="button" @click="save"
-                class="px-3 py-2 sm:px-4 sm:py-2.5 md:px-6 md:py-3 bg-[#005B8F] text-white rounded-lg transition-all font-medium flex items-center gap-1 sm:gap-2 shadow-lg hover:shadow-xl text-xs sm:text-sm"
+                class="px-3 py-2 sm:px-4 sm:py-2.5 md:px-6 md:py-3 bg-[#005B8F] text-white rounded-lg transition-all font-medium flex items-center gap-1 sm:gap-2 shadow-lg text-xs sm:text-sm"
                 :disabled="loading">
                 <Icon v-if="!loading" name="heroicons:check" class="w-4 h-4 sm:w-5 sm:h-5" />
                 <svg v-else class="animate-spin h-4 w-4 sm:h-5 sm:w-5 text-white" xmlns="http://www.w3.org/2000/svg"
@@ -1116,16 +1141,31 @@ const getRowLabel = (rowIndex: number): string => {
   return String.fromCharCode(64 + rowIndex); // 1=A, 2=B, etc.
 };
 
+// const getPositionNumber = (row: number, col: number): number => {
+//   return (row - 1) * (boxTemplate.value?.columns || 10) + col;
+// };
+
 const getPositionNumber = (row: number, col: number): number => {
-  return (row - 1) * (boxTemplate.value?.columns || 10) + col;
+  return (row - 1) * (boxTemplate.value?.columns || 10) + col - 1;
 };
 
+// const getPositionLabel = (position: number): string => {
+//   if (!position || !boxTemplate.value) return 'Select Position';
+
+//   const cols = boxTemplate.value.columns;
+//   const row = Math.floor((position - 1) / cols) + 1;
+//   const col = ((position - 1) % cols) + 1;
+
+//   return `${getRowLabel(row)}${col}`;
+// };
+
 const getPositionLabel = (position: number): string => {
-  if (!position || !boxTemplate.value) return 'Select Position';
+  if (position === null || position === undefined || !boxTemplate.value) return 'Select Position';
 
   const cols = boxTemplate.value.columns;
-  const row = Math.floor((position - 1) / cols) + 1;
-  const col = ((position - 1) % cols) + 1;
+  // position is already zero-based (0, 1, 2...), so use it directly
+  const row = Math.floor(position / cols) + 1;
+  const col = (position % cols) + 1;
 
   return `${getRowLabel(row)}${col}`;
 };
@@ -1141,9 +1181,24 @@ const isPositionOccupied = (row: number, col: number): boolean => {
   }
 
   // Check if position is in the occupancy array with value 1 (occupied)
-  const positionIndex = position - 1;
-  return boxOccupancyData.value.occupancy[positionIndex] === 1;
+  // position is already zero-based, so use it directly as the array index
+  return boxOccupancyData.value.occupancy[position] === 1;
 };
+
+// const isPositionOccupied = (row: number, col: number): boolean => {
+//   if (!boxOccupancyData.value) return false;
+
+//   const position = getPositionNumber(row, col);
+
+//   // If we're editing and this is the current/original position, it should not be marked as occupied
+//   if (isEditMode.value && originalEditPosition.value === position) {
+//     return false;
+//   }
+
+//   // Check if position is in the occupancy array with value 1 (occupied)
+//   const positionIndex = position - 1;
+//   return boxOccupancyData.value.occupancy[positionIndex] === 1;
+// };
 
 const selectPosition = (row: number, col: number) => {
   if (isPositionOccupied(row, col)) return;
@@ -1719,19 +1774,34 @@ const validateStep = (step: number): boolean => {
       return false;
     }
   } else if (step === 2) {
+
     if (!formData.value.site_name ||
-      !formData.value.storage_location.freezer_name ||
-      !formData.value.storage_location.rack_name ||
-      !formData.value.storage_location.box_name ||
-      !formData.value.storage_location.position) {
-      showToast({
-        title: "Warning",
-        message: 'Please complete all storage location fields and select a position',
-        toastType: "warning",
-        duration: 3000,
-      })
-      return false;
-    }
+    !formData.value.storage_location.freezer_name ||
+    !formData.value.storage_location.rack_name ||
+    !formData.value.storage_location.box_name ||
+    formData.value.storage_location.position === null ||
+    formData.value.storage_location.position === undefined) {  // ✅ Explicitly check for null/undefined
+    showToast({
+      title: "Warning",
+      message: 'Please complete all storage location fields and select a position',
+      toastType: "warning",
+      duration: 3000,
+    })
+    return false;
+  }
+    // if (!formData.value.site_name ||
+    //   !formData.value.storage_location.freezer_name ||
+    //   !formData.value.storage_location.rack_name ||
+    //   !formData.value.storage_location.box_name ||
+    //   !formData.value.storage_location.position) {
+    //   showToast({
+    //     title: "Warning",
+    //     message: 'Please complete all storage location fields and select a position',
+    //     toastType: "warning",
+    //     duration: 3000,
+    //   })
+    //   return false;
+    // }
   } else if (step === 3) {
     const hasClinicalData = formData.value.free_fields.diagnosis || 
                            formData.value.free_fields.treatmentStatus || 
