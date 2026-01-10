@@ -534,7 +534,7 @@
                 />
                 <UiSelectInput
                     v-model="movementForm.movement_type"
-                    :options="['transfer', 'immediate', 'temporary']"
+                    :options="['Immediate', 'Reservation']"
                     label="Movement Type"
                 />
               </div>
@@ -1614,7 +1614,7 @@ const movementForm = ref({
   destination_box: '',
   destination_box_id: '',
   destination_position: '',
-  movement_type: 'transfer',
+  movement_type: 'Immediate',
   reservation_time: '',
   start_date_time: '',
   end_date_time: '',
@@ -1999,7 +1999,7 @@ const closeRequestMovementModal = () => {
     destination_box: '',
     destination_box_id: '',
     destination_position: '',
-    movement_type: 'transfer',
+    movement_type: 'Immediate',
     reservation_time: '',
     start_date_time: '',
     end_date_time: '',
