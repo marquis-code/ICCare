@@ -895,52 +895,6 @@ const lagosLGAs = [
 // Track the original position when editing to allow it to be selectable
 const originalEditPosition = ref<number | null>(null);
 
-// Helper functions to get IDs from names
-// const getSiteIdByName = (siteName: string): string => {
-//   const site = sites.value?.find((s: any) =>
-//     (s.site_name || s.name) === siteName
-//   );
-//   return site?.site_id || site?.id || '';
-// };
-
-// const getFreezerIdByName = (freezerName: string): string => {
-//   const freezer = freezers.value?.find((f: any) =>
-//     (f.freezer_name || f.name) === freezerName
-//   );
-//   return freezer?.freezer_id || freezer?.id || '';
-// };
-
-// const getRackIdByName = (rackName: string): string => {
-//   const rack = racks.value?.find((r: any) =>
-//     (r.rack_name || r.name) === rackName
-//   );
-//   return rack?.rack_id || rack?.id || '';
-// };
-
-// const getBoxIdByName = (boxName: string): string => {
-//   const box = boxes.value?.find((b: any) =>
-//     (b.box_name || b.name) === boxName
-//   );
-//   return box?.box_id || box?.id || '';
-// };
-
-// Helper functions to get names for display
-// const getSelectedSiteName = (): string => {
-//   return formData.value.site_id;
-// };
-
-// const getSelectedFreezerName = (): string => {
-//   return formData.value.storage_location.freezer;
-// };
-
-// const getSelectedRackName = (): string => {
-//   return formData.value.storage_location.rack;
-// };
-
-// const getSelectedBoxName = (): string => {
-//   return formData.value.storage_location.box;
-// };
-
 const getSelectedSiteName = (): string => {
   return formData.value.site_name;
 };
@@ -956,95 +910,6 @@ const getSelectedRackName = (): string => {
 const getSelectedBoxName = (): string => {
   return formData.value.storage_location.box_name;
 };
-
-// Storage location change handlers
-// const onSiteChange = async (siteName: string) => {
-//   // Reset dependent fields only if not in edit mode or if site actually changed
-//   if (!isEditMode.value || formData.value.storage_location.freezer === '') {
-//     formData.value.storage_location.freezer = '';
-//     formData.value.storage_location.rack = '';
-//     formData.value.storage_location.box = '';
-//     formData.value.storage_location.position = 0;
-//     boxOccupancyData.value = null;
-//   }
-
-//   if (!siteName) return;
-
-//   const siteId = getSiteIdByName(siteName);
-//   if (siteId) {
-//     // Fetch freezers for this site
-//     await getFreezers({ site_id: siteId });
-//   }
-// };
-
-// const onFreezerChange = async (freezerName: string) => {
-//   // Reset dependent fields only if not in edit mode or if freezer actually changed
-//   if (!isEditMode.value || formData.value.storage_location.rack === '') {
-//     formData.value.storage_location.rack = '';
-//     formData.value.storage_location.box = '';
-//     formData.value.storage_location.position = 0;
-//     boxOccupancyData.value = null;
-//   }
-
-//   if (!freezerName) return;
-
-//   const siteId = getSiteIdByName(formData.value.site_id);
-//   const freezerId = getFreezerIdByName(freezerName);
-
-//   if (siteId && freezerId) {
-//     // Fetch racks for this site and freezer
-//     await getRacks({ site_id: siteId, freezer_id: freezerId });
-//   }
-// };
-
-// const onRackChange = async (rackName: string) => {
-//   // Reset dependent fields only if not in edit mode or if rack actually changed
-//   if (!isEditMode.value || formData.value.storage_location.box === '') {
-//     formData.value.storage_location.box = '';
-//     formData.value.storage_location.position = 0;
-//     boxOccupancyData.value = null;
-//   }
-
-//   if (!rackName) return;
-
-//   const siteId = getSiteIdByName(formData.value.site_id);
-//   const freezerId = getFreezerIdByName(formData.value.storage_location.freezer);
-//   const rackId = getRackIdByName(rackName);
-
-//   if (siteId && freezerId && rackId) {
-//     // Fetch boxes for this site, freezer, and rack
-//     await getBoxes({ site_id: siteId, freezer_id: freezerId, rack_id: rackId });
-//   }
-// };
-
-// const onBoxChange = async (boxName: string) => {
-//   // Reset position only if not in edit mode
-//   if (!isEditMode.value) {
-//     formData.value.storage_location.position = 0;
-//   }
-//   boxOccupancyData.value = null;
-
-//   if (!boxName) return;
-
-//   const siteId = getSiteIdByName(formData.value.site_id);
-//   const freezerId = getFreezerIdByName(formData.value.storage_location.freezer);
-//   const rackId = getRackIdByName(formData.value.storage_location.rack);
-//   const boxId = getBoxIdByName(boxName);
-
-//   if (siteId && freezerId && rackId && boxId) {
-//     // Fetch box occupancy
-//     const result = await getBoxOccupancy({
-//       site_id: siteId,
-//       freezer_id: freezerId,
-//       rack_id: rackId,
-//       box_id: boxId
-//     });
-
-//     if (result) {
-//       boxOccupancyData.value = result as BoxOccupancy;
-//     }
-//   }
-// };
 
 const onSiteChange = async (siteName: string) => {
   if (!isEditMode.value || formData.value.storage_location.freezer_name === '') {
@@ -1149,15 +1014,7 @@ const getPositionNumber = (row: number, col: number): number => {
   return (row - 1) * (boxTemplate.value?.columns || 10) + col - 1;
 };
 
-// const getPositionLabel = (position: number): string => {
-//   if (!position || !boxTemplate.value) return 'Select Position';
 
-//   const cols = boxTemplate.value.columns;
-//   const row = Math.floor((position - 1) / cols) + 1;
-//   const col = ((position - 1) % cols) + 1;
-
-//   return `${getRowLabel(row)}${col}`;
-// };
 
 const getPositionLabel = (position: number): string => {
   if (position === null || position === undefined || !boxTemplate.value) return 'Select Position';
@@ -1185,86 +1042,10 @@ const isPositionOccupied = (row: number, col: number): boolean => {
   return boxOccupancyData.value.occupancy[position] === 1;
 };
 
-// const isPositionOccupied = (row: number, col: number): boolean => {
-//   if (!boxOccupancyData.value) return false;
-
-//   const position = getPositionNumber(row, col);
-
-//   // If we're editing and this is the current/original position, it should not be marked as occupied
-//   if (isEditMode.value && originalEditPosition.value === position) {
-//     return false;
-//   }
-
-//   // Check if position is in the occupancy array with value 1 (occupied)
-//   const positionIndex = position - 1;
-//   return boxOccupancyData.value.occupancy[positionIndex] === 1;
-// };
-
 const selectPosition = (row: number, col: number) => {
   if (isPositionOccupied(row, col)) return;
   formData.value.storage_location.position = getPositionNumber(row, col);
 };
-
-// Function to load storage data when editing
-// const loadStorageDataForEdit = async (data: BioSpecimen) => {
-//   if (!data.storage_location) return;
-
-//   // First, get the site ID and load freezers
-//   const siteId = data.site_id || data.storage_location.site;
-//   if (siteId) {
-//     formData.value.site_id = siteId;
-//     await getFreezers({ site_id: getSiteIdByName(siteId) });
-//   }
-
-//   // Then load racks for the freezer
-//   if (data.storage_location.freezer) {
-//     formData.value.storage_location.freezer = data.storage_location.freezer;
-//     const freezerId = getFreezerIdByName(data.storage_location.freezer);
-//     if (freezerId) {
-//       await getRacks({ 
-//         site_id: getSiteIdByName(siteId), 
-//         freezer_id: freezerId 
-//       });
-//     }
-//   }
-
-//   // Then load boxes for the rack
-//   if (data.storage_location.rack) {
-//     formData.value.storage_location.rack = data.storage_location.rack;
-//     const rackId = getRackIdByName(data.storage_location.rack);
-//     if (rackId) {
-//       await getBoxes({ 
-//         site_id: getSiteIdByName(siteId),
-//         freezer_id: getFreezerIdByName(data.storage_location.freezer),
-//         rack_id: rackId 
-//       });
-//     }
-//   }
-
-//   // Finally load box occupancy
-//   if (data.storage_location.box) {
-//     formData.value.storage_location.box = data.storage_location.box;
-//     const boxId = getBoxIdByName(data.storage_location.box);
-//     if (boxId) {
-//       const result = await getBoxOccupancy({
-//         site_id: getSiteIdByName(siteId),
-//         freezer_id: getFreezerIdByName(data.storage_location.freezer),
-//         rack_id: getRackIdByName(data.storage_location.rack),
-//         box_id: boxId
-//       });
-
-//       if (result) {
-//         boxOccupancyData.value = result as BoxOccupancy;
-//       }
-//     }
-//   }
-
-//   // Set the position and store original
-//   if (data.storage_location.position) {
-//     formData.value.storage_location.position = data.storage_location.position;
-//     originalEditPosition.value = data.storage_location.position;
-//   }
-// };
 
 const loadStorageDataForEdit = async (data: BioSpecimen) => {
   if (!data.storage_location) return;
@@ -1339,12 +1120,7 @@ const loadStorageDataForEdit = async (data: BioSpecimen) => {
   }
 };
 
-// const getCategoryIdByName = (categoryName: string): string => {
-//   const category = categories.value?.find((c: any) =>
-//     (c.cat_name || c.name) === categoryName
-//   );
-//   return category?.cat_id || category?.id || '';
-// };
+
 
 const getSiteIdByName = (siteName: string): string => {
   const site = sites.value?.find((s: any) =>
@@ -1373,56 +1149,6 @@ const getBoxIdByName = (boxName: string): string => {
   );
   return box?.box_id || box?.id || '';
 };
-
-// const populateFormWithEditData = async (data: BioSpecimen) => {
-//   formData.value = {
-//     site_id: data.site_id || '',
-//     sample_category_id: data.sample_category_id || '',
-//     sample_serial_no: data.sample_serial_no || '',
-//     sample_label: data.sample_label || '',
-//     collection_date: data.collection_date || '',
-//     collection_time: data.collection_time || '',
-//     researcher_info: data.researcher_info || '',
-//     field_collector_info: data.field_collector_info || '',
-//     storage_location: {
-//       site: data.storage_location?.site || data.site_id || '',
-//       freezer: data.storage_location?.freezer || '',
-//       rack: data.storage_location?.rack || '',
-//       box: data.storage_location?.box || '',
-//       position: data.storage_location?.position || 0
-//     },
-//     free_fields: {
-//       diagnosis: data.free_fields?.diagnosis || '',
-//       treatmentStatus: data.free_fields?.treatmentStatus || '',
-//       outcomes: data.free_fields?.outcomes || '',
-//       dateOfBirth: data.free_fields?.dateOfBirth || '',
-//       age: data.free_fields?.age || '',
-//       sex: data.free_fields?.sex || '',
-//       ethnicity: data.free_fields?.ethnicity || '',
-//       nationality: data.free_fields?.nationality || '',
-//       history: data.free_fields?.history || '',
-//       riskFactors: data.free_fields?.riskFactors || '',
-//       geolocation: {
-//         country: data.free_fields?.geolocation?.country || '',
-//         state: data.free_fields?.geolocation?.state || '',
-//         lga: data.free_fields?.geolocation?.lga || '',
-//         city: data.free_fields?.geolocation?.city || '',
-//         address: data.free_fields?.geolocation?.address || ''
-//       }
-//     }
-//   };
-
-//   // Update dependent dropdowns for geolocation
-//   if (formData.value.free_fields.geolocation.country === 'Nigeria') {
-//     stateList.value = nigerianStates;
-//   }
-//   if (formData.value.free_fields.geolocation.state === 'Lagos') {
-//     lgaList.value = lagosLGAs;
-//   }
-
-//   // Load storage location data in sequence
-//   await loadStorageDataForEdit(data);
-// };
 
 const populateFormWithEditData = async (data: BioSpecimen) => {
   // Find and set the site name from site_id

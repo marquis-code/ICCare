@@ -22,6 +22,7 @@ interface _GlobalComponents {
     'BiospecimenDetailsModal': typeof import("../components/Biospecimen/DetailsModal.vue")['default']
     'BiospecimenNewSpecimenModal': typeof import("../components/Biospecimen/NewSpecimenModal.vue")['default']
     'BiospecimenTransferModal': typeof import("../components/Biospecimen/TransferModal.vue")['default']
+    'BoxPositionSelector': typeof import("../components/BoxPositionSelector.vue")['default']
     'ConsultationTypeCard': typeof import("../components/ConsultationTypeCard.vue")['default']
     'DatePickerInput': typeof import("../components/DatePickerInput.vue")['default']
     'DateRangePicker': typeof import("../components/DateRangePicker.vue")['default']
@@ -89,6 +90,7 @@ interface _GlobalComponents {
     'LazyBiospecimenDetailsModal': LazyComponent<typeof import("../components/Biospecimen/DetailsModal.vue")['default']>
     'LazyBiospecimenNewSpecimenModal': LazyComponent<typeof import("../components/Biospecimen/NewSpecimenModal.vue")['default']>
     'LazyBiospecimenTransferModal': LazyComponent<typeof import("../components/Biospecimen/TransferModal.vue")['default']>
+    'LazyBoxPositionSelector': LazyComponent<typeof import("../components/BoxPositionSelector.vue")['default']>
     'LazyConsultationTypeCard': LazyComponent<typeof import("../components/ConsultationTypeCard.vue")['default']>
     'LazyDatePickerInput': LazyComponent<typeof import("../components/DatePickerInput.vue")['default']>
     'LazyDateRangePicker': LazyComponent<typeof import("../components/DateRangePicker.vue")['default']>
@@ -162,6 +164,7 @@ export const BiospecimenConfirmActionModal: typeof import("../components/Biospec
 export const BiospecimenDetailsModal: typeof import("../components/Biospecimen/DetailsModal.vue")['default']
 export const BiospecimenNewSpecimenModal: typeof import("../components/Biospecimen/NewSpecimenModal.vue")['default']
 export const BiospecimenTransferModal: typeof import("../components/Biospecimen/TransferModal.vue")['default']
+export const BoxPositionSelector: typeof import("../components/BoxPositionSelector.vue")['default']
 export const ConsultationTypeCard: typeof import("../components/ConsultationTypeCard.vue")['default']
 export const DatePickerInput: typeof import("../components/DatePickerInput.vue")['default']
 export const DateRangePicker: typeof import("../components/DateRangePicker.vue")['default']
@@ -229,6 +232,7 @@ export const LazyBiospecimenConfirmActionModal: LazyComponent<typeof import("../
 export const LazyBiospecimenDetailsModal: LazyComponent<typeof import("../components/Biospecimen/DetailsModal.vue")['default']>
 export const LazyBiospecimenNewSpecimenModal: LazyComponent<typeof import("../components/Biospecimen/NewSpecimenModal.vue")['default']>
 export const LazyBiospecimenTransferModal: LazyComponent<typeof import("../components/Biospecimen/TransferModal.vue")['default']>
+export const LazyBoxPositionSelector: LazyComponent<typeof import("../components/BoxPositionSelector.vue")['default']>
 export const LazyConsultationTypeCard: LazyComponent<typeof import("../components/ConsultationTypeCard.vue")['default']>
 export const LazyDatePickerInput: LazyComponent<typeof import("../components/DatePickerInput.vue")['default']>
 export const LazyDateRangePicker: LazyComponent<typeof import("../components/DateRangePicker.vue")['default']>

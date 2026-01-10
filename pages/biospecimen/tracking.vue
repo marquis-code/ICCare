@@ -95,7 +95,7 @@
                 <table class="w-full min-w-max">
                   <thead class="bg-gray-25">
                   <tr>
-                    <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Sample ID</th>
+                    <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Sample SN</th>
                     <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Source Location</th>
                     <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Destination Location</th>
                     <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Requested Date</th>
@@ -194,7 +194,7 @@
                                   <table class="w-full min-w-max">
                 <thead class="bg-gray-50">
                 <tr>
-                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Sample ID
+                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Sample SN
                   </th>
                   <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Source
                     Location</th>
@@ -290,7 +290,7 @@
               <table class="w-full min-w-maxo">
                 <thead class="bg-gray-50">
                 <tr>
-                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Sample ID
+                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Sample SN
                   </th>
                   <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Source
                     Location</th>
@@ -399,7 +399,7 @@
                                   <table class="w-full min-w-max">
                 <thead class="bg-gray-50">
                 <tr>
-                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Sample ID
+                  <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Sample SN
                   </th>
                   <th class="px-4 py-6 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Source
                     Location</th>
@@ -672,6 +672,29 @@
     </template>
   </div>
 </div>
+   <!-- <div v-else-if="boxTemplate" class="overflow-x-auto rounded-lg bg-gray-25 p-3">
+  <div class="grid gap-2 mb-4" :style="{ gridTemplateColumns: `repeat(${boxTemplate.columns}, minmax(0, 1fr))` }">
+    <template v-for="row in boxTemplate.rows" :key="row">
+      <button
+        v-for="col in boxTemplate.columns"
+        :key="`${row}-${col}`"
+        type="button"
+        @click="selectPosition(row, col)"
+        :class="[
+          'w-full aspect-square text-xs font-semibold rounded-lg border-[0.5px] transition-all duration-200 transform hover:scale-105',
+          movementForm.destination_position === getPositionNumber(row, col)
+            ? 'bg-[#005B8F] text-white border-blue-700 shadow-lg scale-110'
+            : isPositionOccupied(row, col)
+              ? 'bg-gray-300 text-gray-500 border-gray-400 cursor-not-allowed opacity-60'
+              : 'bg-white text-gray-700 border-gray-100 hover:border-blue-400 hover:shadow-md'
+        ]"
+        :disabled="isPositionOccupied(row, col) || trackingSample"
+      >
+        {{ getRowLabel(row) }}{{ col }}
+      </button>
+    </template>
+  </div>
+</div> -->
   <!-- <div v-else-if="boxTemplate" class="overflow-x-auto rounded-lg bg-gray-25 p-3">
     <div class="inline-block min-w-full">
       <div class="grid gap-2 mb-4">
@@ -935,7 +958,7 @@
                 <h3 class="text-base font-semibold text-[#005B8F] mb-4">Movement Information</h3>
                 <div class="space-y-4">
                   <div class="flex justify-between items-start py-2">
-                    <span class="text-sm text-gray-700">Sample ID</span>
+                    <span class="text-sm text-gray-700">Sample SN</span>
                     <span class="text-sm font-medium text-gray-900 text-right">{{ selectedItem.sampleId || 'Not available' }}</span>
                   </div>
                   <div class="flex justify-between items-start py-2">
@@ -1369,11 +1392,11 @@ const formatLocation = (location: any) => {
 const transformTrackingRequest = (request: any): BioSpecimen => {
   return {
     id: request.request_id || request.id,
-    sampleId: request.sample_uuid || request.sample_id || 'N/A',
+    sampleId: request.sample_serial_no,
     sourceLocation: formatLocation(request.source_location || request.source_attributes),
     destinationLocation: formatLocation(request.destination_location || request.destination_attributes),
-    requestedDate: formatDate(request.requested_date || request.created_at || request.request_date),
-    approvedDate: formatDate(request.approved_date || request.approval_date),
+    requestedDate: formatDate(request?.requested_at),
+    approvedDate: formatDate(request?.approved_at),
     requestedBy: request.requested_by || request.request_by || 'N/A',
     status: request.status === 'pending' ? 'pendingMovement' : 'completeMovement',
     description: request.description || request.reason || request.notes,
@@ -1386,11 +1409,11 @@ const transformTrackingRequest = (request: any): BioSpecimen => {
 const transformDisposalRequest = (request: any): BioSpecimen => {
   return {
     id: request.request_id || request.id,
-    sampleId: request.sample_uuid || request.sample_id || 'N/A',
+    sampleId: request.sample_serial_no,
     sourceLocation: formatLocation(request.source_location || request.location),
     destinationLocation: 'Disposal Unit',
-    requestedDate: formatDate(request.requested_date || request.created_at || request.request_date),
-    approvedDate: formatDate(request.approved_date || request.approval_date),
+    requestedDate: formatDate(request?.requested_at),
+    approvedDate: formatDate(request?.approved_at),
     requestedBy: request.requested_by || request.request_by || 'N/A',
     status: request.status === 'pending' ? 'pendingDisposal' : 'completeDisposal',
     description: request.reason_for_disposal || request.reason || request.description,
@@ -1594,6 +1617,33 @@ const rejectionReason = ref('')
 //   request_by: currentUser.value
 // }) as any
 
+// const movementForm = ref({
+//   sample_uuid: '',
+//   source_site: '',
+//   source_site_id: '',
+//   source_freezer: '',
+//   source_freezer_id: '',
+//   source_rack: '',
+//   source_rack_id: '',
+//   source_box: '',
+//   source_box_id: '',
+//   source_position: '',
+//   destination_site: '',
+//   destination_site_id: '',
+//   destination_freezer: '',
+//   destination_freezer_id: '',
+//   destination_rack: '',
+//   destination_rack_id: '',
+//   destination_box: '',
+//   destination_box_id: '',
+//   destination_position: '',
+//   movement_type: 'Immediate',
+//   reservation_time: '',
+//   start_date_time: '',
+//   end_date_time: '',
+//   request_by: currentUser.value
+// }) as any
+
 const movementForm = ref({
   sample_uuid: '',
   source_site: '',
@@ -1604,7 +1654,7 @@ const movementForm = ref({
   source_rack_id: '',
   source_box: '',
   source_box_id: '',
-  source_position: '',
+  source_position: null as number | null,  // ✅ Allow null for zero value
   destination_site: '',
   destination_site_id: '',
   destination_freezer: '',
@@ -1613,7 +1663,7 @@ const movementForm = ref({
   destination_rack_id: '',
   destination_box: '',
   destination_box_id: '',
-  destination_position: '',
+  destination_position: null as number | null,  // ✅ Allow null for zero value
   movement_type: 'Immediate',
   reservation_time: '',
   start_date_time: '',
@@ -1656,53 +1706,53 @@ const disposalForm = ref({
 //   }
 // }
 
-const onSampleSelect = async (sample: any) => {
-  console.log('Selected sample:', sample) // Debug log to see the structure
+// const onSampleSelect = async (sample: any) => {
+//   console.log('Selected sample:', sample) // Debug log to see the structure
   
-  if (sample && sample.storage_location) {
-    // The storage_location contains IDs, not names
-    // Store the IDs directly
-    const sourceLocation = sample.storage_location
+//   if (sample && sample.storage_location) {
+//     // The storage_location contains IDs, not names
+//     // Store the IDs directly
+//     const sourceLocation = sample.storage_location
     
-    movementForm.value.source_site_id = sourceLocation.site || ''
-    movementForm.value.source_freezer_id = sourceLocation.freezer || ''
-    movementForm.value.source_rack_id = sourceLocation.rack || ''
-    movementForm.value.source_box_id = sourceLocation.box || ''
-    movementForm.value.source_position = sourceLocation.position || ''
+//     movementForm.value.source_site_id = sourceLocation.site || ''
+//     movementForm.value.source_freezer_id = sourceLocation.freezer || ''
+//     movementForm.value.source_rack_id = sourceLocation.rack || ''
+//     movementForm.value.source_box_id = sourceLocation.box || ''
+//     movementForm.value.source_position = sourceLocation.position || ''
     
-    // Now find the display names from the IDs
-    const site = sites.value?.find((s: any) => s.site_id === sourceLocation.site)
-    const freezer = freezers.value?.find((f: any) => f.freezer_id === sourceLocation.freezer)
-    const rack = racks.value?.find((r: any) => r.rack_id === sourceLocation.rack)
-    const box = boxes.value?.find((b: any) => b.box_id === sourceLocation.box)
+//     // Now find the display names from the IDs
+//     const site = sites.value?.find((s: any) => s.site_id === sourceLocation.site)
+//     const freezer = freezers.value?.find((f: any) => f.freezer_id === sourceLocation.freezer)
+//     const rack = racks.value?.find((r: any) => r.rack_id === sourceLocation.rack)
+//     const box = boxes.value?.find((b: any) => b.box_id === sourceLocation.box)
     
-    movementForm.value.source_site = site?.site_name || sourceLocation.site || ''
-    movementForm.value.source_freezer = freezer?.freezer_name || sourceLocation.freezer || ''
-    movementForm.value.source_rack = rack?.rack_name || sourceLocation.rack || ''
-    movementForm.value.source_box = box?.box_name || sourceLocation.box || ''
+//     movementForm.value.source_site = site?.site_name || sourceLocation.site || ''
+//     movementForm.value.source_freezer = freezer?.freezer_name || sourceLocation.freezer || ''
+//     movementForm.value.source_rack = rack?.rack_name || sourceLocation.rack || ''
+//     movementForm.value.source_box = box?.box_name || sourceLocation.box || ''
     
-    // Load the necessary data if not already loaded
-    if (sourceLocation.site && !freezers.value?.some((f: any) => f.site_id === sourceLocation.site)) {
-      await getFreezers({ site_id: sourceLocation.site })
-    }
-    if (sourceLocation.freezer && !racks.value?.some((r: any) => r.freezer_id === sourceLocation.freezer)) {
-      const selectedFreezer = freezers.value?.find((f: any) => f.freezer_id === sourceLocation.freezer)
-      if (selectedFreezer) {
-        await getRacks({ site_id: selectedFreezer.site_id, freezer_id: sourceLocation.freezer })
-      }
-    }
-    if (sourceLocation.rack && !boxes.value?.some((b: any) => b.rack_id === sourceLocation.rack)) {
-      const selectedRack = racks.value?.find((r: any) => r.rack_id === sourceLocation.rack)
-      if (selectedRack) {
-        await getBoxes({ 
-          site_id: selectedRack.site_id, 
-          freezer_id: selectedRack.freezer_id, 
-          rack_id: sourceLocation.rack 
-        })
-      }
-    }
-  }
-}
+//     // Load the necessary data if not already loaded
+//     if (sourceLocation.site && !freezers.value?.some((f: any) => f.site_id === sourceLocation.site)) {
+//       await getFreezers({ site_id: sourceLocation.site })
+//     }
+//     if (sourceLocation.freezer && !racks.value?.some((r: any) => r.freezer_id === sourceLocation.freezer)) {
+//       const selectedFreezer = freezers.value?.find((f: any) => f.freezer_id === sourceLocation.freezer)
+//       if (selectedFreezer) {
+//         await getRacks({ site_id: selectedFreezer.site_id, freezer_id: sourceLocation.freezer })
+//       }
+//     }
+//     if (sourceLocation.rack && !boxes.value?.some((b: any) => b.rack_id === sourceLocation.rack)) {
+//       const selectedRack = racks.value?.find((r: any) => r.rack_id === sourceLocation.rack)
+//       if (selectedRack) {
+//         await getBoxes({ 
+//           site_id: selectedRack.site_id, 
+//           freezer_id: selectedRack.freezer_id, 
+//           rack_id: sourceLocation.rack 
+//         })
+//       }
+//     }
+//   }
+// }
 
 // Destination location handlers
 // const onDestinationSiteChange = async () => {
@@ -1767,6 +1817,54 @@ const onSampleSelect = async (sample: any) => {
 //   }
 // }
 
+const onSampleSelect = async (sample: any) => {
+  console.log('Selected sample:', sample)
+  
+  if (sample && sample.storage_location) {
+    const sourceLocation = sample.storage_location
+    
+    // Store IDs directly
+    movementForm.value.source_site_id = sourceLocation.site || ''
+    movementForm.value.source_freezer_id = sourceLocation.freezer || ''
+    movementForm.value.source_rack_id = sourceLocation.rack || ''
+    movementForm.value.source_box_id = sourceLocation.box || ''
+    // ✅ Position is already zero-based from the system
+    movementForm.value.source_position = sourceLocation.position !== undefined ? sourceLocation.position : null
+    
+    // Find display names from IDs
+    const site = sites.value?.find((s: any) => s.site_id === sourceLocation.site)
+    const freezer = freezers.value?.find((f: any) => f.freezer_id === sourceLocation.freezer)
+    const rack = racks.value?.find((r: any) => r.rack_id === sourceLocation.rack)
+    const box = boxes.value?.find((b: any) => b.box_id === sourceLocation.box)
+    
+    movementForm.value.source_site = site?.site_name || sourceLocation.site || ''
+    movementForm.value.source_freezer = freezer?.freezer_name || sourceLocation.freezer || ''
+    movementForm.value.source_rack = rack?.rack_name || sourceLocation.rack || ''
+    movementForm.value.source_box = box?.box_name || sourceLocation.box || ''
+    
+    // Load necessary data if not already loaded
+    if (sourceLocation.site && !freezers.value?.some((f: any) => f.site_id === sourceLocation.site)) {
+      await getFreezers({ site_id: sourceLocation.site })
+    }
+    if (sourceLocation.freezer && !racks.value?.some((r: any) => r.freezer_id === sourceLocation.freezer)) {
+      const selectedFreezer = freezers.value?.find((f: any) => f.freezer_id === sourceLocation.freezer)
+      if (selectedFreezer) {
+        await getRacks({ site_id: selectedFreezer.site_id, freezer_id: sourceLocation.freezer })
+      }
+    }
+    if (sourceLocation.rack && !boxes.value?.some((b: any) => b.rack_id === sourceLocation.rack)) {
+      const selectedRack = racks.value?.find((r: any) => r.rack_id === sourceLocation.rack)
+      if (selectedRack) {
+        await getBoxes({ 
+          site_id: selectedRack.site_id, 
+          freezer_id: selectedRack.freezer_id, 
+          rack_id: sourceLocation.rack 
+        })
+      }
+    }
+  }
+}
+
 const onDestinationSiteChange = async (siteName: string) => {
   const siteId = getSiteIdByName(siteName)
   movementForm.value.destination_site_id = siteId
@@ -1824,8 +1922,40 @@ const onDestinationRackChange = async (rackName: string) => {
   boxOccupancyData.value = null
 }
 
+// const onDestinationBoxChange = async (boxName: string) => {
+//   movementForm.value.destination_position = ''
+//   boxOccupancyData.value = null
+
+//   if (!boxName) return
+
+//   const boxId = getBoxIdByName(boxName)
+//   movementForm.value.destination_box_id = boxId
+
+//   if (movementForm.value.destination_site_id && 
+//       movementForm.value.destination_freezer_id && 
+//       movementForm.value.destination_rack_id && 
+//       boxId) {
+//     const result = await getBoxOccupancy({
+//       site_id: movementForm.value.destination_site_id,
+//       freezer_id: movementForm.value.destination_freezer_id,
+//       rack_id: movementForm.value.destination_rack_id,
+//       box_id: boxId
+//     })
+
+//     if (result) {
+//       boxOccupancyData.value = result
+//     }
+//   }
+// }
+
+
+// Add these helper methods
+// const getRowLabel = (rowIndex: number): string => {
+//   return String.fromCharCode(64 + rowIndex) // 1=A, 2=B, etc.
+// }
+
 const onDestinationBoxChange = async (boxName: string) => {
-  movementForm.value.destination_position = ''
+  movementForm.value.destination_position = null  // ✅ Reset to null instead of empty string
   boxOccupancyData.value = null
 
   if (!boxName) return
@@ -1850,39 +1980,74 @@ const onDestinationBoxChange = async (boxName: string) => {
   }
 }
 
-
-// Add these helper methods
 const getRowLabel = (rowIndex: number): string => {
   return String.fromCharCode(64 + rowIndex) // 1=A, 2=B, etc.
 }
 
+
+// const getPositionNumber = (row: number, col: number): number => {
+//   return (row - 1) * (boxTemplate.value?.columns || 10) + col
+// }
+
 const getPositionNumber = (row: number, col: number): number => {
-  return (row - 1) * (boxTemplate.value?.columns || 10) + col
+  // Returns zero-based position index (0, 1, 2...)
+  return (row - 1) * (boxTemplate.value?.columns || 10) + col - 1
 }
 
+// const getPositionLabel = (position: number): string => {
+//   if (!position || !boxTemplate.value) return 'Select Position'
+  
+//   const cols = boxTemplate.value.columns
+//   const row = Math.floor((position - 1) / cols) + 1
+//   const col = ((position - 1) % cols) + 1
+  
+//   return `${getRowLabel(row)}${col}`
+// }
+
 const getPositionLabel = (position: number): string => {
-  if (!position || !boxTemplate.value) return 'Select Position'
+  if (position === null || position === undefined || !boxTemplate.value) return 'Select Position'
   
   const cols = boxTemplate.value.columns
-  const row = Math.floor((position - 1) / cols) + 1
-  const col = ((position - 1) % cols) + 1
+  // Position is already zero-based, so use it directly
+  const row = Math.floor(position / cols) + 1
+  const col = (position % cols) + 1
   
   return `${getRowLabel(row)}${col}`
 }
+
+
+
+
+// const isPositionOccupied = (row: number, col: number): boolean => {
+//   if (!boxOccupancyData.value) return false
+  
+//   const position = getPositionNumber(row, col)
+//   const positionIndex = position - 1
+  
+//   return boxOccupancyData.value.occupancy[positionIndex] === 1
+// }
 
 const isPositionOccupied = (row: number, col: number): boolean => {
   if (!boxOccupancyData.value) return false
   
   const position = getPositionNumber(row, col)
-  const positionIndex = position - 1
   
-  return boxOccupancyData.value.occupancy[positionIndex] === 1
+  // Check if position is in the occupancy array with value 1 (occupied)
+  // Position is already zero-based, so use it directly as the array index
+  return boxOccupancyData.value.occupancy[position] === 1
 }
+
+
+// const selectPosition = (row: number, col: number) => {
+//   if (isPositionOccupied(row, col)) return
+//   movementForm.value.destination_position = getPositionNumber(row, col)
+// }
 
 const selectPosition = (row: number, col: number) => {
   if (isPositionOccupied(row, col)) return
   movementForm.value.destination_position = getPositionNumber(row, col)
 }
+
 
 // Watch for destination site changes to fetch freezers
 watch(() => movementForm.value.destination_site, async (newSite) => {
@@ -1977,6 +2142,37 @@ const openRequestMovementModal = () => {
 //   }
 // }
 
+// const closeRequestMovementModal = () => {
+//   showRequestMovementModal.value = false
+//   movementForm.value = {
+//     sample_uuid: '',
+//     source_site: '',
+//     source_site_id: '',
+//     source_freezer: '',
+//     source_freezer_id: '',
+//     source_rack: '',
+//     source_rack_id: '',
+//     source_box: '',
+//     source_box_id: '',
+//     source_position: '',
+//     destination_site: '',
+//     destination_site_id: '',
+//     destination_freezer: '',
+//     destination_freezer_id: '',
+//     destination_rack: '',
+//     destination_rack_id: '',
+//     destination_box: '',
+//     destination_box_id: '',
+//     destination_position: '',
+//     movement_type: 'Immediate',
+//     reservation_time: '',
+//     start_date_time: '',
+//     end_date_time: '',
+//     request_by: currentUser.value
+//   }
+//   boxOccupancyData.value = null
+// }
+
 const closeRequestMovementModal = () => {
   showRequestMovementModal.value = false
   movementForm.value = {
@@ -1989,7 +2185,7 @@ const closeRequestMovementModal = () => {
     source_rack_id: '',
     source_box: '',
     source_box_id: '',
-    source_position: '',
+    source_position: null,  // ✅ Reset to null
     destination_site: '',
     destination_site_id: '',
     destination_freezer: '',
@@ -1998,7 +2194,7 @@ const closeRequestMovementModal = () => {
     destination_rack_id: '',
     destination_box: '',
     destination_box_id: '',
-    destination_position: '',
+    destination_position: null,  // ✅ Reset to null
     movement_type: 'Immediate',
     reservation_time: '',
     start_date_time: '',
@@ -2007,6 +2203,7 @@ const closeRequestMovementModal = () => {
   }
   boxOccupancyData.value = null
 }
+
 
 const openRequestDisposalModal = () => {
   showRequestDisposalModal.value = true
@@ -2308,32 +2505,3 @@ definePageMeta({
   layout: 'dashboard'
 })
 </script>
-<!-- 
-<style scoped>
-.custom-input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
-}
-
-.custom-input:focus {
-  outline: none;
-  border-color: #005B8F;
-  ring: 2px;
-  ring-color: #005B8F;
-}
-
-.custom-checkbox {
-  width: 1.25rem;
-  height: 1.25rem;
-  border-radius: 0.25rem;
-  border: 1px solid #d1d5db;
-}
-
-.custom-checkbox:checked {
-  background-color: #005B8F;
-  border-color: #005B8F;
-}
-</style> -->

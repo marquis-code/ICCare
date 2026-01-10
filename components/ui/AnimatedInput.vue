@@ -777,7 +777,7 @@
         </div>
         
         <!-- Quick Times -->
-        <div class="grid grid-cols-2 gap-2">
+        <!-- <div class="grid grid-cols-2 gap-2">
           <button
             v-for="quickTime in quickTimes.slice(0, 6)"
             :key="quickTime.label"
@@ -788,7 +788,7 @@
           >
             {{ quickTime.label }}
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
     
