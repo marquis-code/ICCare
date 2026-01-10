@@ -40,6 +40,9 @@ const searchQuery = ref('')
 const searchInput = ref<HTMLInputElement | null>(null)
 const pollingInterval = ref<NodeJS.Timeout | null>(null)
 
+const notificationRef = ref<HTMLElement | null>(null)
+const userMenuRef = ref<HTMLElement | null>(null)
+
 // Define sidebar navigation structure
 interface NavItem {
   path: string
@@ -247,6 +250,23 @@ watch(showSearchModal, async (val) => {
   }
 })
 
+onMounted(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (notificationRef.value && !notificationRef.value.contains(event.target as Node)) {
+      showNotifications.value = false
+    }
+    if (userMenuRef.value && !userMenuRef.value.contains(event.target as Node)) {
+      showUserMenu.value = false
+    }
+  }
+  
+  document.addEventListener('mousedown', handleClickOutside)
+  
+  onUnmounted(() => {
+    document.removeEventListener('mousedown', handleClickOutside)
+  })
+})
+
 onMounted(async () => {
   await getUnreadCount()
   await loadNotifications()
@@ -377,7 +397,7 @@ onUnmounted(() => stopPolling())
           <!-- User Info -->
           <div class="flex items-center gap-2 lg:gap-3">
             <!-- Notifications -->
-            <div class="relative">
+            <div class="relative" ref="notificationRef">
               <button @click="toggleNotifications" class="relative p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
                 <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -462,7 +482,7 @@ onUnmounted(() => stopPolling())
             </div>
 
             <!-- User Profile -->
-            <div class="relative">
+            <div class="relative" ref="userMenuRef">
               <button @click="toggleUserMenu" class="flex items-center gap-2 hover:bg-gray-50 rounded-lg p-1 lg:p-2 transition-colors">
                 <div class="w-8 h-8 lg:w-10 lg:h-10 bg-[#005B8F] rounded-full flex items-center justify-center text-white font-medium text-sm flex-shrink-0">
                   {{ userInitials }}
@@ -613,7 +633,12 @@ onUnmounted(() => stopPolling())
     </Teleport>
 
     <!-- Click Outside Handler -->
-    <div v-if="showNotifications || showUserMenu" class="fixed inset-0 z-40" @click="closeAllDropdowns"></div>
+    <!-- <div v-if="showNotifications || showUserMenu" class="fixed inset-0 z-40" @click="closeAllDropdowns"></div> -->
+     <div v-if="showNotifications || showUserMenu" 
+     class="fixed inset-0 z-40" 
+     @click="closeAllDropdowns"
+     style="pointer-events: none;">
+</div>
   </div>
 </template>
 

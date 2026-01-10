@@ -79,7 +79,7 @@ export const biosample_api = {
     request_by: string
     approved_by: string[]
   }) => {
-    return GATEWAY_ENDPOINT.post('/biospecimen/samples/track', payload)
+    return GATEWAY_ENDPOINT.post('/biospecimen/samples/track/request', payload)
   },
 
   // Use or dispose sample

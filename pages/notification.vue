@@ -50,7 +50,7 @@
             </div>
 
             <!-- Loading State -->
-            <div v-if="loading && !notifications.length" class="flex items-center justify-center py-12">
+            <div v-if="loading && !notificationsList?.value?.length" class="flex items-center justify-center py-12">
               <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#005B8F]"></div>
             </div>
 
@@ -198,7 +198,7 @@ const startPolling = () => {
     await getUnreadCount()
 
     // Only refresh notifications if count changed
-    const currentCount = notificationsList.value.filter(n => !n.read).length
+    const currentCount = notificationsList.value.filter(n => !n.read)?.length
     if (currentCount !== unreadCount.value) {
       await loadNotifications()
     }

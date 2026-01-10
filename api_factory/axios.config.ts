@@ -405,7 +405,7 @@ const triggerPageReload = () => {
   if (process.client) {
     // Use nuxt's router to reload or refresh the page
     setTimeout(() => {
-      window.location.reload();
+      // window.location.reload();
     }, 500);
   }
 };

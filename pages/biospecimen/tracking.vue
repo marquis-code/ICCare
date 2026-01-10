@@ -145,7 +145,17 @@
                       </span>
                     </td> -->
                     <td class="px-4 py-4 text-sm">
-                      <button @click="openViewDetailsModal(item, 'disposal')"
+                    <div class="flex gap-2">
+                      <button @click="openRejectModal(item, 'tracking')"
+                              class="px-3 py-1 text-xs border border-red-300 text-red-600 rounded hover:bg-red-50 transition">
+                        Reject
+                      </button>
+                      <button @click="openApproveModal(item, 'tracking')"
+                              class="px-3 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200 transition">
+                        Approve
+                      </button>
+                    </div>
+                      <!-- <button @click="openViewDetailsModal(item, 'tracking')"
                               class="p-2 hover:bg-gray-100 rounded transition">
                         <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
                           <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
@@ -153,7 +163,7 @@
                                 d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
                                 clip-rule="evenodd" />
                         </svg>
-                      </button>
+                      </button> -->
                     </td>
                   </tr>
                   </tbody>
@@ -1093,16 +1103,16 @@
               Are you sure you want to approve this {{ getRequestType }} request for sample <span class="font-semibold">{{ selectedItem?.sampleId }}</span>?
             </p>
 
-            <div class="bg-gray-25 rounded-lg p-4 mb-6 space-y-2">
-              <div class="flex justify-between text-sm">
+            <div class="bg-gray-25 rounded-lg p-4 mb-6 space-y-4">
+              <div class="flex space-y-1 flex-col justify-between text-sm">
                 <span class="text-gray-600">Source:</span>
                 <span class="text-gray-900 font-medium">{{ selectedItem?.sourceLocation }}</span>
               </div>
-              <div class="flex justify-between text-sm">
+              <div class="flex space-y-1 flex-col justify-between text-sm">
                 <span class="text-gray-600">Destination:</span>
                 <span class="text-gray-900 font-medium">{{ selectedItem?.destinationLocation }}</span>
               </div>
-              <div class="flex justify-between text-sm">
+              <div class="flex space-y-1 flex-col justify-between text-sm">
                 <span class="text-gray-600">Requested By:</span>
                 <span class="text-gray-900 font-medium">{{ selectedItem?.requestedBy }}</span>
               </div>
@@ -1157,16 +1167,16 @@
               Are you sure you want to reject this {{ getRequestType }} request for sample <span class="font-semibold">{{ selectedItem?.sampleId }}</span>?
             </p>
 
-            <div class="bg-gray-25 rounded-lg p-4 mb-4 space-y-2">
-              <div class="flex justify-between text-sm">
+            <div class="bg-gray-25 rounded-lg p-4 mb-4 space-y-4">
+              <div class="flex flex-col space-y-1 justify-between text-sm">
                 <span class="text-gray-600">Source:</span>
                 <span class="text-gray-900 font-medium">{{ selectedItem?.sourceLocation }}</span>
               </div>
-              <div class="flex justify-between text-sm">
+              <div class="flex flex-col space-y-1 justify-between text-sm">
                 <span class="text-gray-600">Destination:</span>
                 <span class="text-gray-900 font-medium">{{ selectedItem?.destinationLocation }}</span>
               </div>
-              <div class="flex justify-between text-sm">
+              <div class="flex flex-col space-y-1 justify-between text-sm">
                 <span class="text-gray-600">Requested By:</span>
                 <span class="text-gray-900 font-medium">{{ selectedItem?.requestedBy }}</span>
               </div>
