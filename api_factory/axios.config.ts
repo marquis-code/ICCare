@@ -307,8 +307,7 @@ import { auth_api } from "@/api_factory/modules/auth";
 const { showToast } = useCustomToast();
 const { token, getRefreshToken, setToken, setRefreshToken, logOut } = useUser();
 
-const $GATEWAY_ENDPOINT_WITHOUT_VERSION = import.meta.env
-  .VITE_BASE_URL as string;
+const $GATEWAY_ENDPOINT_WITHOUT_VERSION = import.meta.env.VITE_BASE_URL as string;
 const $GATEWAY_ENDPOINT = import.meta.env.VITE_BASE_URL;
 const $GATEWAY_ENDPOINT_V2 = import.meta.env.VITE_BASE_URL + "/v2";
 const $IMAGE_UPLOAD_ENDPOINT = import.meta.env

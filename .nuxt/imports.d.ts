@@ -34,4 +34,5 @@ export { useNitroOrigin } from '../node_modules/nuxt-site-config/dist/runtime/ap
 export { useSiteConfig } from '../node_modules/nuxt-site-config/dist/runtime/app/composables/useSiteConfig';
 export { createSitePathResolver, withSiteTrailingSlash, withSiteUrl } from '../node_modules/nuxt-site-config/dist/runtime/app/composables/utils';
 export { useRobotsRule } from '../node_modules/@nuxtjs/robots/dist/runtime/app/composables/useRobotsRule';
+export { useNuxtDevTools } from '../node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools';
 export { definePageMeta } from '../node_modules/nuxt/dist/pages/runtime/composables';
