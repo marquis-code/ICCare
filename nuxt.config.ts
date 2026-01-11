@@ -51,7 +51,7 @@ export default defineNuxtConfig({
         },
         { property: "og:type", content: "website" },
         { property: "og:url", content: "https://iccarebiobank.com" },
-        { property: "og:image", content: "https://iccarebiobank.com/og-image.jpg" },
+        { property: "og:image", content: "https://iccarebiobank.com/icon.jpg" },
 
         // ✅ Twitter meta
         { name: "twitter:card", content: "summary_large_image" },
@@ -62,10 +62,11 @@ export default defineNuxtConfig({
           content:
             "Collaborate on secure biobank and clinical research with iCCare Biobank. HIPAA & GDPR certified, offering real-time tracking for samples and transfers.",
         },
-        { name: "twitter:image", content: "https://iccarebiobank.com/og-image.jpg" },
+        { name: "twitter:image", content: "https://iccarebiobank.com/icon.jpg" },
       ],
-
       link: [
+        { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+        { rel: "canonical", href: "https://iccarebiobank.com" },
         { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
         { rel: "shortcut icon", href: "/favicon.ico", type: "image/x-icon" },
         { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
